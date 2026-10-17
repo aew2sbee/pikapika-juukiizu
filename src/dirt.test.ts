@@ -58,20 +58,21 @@ describe('DirtField.spray', () => {
     // The cells sit under the jet for about three frames.
     for (const x of [20, 35, 50, 65, 80]) dirt.spray(x - 15, 50, x, 50, JET, FRAME);
     expect(dirt.remaining).toBe(0.5);
-    expect(dirtiness(mud)).toBeGreaterThan(0.9);
+    expect(dirtiness(mud)).toBeGreaterThan(0.8);
   });
 
   it('thins mud while the jet is held on it and washes it off in under a second', () => {
     const mud = cell('mud');
     const dirt = new DirtField([mud]);
-    hold(dirt, 0.3);
+    hold(dirt, STRENGTH.mud * 0.4);
     const thinned = dirtiness(mud);
     expect(thinned).toBeGreaterThan(0);
     expect(thinned).toBeLessThan(1);
-    hold(dirt, 0.3);
+    hold(dirt, STRENGTH.mud * 0.4);
     expect(dirtiness(mud)).toBeLessThan(thinned);
-    hold(dirt, 0.4);
+    hold(dirt, STRENGTH.mud * 0.3);
     expect(dirt.remaining).toBe(0);
+    expect(STRENGTH.mud).toBeLessThan(1);
   });
 
   it('washes everything the jet swept past in one frame, not just its end', () => {

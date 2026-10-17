@@ -14,7 +14,7 @@ const CELL = 6;
 /** Radius the water jet washes, in viewBox units. */
 const JET = 18;
 /** The jet is never smaller than this on screen (CSS px), so a finger on a phone still washes a finger-sized patch. */
-const MIN_JET_PX = 36;
+const MIN_JET_PX = 27;
 /** Finish automatically once this little dirt is left, so nobody has to hunt for specks. */
 const CLEAR_AT = 0.03;
 /** Mud is drawn in this many opacity steps as it thins. */

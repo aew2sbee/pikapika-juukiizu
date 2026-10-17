@@ -1,7 +1,8 @@
+import './style.css';
+import { mountCleaning } from './cleaning';
 import { isPreview } from './env';
+import { excavator } from './vehicles/excavator';
 
-const app = document.querySelector<HTMLDivElement>('#app')!;
-app.innerHTML = `
-  <h1>ぴかぴか じゅーきーず</h1>
-  <p>じゅんびちゅう${isPreview ? '（プレビュー）' : ''}</p>
-`;
+if (isPreview) document.body.insertAdjacentHTML('beforeend', '<div class="badge">プレビュー</div>');
+
+void mountCleaning(document.querySelector<HTMLDivElement>('#app')!, excavator);

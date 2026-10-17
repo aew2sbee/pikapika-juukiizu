@@ -5,6 +5,7 @@ import { clearScaled, fillCircles, fitCanvas } from './canvas';
 import { type Cell, type DirtField, dirtiness, generateDirt, type Mask } from './dirt';
 import { distanceToSegment, type Point } from './geometry';
 import { playFanfare, playFuss } from './sound';
+import { vehicleSvg } from './vehicles';
 import type { Vehicle } from './vehicles/types';
 import { Washer } from './washer';
 
@@ -21,35 +22,49 @@ const SPARKLES = 14;
 const FUSS_AFTER = 0.6;
 /** Milliseconds after the water leaves the face before the vehicle calms down. */
 const CALM_AFTER = 400;
-/** Delay before "again" appears, so a finger still spraying doesn't hit it straight away. */
-const AGAIN_DELAY = 1500;
+/** Delay before the buttons appear after a clean, so a finger still spraying doesn't hit them straight away. */
+const ACTIONS_DELAY = 1500;
 
 const COLORS = { dust: '#d7b98a', mud: '#5d4037' } as const;
 
-export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promise<void> {
+export interface CleaningOptions {
+  /** Aborted when the screen is left: everything the screen started stops. */
+  signal: AbortSignal;
+  /** Goes back to the select screen. */
+  onBack(): void;
+}
+
+export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signal, onBack }: CleaningOptions): Promise<void> {
   const { width, height } = vehicle;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${vehicle.shapes}</svg>`;
-  const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  const svg = vehicleSvg(vehicle);
+  root.classList.add('wash');
   root.innerHTML = `
+    <button class="back pill" type="button">◀ もどる</button>
     <div class="stage" data-mood="normal" style="--aspect: ${width} / ${height}">
       <div class="vehicle" aria-label="${vehicle.name}">${svg}<canvas></canvas></div>
       <p class="cheer" hidden>ぴかぴか！</p>
-      <button class="again" type="button" hidden>もういっかい</button>
+      <div class="actions" hidden>
+        <button class="again pill" type="button">もういっかい</button>
+        <button class="others pill" type="button">ほかの くるま</button>
+      </div>
     </div>`;
   const stage = root.querySelector<HTMLDivElement>('.stage')!;
   const canvas = stage.querySelector('canvas')!;
   const cheer = stage.querySelector<HTMLParagraphElement>('.cheer')!;
-  const again = stage.querySelector<HTMLButtonElement>('.again')!;
+  const actions = stage.querySelector<HTMLDivElement>('.actions')!;
   const g = canvas.getContext('2d')!;
   const face = faceCircle(stage.querySelector<SVGGraphicsElement>('.face')!);
   // Trim blobs that spill past the vehicle's outline.
-  for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgUrl}")`);
+  for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgDataUrl(svg)}")`);
 
-  const image = await loadImage(svgUrl);
-  const mask = silhouette(image, Math.ceil(width / CELL), Math.ceil(height / CELL));
+  // Wired before the wait, so the way back works while the vehicle loads (or if it never does).
+  root.querySelector('.back')!.addEventListener('click', onBack);
+
+  const mask = await silhouette(vehicle);
+  if (signal.aborted) return;
 
   let dirt: DirtField;
-  let againTimer = 0;
+  let actionsTimer = 0;
   let clean = false;
   let fussing = false;
   /** How long water has been on the face without a break. */
@@ -62,10 +77,10 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
 
   function reset() {
     dirt = generateDirt(mask);
-    clearTimeout(againTimer);
+    clearTimeout(actionsTimer);
     clean = false;
     stage.querySelectorAll('.sparkle').forEach((s) => s.remove());
-    cheer.hidden = again.hidden = true;
+    cheer.hidden = actions.hidden = true;
     calm();
     draw();
   }
@@ -100,7 +115,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
     showMood();
     cheer.hidden = false;
     addSparkles(stage);
-    againTimer = window.setTimeout(() => (again.hidden = false), AGAIN_DELAY);
+    actionsTimer = window.setTimeout(() => (actions.hidden = false), ACTIONS_DELAY);
     playFanfare();
   }
 
@@ -140,10 +155,16 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
       return hit;
     },
     splashRadius: () => (JET * canvas.clientWidth) / width,
+    signal,
   });
-  again.addEventListener('click', reset);
+  stage.querySelector('.again')!.addEventListener('click', reset);
+  stage.querySelector('.others')!.addEventListener('click', onBack);
+  signal.addEventListener('abort', () => {
+    clearTimeout(actionsTimer);
+    clearTimeout(calmTimer);
+  });
 
-  fitCanvas(canvas, 2, draw);
+  fitCanvas(canvas, { maxDensity: 2, signal, onResize: draw });
 
   reset();
 }
@@ -171,8 +192,33 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+function svgDataUrl(svg: string): string {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+/** Silhouettes already worked out, so opening a vehicle again starts straight away. */
+const silhouettes = new Map<Vehicle, Promise<Mask>>();
+
+function silhouette(vehicle: Vehicle): Promise<Mask> {
+  let mask = silhouettes.get(vehicle);
+  if (!mask) {
+    const cols = Math.ceil(vehicle.width / CELL);
+    const rows = Math.ceil(vehicle.height / CELL);
+    mask = loadImage(svgDataUrl(vehicleSvg(vehicle))).then(
+      (image) => rasterize(image, cols, rows),
+      (error: unknown) => {
+        // Forget the failure, so opening the vehicle again tries again.
+        silhouettes.delete(vehicle);
+        throw error;
+      },
+    );
+    silhouettes.set(vehicle, mask);
+  }
+  return mask;
+}
+
 /** Marks the grid cells the vehicle covers by drawing it at one pixel per cell. */
-function silhouette(image: HTMLImageElement, cols: number, rows: number): Mask {
+function rasterize(image: HTMLImageElement, cols: number, rows: number): Mask {
   const canvas = document.createElement('canvas');
   canvas.width = cols;
   canvas.height = rows;

@@ -37,6 +37,8 @@ const JET_LAYERS = [
 ] as const;
 
 export interface WasherOptions {
+  /** Aborting it takes the washer down: the water and its sound stop. */
+  signal: AbortSignal;
   /**
    * Called every frame the trigger is held, with the path the jet swept in screen coordinates.
    * Returns whether it washed any dirt off.
@@ -66,6 +68,7 @@ export class Washer {
   private readonly shades: Drop[][] = Array.from({ length: DROP_SHADES }, () => []);
   private hitting = false;
   private animating = false;
+  private frameRequest = 0;
   /** Unset until the first frame of a run, which counts as no time passing. */
   private lastFrame: number | undefined;
 
@@ -80,7 +83,13 @@ export class Washer {
     this.gun.style.aspectRatio = `${VIEW.width} / ${VIEW.height}`;
     this.gun.querySelector('svg')!.style.transformOrigin = `${GRIP.x * 100}% ${GRIP.y * 100}%`;
     this.aim(REST_ANGLE);
-    fitCanvas(canvas, 1);
+    const { signal } = options;
+    fitCanvas(canvas, { maxDensity: 1, signal });
+    // The listeners leave with the screen's container; the loop and the sound would not.
+    signal.addEventListener('abort', () => {
+      cancelAnimationFrame(this.frameRequest);
+      stopSpray();
+    });
 
     root.addEventListener('pointerdown', (e) => {
       unlockAudio();
@@ -125,7 +134,7 @@ export class Washer {
     if (this.animating) return;
     this.animating = true;
     this.lastFrame = undefined;
-    requestAnimationFrame(this.frame);
+    this.frameRequest = requestAnimationFrame(this.frame);
   }
 
   /** Sprays and draws one frame: the jet while the trigger is held, and the drops still flying. */
@@ -147,7 +156,7 @@ export class Washer {
     this.drawDrops(seconds);
 
     this.animating = Boolean(this.nozzle) || this.drops.length > 0;
-    if (this.animating) requestAnimationFrame(this.frame);
+    if (this.animating) this.frameRequest = requestAnimationFrame(this.frame);
   };
 
   /** Turns the gun toward the target and returns where its nozzle tip ends up. */

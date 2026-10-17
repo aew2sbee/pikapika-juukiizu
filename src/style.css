@@ -17,11 +17,21 @@ body {
   -webkit-touch-callout: none;
 }
 
-#app {
+.screen {
   position: relative;
   height: 100dvh;
   display: grid;
   place-items: center;
+}
+
+/* The select screen scrolls when its cards don't fit (more vehicles, short landscape phones). */
+.pick {
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+/* The wash screen: the whole screen is the washer's trigger. */
+.wash {
   cursor: crosshair;
 }
 
@@ -129,11 +139,8 @@ body {
   }
 }
 
-.again {
-  position: absolute;
-  bottom: -14%;
-  left: 50%;
-  translate: -50%;
+.pill {
+  --shade: #2e7d32;
   padding: 0.5em 1.4em;
   border: none;
   border-radius: 999px;
@@ -142,13 +149,92 @@ body {
   font: inherit;
   font-size: clamp(20px, 4.5vw, 32px);
   font-weight: bold;
-  box-shadow: 0 5px 0 #2e7d32;
+  box-shadow: 0 5px 0 var(--shade);
+  cursor: pointer;
+}
+
+.pill:active {
+  translate: 0 4px;
+  box-shadow: 0 1px 0 var(--shade);
+}
+
+.actions {
+  position: absolute;
+  bottom: -14%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 3vmin;
   animation: pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
-.again:active {
-  translate: -50% 4px;
-  box-shadow: 0 1px 0 #2e7d32;
+.actions[hidden] {
+  display: none;
+}
+
+.others {
+  --shade: #1565c0;
+  background: #1e88e5;
+}
+
+.back {
+  --shade: #4e342e;
+  position: fixed;
+  top: 3vmin;
+  left: 3vmin;
+  z-index: 1;
+  font-size: clamp(16px, 3vw, 22px);
+  background: #6d4c41;
+}
+
+/* The select screen. */
+.select {
+  display: grid;
+  justify-items: center;
+  gap: 4vmin;
+  padding: 4vmin;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(28px, 6vw, 56px);
+  color: #5d4037;
+  text-shadow: 0 3px 0 #fff;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4vmin;
+}
+
+.card {
+  display: grid;
+  justify-items: center;
+  gap: 1vmin;
+  width: min(42vw, 360px);
+  padding: 3vmin 3vmin 2vmin;
+  border: none;
+  border-radius: 24px;
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 6px 0 #bcaaa4, 0 10px 20px rgb(0 0 0 / 0.12);
+  color: #3e2723;
+  font: inherit;
+  font-size: clamp(18px, 3.5vw, 30px);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.card svg {
+  width: 100%;
+  height: auto;
+}
+
+.card:active {
+  translate: 0 4px;
+  box-shadow: 0 2px 0 #bcaaa4, 0 4px 10px rgb(0 0 0 / 0.12);
 }
 
 .water {
@@ -201,7 +287,7 @@ body {
 .badge {
   position: fixed;
   top: 8px;
-  left: 8px;
+  right: 8px;
   padding: 2px 8px;
   border-radius: 4px;
   background: #3e2723;

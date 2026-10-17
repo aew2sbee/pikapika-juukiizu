@@ -1,0 +1,19 @@
+import { describe, expect, it } from 'vitest';
+import { vehicles } from '.';
+import { face } from './parts';
+
+describe('face', () => {
+  it.each(['normal', 'happy', 'fussy'])('has parts for the %s mood', (mood) => {
+    expect(face(0, 0)).toMatch(new RegExp(`data-moods="[^"]*${mood}`));
+  });
+});
+
+describe('vehicles', () => {
+  it.each(vehicles.map((v) => [v.name, v]))('%s has a face', (_, vehicle) => {
+    expect(vehicle.shapes).toContain('class="face"');
+  });
+
+  it('have different names', () => {
+    expect(new Set(vehicles.map((v) => v.name)).size).toBe(vehicles.length);
+  });
+});

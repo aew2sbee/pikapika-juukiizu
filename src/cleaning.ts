@@ -88,8 +88,9 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   }
 
   /** Water held on the face makes the vehicle squeeze its eyes shut and shake. */
-  function wetFace(from: Point, to: Point, seconds: number) {
-    if (distanceToSegment(face, from, to) > face.r) {
+  function wetFace(from: Point, to: Point, radius: number, seconds: number) {
+    // face.r is sized for the usual jet; a wider jet (small screens) reaches the face from further out.
+    if (distanceToSegment(face, from, to) > face.r + radius - JET) {
       faceWet = 0;
       return;
     }
@@ -142,7 +143,9 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
 
   /** The jet's radius in viewBox units: JET, or more where the vehicle is drawn small. */
   function jetRadius() {
-    return Math.max(JET, (MIN_JET_PX * width) / canvas.clientWidth);
+    // A canvas with no width yet (mid-layout) would make the jet infinitely wide.
+    const shown = canvas.clientWidth;
+    return shown ? Math.max(JET, (MIN_JET_PX * width) / shown) : JET;
   }
 
   /** Converts a screen point to viewBox units. */
@@ -155,8 +158,9 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
       const rect = canvas.getBoundingClientRect();
       const a = toVehicle(from, rect);
       const b = toVehicle(to, rect);
-      wetFace(a, b, seconds);
-      const hit = dirt.spray(a, b, jetRadius(), seconds);
+      const radius = jetRadius();
+      wetFace(a, b, radius, seconds);
+      const hit = dirt.spray(a, b, radius, seconds);
       if (hit && dirt.remaining <= CLEAR_AT) finish();
       else if (hit) draw();
       return hit;

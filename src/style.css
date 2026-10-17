@@ -24,7 +24,7 @@ body {
   place-items: center;
 }
 
-/* The select screen scrolls when its cards don't fit (more vehicles, short landscape phones). */
+/* The select screen scrolls when even the smallest cards don't fit (very short screens). */
 .pick {
   overflow-y: auto;
   touch-action: pan-y;
@@ -212,7 +212,8 @@ body {
   /* --cols and --rows come from the number of vehicles (select.ts). */
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-  grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
+  /* Cards shrink to fit the screen, but not below a size a small finger can still find and press. */
+  grid-template-rows: repeat(var(--rows), minmax(120px, 1fr));
   gap: 4vmin;
   width: min(100%, 1000px);
 }
@@ -237,6 +238,7 @@ body {
 
 .card span {
   /* Scales with the card, so the longest name (8 letters) still fits on one line, and stays small on short screens. */
+  font-size: clamp(14px, 3vw, 30px); /* for browsers without container query units */
   font-size: min(11cqi, 30px, 4.5dvh);
 }
 

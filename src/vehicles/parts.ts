@@ -20,12 +20,39 @@ export function face(x: number, y: number): string {
     </g>`;
 }
 
+/** Circles of one radius along a row, as SVG markup. */
+function circles(xs: number[], cy: number, r: number): string {
+  return xs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`).join('');
+}
+
 /** A crawler track: a rounded belt with wheels at the given x positions. */
 export function track(x: number, y: number, width: number, height: number, wheelXs: number[]): string {
   const cy = y + height / 2;
-  const r = Math.round(height * 0.31);
-  const wheels = (radius: number) => wheelXs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${radius}"/>`).join('');
   return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${height / 2}" fill="#424242"/>
-    <g fill="#757575">${wheels(r)}</g>
-    <g fill="#bdbdbd">${wheels(6)}</g>`;
+    <g fill="#757575">${circles(wheelXs, cy, Math.round(height * 0.31))}</g>
+    <g fill="#bdbdbd">${circles(wheelXs, cy, 6)}</g>`;
+}
+
+/** Road wheels: tyres of radius r centred on y, at the given x positions. */
+export function wheels(xs: number[], y: number, r: number): string {
+  return `<g fill="#37474f">${circles(xs, y, r)}</g>
+    <g fill="#bdbdbd">${circles(xs, y, r * 0.5)}</g>
+    <g fill="#757575">${circles(xs, y, r * 0.2)}</g>`;
+}
+
+/** A cab window with the face centred in it. */
+export function cabWindow(x: number, y: number, width: number, height: number): string {
+  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="10" fill="#b3e5fc"/>
+    ${face(x + width / 2, y + height / 2)}`;
+}
+
+/** A three-wheeled truck with its cab on the right; `load` (a dump bed, a drum…) sits behind the cab. */
+export function truck(cabColor: string, load: string): string {
+  return `<rect x="30" y="172" width="360" height="22" rx="4" fill="#424242"/>
+    ${load}
+    <rect x="282" y="74" width="110" height="108" rx="16" fill="${cabColor}"/>
+    ${cabWindow(296, 86, 82, 62)}
+    <rect x="378" y="164" width="22" height="16" rx="4" fill="#757575"/>
+    <circle cx="388" cy="156" r="6" fill="#fff59d"/>
+    ${wheels([82, 150, 334], 204, 30)}`;
 }

@@ -5,11 +5,14 @@ import { vehicleSvg } from './vehicles';
 import type { Vehicle } from './vehicles/types';
 
 export function mountSelect(root: HTMLElement, vehicles: Vehicle[], onPick: (vehicle: Vehicle) => void): void {
+  // As square a grid as the vehicles allow: six make three across and two down.
+  const cols = Math.ceil(Math.sqrt(vehicles.length));
+  const rows = Math.ceil(vehicles.length / cols);
   root.classList.add('pick');
   root.innerHTML = `
     <div class="select">
       <h1 class="title">どの くるまを あらう？</h1>
-      <div class="cards">
+      <div class="cards" style="--cols: ${cols}; --rows: ${rows}">
         ${vehicles
           .map(
             (vehicle) => `

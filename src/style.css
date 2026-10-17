@@ -24,7 +24,7 @@ body {
   place-items: center;
 }
 
-/* The select screen scrolls when its cards don't fit (more vehicles, short landscape phones). */
+/* The select screen scrolls when even the smallest cards don't fit (very short screens). */
 .pick {
   overflow-y: auto;
   touch-action: pan-y;
@@ -147,8 +147,10 @@ body {
   background: #43a047;
   color: #fff;
   font: inherit;
-  font-size: clamp(20px, 4.5vw, 32px);
+  /* Sized by the shorter side too, so the label stays on one line and the button stays wide on landscape phones. */
+  font-size: clamp(16px, min(4.5vw, 6dvh), 32px);
   font-weight: bold;
+  white-space: nowrap;
   box-shadow: 0 5px 0 var(--shade);
   cursor: pointer;
 }
@@ -189,8 +191,13 @@ body {
 }
 
 /* The select screen. */
+/* The title on top; the cards share out whatever height is left. */
 .select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100dvh;
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   justify-items: center;
   gap: 4vmin;
   padding: 4vmin;
@@ -198,23 +205,28 @@ body {
 
 .title {
   margin: 0;
-  font-size: clamp(28px, 6vw, 56px);
+  font-size: clamp(24px, min(6vw, 8dvh), 56px);
   color: #5d4037;
   text-shadow: 0 3px 0 #fff;
 }
 
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  /* --cols and --rows come from the number of vehicles (select.ts). */
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  /* Cards shrink to fit the screen, but not below a size a small finger can still find and press. */
+  grid-template-rows: repeat(var(--rows), minmax(120px, 1fr));
   gap: 4vmin;
+  width: min(100%, 1000px);
 }
 
 .card {
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   justify-items: center;
   gap: 1vmin;
-  width: min(42vw, 360px);
+  min-height: 0;
+  container-type: inline-size;
   padding: 3vmin 3vmin 2vmin;
   border: none;
   border-radius: 24px;
@@ -222,14 +234,20 @@ body {
   box-shadow: 0 6px 0 #bcaaa4, 0 10px 20px rgb(0 0 0 / 0.12);
   color: #3e2723;
   font: inherit;
-  font-size: clamp(18px, 3.5vw, 30px);
   font-weight: bold;
   cursor: pointer;
 }
 
+.card span {
+  /* Scales with the card, so the longest name (8 letters) still fits on one line, and stays small on short screens. */
+  font-size: clamp(14px, 3vw, 30px); /* for browsers without container query units */
+  font-size: min(11cqi, 30px, 4.5dvh);
+}
+
+/* The picture takes the card's spare height and keeps its proportions inside it. */
 .card svg {
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 .card:active {

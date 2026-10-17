@@ -147,8 +147,10 @@ body {
   background: #43a047;
   color: #fff;
   font: inherit;
-  font-size: clamp(20px, 4.5vw, 32px);
+  /* Sized by the shorter side too, so the label stays on one line and the button stays wide on landscape phones. */
+  font-size: clamp(16px, min(4.5vw, 6dvh), 32px);
   font-weight: bold;
+  white-space: nowrap;
   box-shadow: 0 5px 0 var(--shade);
   cursor: pointer;
 }

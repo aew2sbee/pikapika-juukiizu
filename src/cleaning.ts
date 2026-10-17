@@ -13,6 +13,8 @@ import { Washer } from './washer';
 const CELL = 6;
 /** Radius the water jet washes, in viewBox units. */
 const JET = 18;
+/** The jet is never smaller than this on screen (CSS px), so a finger on a phone still washes a finger-sized patch. */
+const MIN_JET_PX = 36;
 /** Finish automatically once this little dirt is left, so nobody has to hunt for specks. */
 const CLEAR_AT = 0.03;
 /** Mud is drawn in this many opacity steps as it thins. */
@@ -138,6 +140,11 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
     for (const [level, cells] of mud) fillCircles(g, cells, COLORS.mud, 0.35 + 0.65 * level);
   }
 
+  /** The jet's radius in viewBox units: JET, or more where the vehicle is drawn small. */
+  function jetRadius() {
+    return Math.max(JET, (MIN_JET_PX * width) / canvas.clientWidth);
+  }
+
   /** Converts a screen point to viewBox units. */
   function toVehicle(p: Point, rect: DOMRect): Point {
     return { x: ((p.x - rect.left) / rect.width) * width, y: ((p.y - rect.top) / rect.height) * height };
@@ -149,12 +156,12 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
       const a = toVehicle(from, rect);
       const b = toVehicle(to, rect);
       wetFace(a, b, seconds);
-      const hit = dirt.spray(a, b, JET, seconds);
+      const hit = dirt.spray(a, b, jetRadius(), seconds);
       if (hit && dirt.remaining <= CLEAR_AT) finish();
       else if (hit) draw();
       return hit;
     },
-    splashRadius: () => (JET * canvas.clientWidth) / width,
+    splashRadius: () => (jetRadius() * canvas.clientWidth) / width,
     signal,
   });
   stage.querySelector('.again')!.addEventListener('click', reset);

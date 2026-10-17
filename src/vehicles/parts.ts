@@ -20,12 +20,22 @@ export function face(x: number, y: number): string {
     </g>`;
 }
 
+/** Circles of one radius along a row, as SVG markup. */
+function circles(xs: number[], cy: number, r: number): string {
+  return xs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`).join('');
+}
+
 /** A crawler track: a rounded belt with wheels at the given x positions. */
 export function track(x: number, y: number, width: number, height: number, wheelXs: number[]): string {
   const cy = y + height / 2;
-  const r = Math.round(height * 0.31);
-  const wheels = (radius: number) => wheelXs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${radius}"/>`).join('');
   return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${height / 2}" fill="#424242"/>
-    <g fill="#757575">${wheels(r)}</g>
-    <g fill="#bdbdbd">${wheels(6)}</g>`;
+    <g fill="#757575">${circles(wheelXs, cy, Math.round(height * 0.31))}</g>
+    <g fill="#bdbdbd">${circles(wheelXs, cy, 6)}</g>`;
+}
+
+/** Road wheels: tyres of radius r centred on y, at the given x positions. */
+export function wheels(xs: number[], y: number, r: number): string {
+  return `<g fill="#37474f">${circles(xs, y, r)}</g>
+    <g fill="#bdbdbd">${circles(xs, y, r * 0.5)}</g>
+    <g fill="#757575">${circles(xs, y, r * 0.2)}</g>`;
 }

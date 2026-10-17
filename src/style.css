@@ -3,7 +3,7 @@ body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: #fff8e1;
+  background: #e6dccd;
   color: #3e2723;
   font-family: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', sans-serif;
 }
@@ -18,15 +18,37 @@ body {
 }
 
 #app {
+  position: relative;
   height: 100dvh;
   display: grid;
   place-items: center;
+  cursor: crosshair;
+}
+
+.garage,
+.garage svg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .stage {
   position: relative;
   width: min(94vw, calc(68dvh * var(--aspect)));
   aspect-ratio: var(--aspect);
+}
+
+/* Shadow on the garage floor; it stays put while the vehicle hops. */
+.stage::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -2%;
+  height: 7%;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.18);
 }
 
 .vehicle,
@@ -39,7 +61,6 @@ body {
 }
 
 .vehicle canvas {
-  cursor: pointer;
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
 }
@@ -112,6 +133,31 @@ body {
 .again:active {
   translate: -50% 4px;
   box-shadow: 0 1px 0 #2e7d32;
+}
+
+.water {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The pressure washer's gun, turned around its grip (set from washer.ts) to face the finger. */
+.gun {
+  position: fixed;
+  left: 2vmin;
+  bottom: 4vmin;
+  width: 36vmin;
+  pointer-events: none;
+}
+
+.gun svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--angle));
+  filter: drop-shadow(0 4px 4px rgb(0 0 0 / 0.25));
 }
 
 .sparkle {

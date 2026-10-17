@@ -1,19 +1,23 @@
-// The cleaning screen: a dirty vehicle (SVG) under a canvas of dirt that fingers wipe off.
+// The cleaning screen: a dirty vehicle (SVG) under a canvas of dirt, washed off by a pressure washer
+// that sprays wherever the finger is.
 
 import { type Cell, type DirtField, dirtiness, generateDirt, type Mask } from './dirt';
-import { playFanfare, playScrub, unlockAudio } from './sound';
+import { playFanfare, setSprayHitting, startSpray, stopSpray, unlockAudio } from './sound';
 import type { Vehicle } from './vehicles/types';
+import { type Point, Washer } from './washer';
 
 /** Dirt grid cell size, in viewBox units. */
 const CELL = 6;
-/** Finger radius, in viewBox units. */
-const BRUSH = 18;
+/** Radius the water jet washes, in viewBox units. */
+const JET = 18;
+/** Longest frame counted, so a stalled tab doesn't wash a big patch at once. */
+const MAX_FRAME = 0.05;
 /** Finish automatically once this little dirt is left, so nobody has to hunt for specks. */
 const CLEAR_AT = 0.03;
 /** Mud is drawn in this many opacity steps as it thins. */
 const MUD_SHADES = 8;
 const SPARKLES = 14;
-/** Delay before "again" appears, so a finger still rubbing doesn't hit it straight away. */
+/** Delay before "again" appears, so a finger still spraying doesn't hit it straight away. */
 const AGAIN_DELAY = 1500;
 
 const COLORS = { dust: '#d7b98a', mud: '#5d4037' } as const;
@@ -33,6 +37,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   const cheer = stage.querySelector<HTMLParagraphElement>('.cheer')!;
   const again = stage.querySelector<HTMLButtonElement>('.again')!;
   const g = canvas.getContext('2d')!;
+  const washer = new Washer(root);
   // Trim blobs that spill past the vehicle's outline.
   for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgUrl}")`);
 
@@ -41,8 +46,11 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
 
   let dirt: DirtField;
   let againTimer = 0;
-  let drawQueued = false;
-  const fingers = new Map<number, { x: number; y: number }>();
+  /** The finger holding the trigger, in screen coordinates, and where it was last frame. */
+  let nozzle: { id: number; at: Point; last: Point } | undefined;
+  let hitting = false;
+  let animating = false;
+  let lastFrame = 0;
 
   function reset() {
     dirt = generateDirt(mask);
@@ -85,54 +93,59 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
     for (const [level, cells] of mud) fillBlobs(g, cells, COLORS.mud, 0.35 + 0.65 * level);
   }
 
-  function queueDraw() {
-    if (drawQueued) return;
-    drawQueued = true;
-    requestAnimationFrame(() => {
-      drawQueued = false;
-      draw();
-    });
-  }
-
-  function toVehicle(e: PointerEvent) {
+  function frame(now: number) {
+    const seconds = Math.min((now - lastFrame) / 1000, MAX_FRAME);
+    lastFrame = now;
     const rect = canvas.getBoundingClientRect();
-    return {
-      x: ((e.clientX - rect.left) / rect.width) * width,
-      y: ((e.clientY - rect.top) / rect.height) * height,
-    };
+    if (nozzle) {
+      const [from, to] = [nozzle.last, nozzle.at].map((p) => ({
+        x: ((p.x - rect.left) / rect.width) * width,
+        y: ((p.y - rect.top) / rect.height) * height,
+      }));
+      nozzle.last = nozzle.at;
+      const hit = dirt.spray(from.x, from.y, to.x, to.y, JET, seconds);
+      if (hit && dirt.remaining <= CLEAR_AT) finish();
+      else if (hit) draw();
+      if (hit !== hitting) setSprayHitting((hitting = hit));
+    }
+    const flying = washer.update(seconds, nozzle?.at, (JET * rect.width) / width);
+    animating = Boolean(nozzle) || flying;
+    if (animating) requestAnimationFrame(frame);
   }
 
-  function wiped(changed: boolean) {
-    if (!changed) return;
-    if (dirt.remaining <= CLEAR_AT) finish();
-    else queueDraw();
-    playScrub();
+  function animate() {
+    if (animating) return;
+    animating = true;
+    lastFrame = performance.now();
+    requestAnimationFrame(frame);
   }
 
-  canvas.addEventListener('pointerdown', (e) => {
+  // The washer has one nozzle, so only the first finger down sprays.
+  root.addEventListener('pointerdown', (e) => {
     unlockAudio();
-    canvas.setPointerCapture(e.pointerId);
-    const p = toVehicle(e);
-    fingers.set(e.pointerId, p);
-    wiped(dirt.dab(p.x, p.y, BRUSH));
+    if (nozzle || (e.target as Element).closest('.again')) return;
+    root.setPointerCapture(e.pointerId);
+    const at = { x: e.clientX, y: e.clientY };
+    nozzle = { id: e.pointerId, at, last: at };
+    startSpray();
+    animate();
   });
-  canvas.addEventListener('pointermove', (e) => {
-    const from = fingers.get(e.pointerId);
-    if (!from) return;
-    const to = toVehicle(e);
-    fingers.set(e.pointerId, to);
-    wiped(dirt.rub(from.x, from.y, to.x, to.y, BRUSH));
+  root.addEventListener('pointermove', (e) => {
+    if (nozzle?.id === e.pointerId) nozzle.at = { x: e.clientX, y: e.clientY };
   });
+  const release = (e: PointerEvent) => {
+    if (nozzle?.id !== e.pointerId) return;
+    nozzle = undefined;
+    hitting = false;
+    stopSpray();
+  };
   // iOS may not count a touch's pointerdown as permission to play sound, but it does count its end.
-  canvas.addEventListener('pointerup', (e) => {
+  root.addEventListener('pointerup', (e) => {
     unlockAudio();
-    fingers.delete(e.pointerId);
+    release(e);
   });
-  canvas.addEventListener('pointercancel', (e) => fingers.delete(e.pointerId));
-  again.addEventListener('click', () => {
-    unlockAudio();
-    reset();
-  });
+  root.addEventListener('pointercancel', release);
+  again.addEventListener('click', reset);
 
   new ResizeObserver(() => {
     // Soft blobs gain nothing from 3x screens but would cost over twice the pixels of 2x.

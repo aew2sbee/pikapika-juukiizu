@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type Cell, DirtField, dirtiness, generateDirt, type Mask, STRENGTH } from './dirt';
 
-const BRUSH = 18;
+const JET = 18;
 
 /** Deterministic random numbers (mulberry32). */
 function seeded(seed: number): () => number {
@@ -45,50 +45,48 @@ describe('generateDirt', () => {
   });
 });
 
-describe('DirtField.rub', () => {
-  const pass = (dirt: DirtField) => dirt.rub(0, 50, 100, 50, BRUSH);
+describe('DirtField.spray', () => {
+  const FRAME = 1 / 60;
+  /** Holds the jet on (50, 50) for the given time, one frame at a time. */
+  const hold = (dirt: DirtField, seconds: number) => {
+    for (let t = 0; t < seconds - 1e-9; t += FRAME) dirt.spray(50, 50, 50, 50, JET, FRAME);
+  };
 
-  it('wipes dust in one pass', () => {
-    const dirt = new DirtField([cell('dust')]);
-    expect(pass(dirt)).toBe(true);
-    expect(dirt.remaining).toBe(0);
-  });
-
-  it('thins mud with each pass and wipes it after about three', () => {
-    const mud = cell('mud');
-    const dirt = new DirtField([mud]);
-    pass(dirt);
-    const afterOne = dirtiness(mud);
-    expect(afterOne).toBeGreaterThan(0);
-    expect(afterOne).toBeLessThan(1);
-    pass(dirt);
-    expect(dirtiness(mud)).toBeLessThan(afterOne);
-    expect(dirt.remaining).toBe(1);
-    pass(dirt);
-    expect(dirt.remaining).toBe(0);
-  });
-
-  it('wipes dust with a tap but not mud', () => {
-    const dirt = new DirtField([cell('dust'), cell('mud')]);
-    dirt.dab(50, 50, BRUSH);
-    expect(dirt.remaining).toBe(0.5);
-  });
-
-  it('rubs nothing while the finger stays put', () => {
+  it('washes dust off with a quick swipe but barely touches mud', () => {
     const mud = cell('mud');
     const dirt = new DirtField([cell('dust'), mud]);
-    for (let i = 0; i < 100; i++) expect(dirt.rub(50, 50, 50, 50, BRUSH)).toBe(false);
-    expect(dirt.remaining).toBe(1);
-    expect(dirtiness(mud)).toBe(1);
+    // The cells sit under the jet for about three frames.
+    for (const x of [20, 35, 50, 65, 80]) dirt.spray(x - 15, 50, x, 50, JET, FRAME);
+    expect(dirt.remaining).toBe(0.5);
+    expect(dirtiness(mud)).toBeGreaterThan(0.9);
   });
 
-  it('leaves dirt outside the brush alone', () => {
+  it('thins mud while the jet is held on it and washes it off in under a second', () => {
+    const mud = cell('mud');
+    const dirt = new DirtField([mud]);
+    hold(dirt, 0.3);
+    const thinned = dirtiness(mud);
+    expect(thinned).toBeGreaterThan(0);
+    expect(thinned).toBeLessThan(1);
+    hold(dirt, 0.3);
+    expect(dirtiness(mud)).toBeLessThan(thinned);
+    hold(dirt, 0.4);
+    expect(dirt.remaining).toBe(0);
+  });
+
+  it('washes everything the jet swept past in one frame, not just its end', () => {
     const dirt = new DirtField([cell('dust')]);
-    expect(dirt.rub(0, 0, 100, 0, BRUSH)).toBe(false);
+    expect(dirt.spray(0, 50, 100, 50, JET, STRENGTH.dust)).toBe(true);
+    expect(dirt.remaining).toBe(0);
+  });
+
+  it('leaves dirt outside the jet alone', () => {
+    const dirt = new DirtField([cell('dust')]);
+    expect(dirt.spray(0, 0, 100, 0, JET, 1)).toBe(false);
     expect(dirt.remaining).toBe(1);
   });
 
-  it('clear wipes everything', () => {
+  it('clear washes everything', () => {
     const dirt = new DirtField([cell('dust'), cell('mud')]);
     dirt.clear();
     expect(dirt.remaining).toBe(0);

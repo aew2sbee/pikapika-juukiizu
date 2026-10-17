@@ -1,15 +1,12 @@
-// Dirt on a vehicle: blobs of cells in SVG viewBox units that wear off as they are rubbed.
+// Dirt on a vehicle: blobs of cells in SVG viewBox units that wash off under a water jet.
 
 export type DirtKind = 'dust' | 'mud';
 
-/** Rubbing distance needed to wipe a cell clean. A finger pass straight over a cell rubs about the brush diameter. */
-export const STRENGTH: Record<DirtKind, number> = { dust: 8, mud: 80 };
-
-/** A tap rubs this much, enough to wipe dust but not mud. */
-const DAB = 10;
-
-/** Distance between rub samples along a finger stroke. */
-const STEP = 2;
+/**
+ * Seconds of water needed to wash a cell clean: dust goes as soon as the jet sweeps over it,
+ * mud needs the jet held on it.
+ */
+export const STRENGTH: Record<DirtKind, number> = { dust: 0.04, mud: 0.8 };
 
 const DUST_COVERAGE = 0.6;
 const MUD_BLOBS = 6;
@@ -20,7 +17,7 @@ export interface Cell {
   /** Drawing radius; a little larger than half a cell so neighbours overlap into blobs. */
   r: number;
   kind: DirtKind;
-  /** Rubbing left before the cell is clean. */
+  /** Seconds of water left before the cell is clean. */
   hp: number;
 }
 
@@ -46,43 +43,25 @@ export class DirtField {
   }
 
   /**
-   * Rubs along the segment with a round brush. Returns whether any dirt came off.
-   * A finger that stays put rubs nothing, even though touch screens keep reporting it.
+   * Sprays water for `seconds` over the path the jet swept in that time (a point if it stayed put).
+   * Every dirty cell the jet covers soaks up the whole time. Returns whether any dirt came off.
    */
-  rub(x0: number, y0: number, x1: number, y1: number, radius: number): boolean {
-    const length = Math.hypot(x1 - x0, y1 - y0);
-    if (!length) return false;
-    const near = this.dirtyNear(x0, y0, x1, y1, radius);
-    const samples = Math.ceil(length / STEP);
+  spray(x0: number, y0: number, x1: number, y1: number, radius: number, seconds: number): boolean {
     let changed = false;
-    for (let i = 1; i <= samples; i++) {
-      const t = i / samples;
-      changed = this.wipe(near, x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, radius, length / samples) || changed;
-    }
-    return changed;
-  }
-
-  /** A tap: wipes dust under the finger and barely touches mud. */
-  dab(x: number, y: number, radius: number): boolean {
-    return this.wipe(this.dirtyNear(x, y, x, y, radius), x, y, radius, DAB);
-  }
-
-  /** Dirty cells inside the box a brush covers while moving along the segment. */
-  private dirtyNear(x0: number, y0: number, x1: number, y1: number, radius: number): Cell[] {
-    const [left, right] = [Math.min(x0, x1) - radius, Math.max(x0, x1) + radius];
-    const [top, bottom] = [Math.min(y0, y1) - radius, Math.max(y0, y1) + radius];
-    return this.cells.filter((c) => c.hp > 0 && c.x >= left && c.x <= right && c.y >= top && c.y <= bottom);
-  }
-
-  private wipe(cells: Cell[], x: number, y: number, radius: number, amount: number): boolean {
-    let changed = false;
-    for (const cell of cells) {
-      if (cell.hp <= 0 || (cell.x - x) ** 2 + (cell.y - y) ** 2 > radius ** 2) continue;
-      cell.hp = Math.max(0, cell.hp - amount);
+    for (const cell of this.dirtyNear(x0, y0, x1, y1, radius)) {
+      if (distanceToSegment(cell.x, cell.y, x0, y0, x1, y1) > radius) continue;
+      cell.hp = Math.max(0, cell.hp - seconds);
       if (cell.hp === 0) this.left--;
       changed = true;
     }
     return changed;
+  }
+
+  /** Dirty cells inside the box the jet covers while moving along the segment. */
+  private dirtyNear(x0: number, y0: number, x1: number, y1: number, radius: number): Cell[] {
+    const [left, right] = [Math.min(x0, x1) - radius, Math.max(x0, x1) + radius];
+    const [top, bottom] = [Math.min(y0, y1) - radius, Math.max(y0, y1) + radius];
+    return this.cells.filter((c) => c.hp > 0 && c.x >= left && c.x <= right && c.y >= top && c.y <= bottom);
   }
 
   clear(): void {
@@ -124,4 +103,11 @@ export function generateDirt(mask: Mask, random: () => number = Math.random): Di
       hp: STRENGTH[kind],
     })),
   );
+}
+
+function distanceToSegment(px: number, py: number, x0: number, y0: number, x1: number, y1: number): number {
+  const [dx, dy] = [x1 - x0, y1 - y0];
+  const lengthSquared = dx * dx + dy * dy;
+  const t = lengthSquared ? Math.max(0, Math.min(1, ((px - x0) * dx + (py - y0) * dy) / lengthSquared)) : 0;
+  return Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
 }

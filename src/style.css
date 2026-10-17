@@ -1,0 +1,210 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #e6dccd;
+  color: #3e2723;
+  font-family: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', sans-serif;
+}
+
+/* Little fingers touch everywhere: no scrolling, zooming, text selection or long-press menus. */
+body {
+  touch-action: none;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#app {
+  position: relative;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  cursor: crosshair;
+}
+
+.garage,
+.garage svg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.stage {
+  position: relative;
+  width: min(94vw, calc(68dvh * var(--aspect)));
+  aspect-ratio: var(--aspect);
+}
+
+/* Shadow on the garage floor; it stays put while the vehicle hops. */
+.stage::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -2%;
+  height: 7%;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.18);
+}
+
+.vehicle,
+.vehicle svg,
+.vehicle canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.vehicle canvas {
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+}
+
+/* Face parts show only in the moods they list; the stage carries the current mood. */
+[data-moods] {
+  display: none;
+}
+
+[data-mood='normal'] [data-moods~='normal'],
+[data-mood='happy'] [data-moods~='happy'],
+[data-mood='fussy'] [data-moods~='fussy'] {
+  display: inline;
+}
+
+[data-mood='happy'] .vehicle {
+  animation: hop 0.6s ease-in-out infinite;
+}
+
+/* Water on the face: a "no, no" shake. */
+[data-mood='fussy'] .vehicle {
+  transform-origin: 50% 90%;
+  animation: fuss 0.25s ease-in-out infinite;
+}
+
+@keyframes fuss {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: translateX(-1%) rotate(-1.5deg);
+  }
+  75% {
+    transform: translateX(1%) rotate(1.5deg);
+  }
+}
+
+@keyframes hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7%);
+  }
+}
+
+.cheer {
+  position: absolute;
+  top: -12%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(32px, 9vw, 72px);
+  font-weight: bold;
+  color: #f9a825;
+  text-shadow: 0 3px 0 #fff, 0 6px 12px rgb(0 0 0 / 0.15);
+  animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0);
+  }
+}
+
+.again {
+  position: absolute;
+  bottom: -14%;
+  left: 50%;
+  translate: -50%;
+  padding: 0.5em 1.4em;
+  border: none;
+  border-radius: 999px;
+  background: #43a047;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(20px, 4.5vw, 32px);
+  font-weight: bold;
+  box-shadow: 0 5px 0 #2e7d32;
+  animation: pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.again:active {
+  translate: -50% 4px;
+  box-shadow: 0 1px 0 #2e7d32;
+}
+
+.water {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The pressure washer's gun, turned around its grip (set from washer.ts) to face the finger. */
+.gun {
+  position: fixed;
+  left: 2vmin;
+  bottom: 4vmin;
+  width: 36vmin;
+  pointer-events: none;
+}
+
+.gun svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--angle));
+  filter: drop-shadow(0 4px 4px rgb(0 0 0 / 0.25));
+}
+
+.sparkle {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  translate: -50% -50%;
+  background: #fff;
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+  filter: drop-shadow(0 0 2px #f9a825) drop-shadow(0 0 6px #ffb300);
+  pointer-events: none;
+  animation: twinkle 1.2s ease-in-out infinite both;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: scale(0) rotate(0);
+  }
+  50% {
+    transform: scale(1) rotate(45deg);
+  }
+}
+
+.badge {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #3e2723;
+  color: #fff;
+  font-size: 12px;
+}

@@ -2,13 +2,18 @@
  * Keeps a canvas's backing store matched to its size on screen, with at most `maxDensity` pixels per
  * CSS pixel: soft dirt and water look the same at 2x or 1x and cost far fewer pixels than 3x.
  */
-export function fitCanvas(canvas: HTMLCanvasElement, maxDensity: number, onResize?: () => void): void {
-  new ResizeObserver(() => {
+export function fitCanvas(
+  canvas: HTMLCanvasElement,
+  { maxDensity, signal, onResize }: { maxDensity: number; signal: AbortSignal; onResize?: () => void },
+): void {
+  const observer = new ResizeObserver(() => {
     const density = Math.min(devicePixelRatio, maxDensity);
     canvas.width = Math.round(canvas.clientWidth * density);
     canvas.height = Math.round(canvas.clientHeight * density);
     onResize?.();
-  }).observe(canvas);
+  });
+  observer.observe(canvas);
+  signal.addEventListener('abort', () => observer.disconnect());
 }
 
 /** Clears the canvas and scales drawing so that `unitsAcross` units span its width. */

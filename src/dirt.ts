@@ -6,7 +6,7 @@ export type DirtKind = 'dust' | 'mud';
  * Seconds of water needed to wash a cell clean: dust goes as soon as the jet sweeps over it,
  * mud needs the jet held on it.
  */
-export const STRENGTH: Record<DirtKind, number> = { dust: 0.04, mud: 0.5 };
+export const STRENGTH: Record<DirtKind, number> = { dust: 0.04, mud: 0.3 };
 
 const DUST_COVERAGE = 0.6;
 const MUD_BLOBS = 6;

@@ -7,16 +7,16 @@
     <rect x="-40" y="-18" width="90" height="30" rx="12" fill="#1e88e5" stroke="#1565c0" stroke-width="3"/>
     <circle cx="-24" cy="-3" r="5" fill="#90caf9"/>
   </g>
-</svg>`,D=-.45,O=.05,k=900,A=240,j=4,M=[[.7,`rgb(129 212 250 / 0.35)`],[.35,`rgb(179 229 252 / 0.85)`],[.12,`rgb(255 255 255 / 0.95)`]],N=class{options;gun;g;drops=[];fingers=new Map;nozzle;hitting=!1;animating=!1;lastFrame=0;constructor(t,n){this.options=n,t.insertAdjacentHTML(`beforeend`,`<canvas class="water"></canvas><div class="gun">${E}</div>`);let r=t.querySelector(`.water`);this.g=r.getContext(`2d`),this.gun=t.querySelector(`.gun`),this.gun.style.aspectRatio=`${C.width} / ${C.height}`,this.gun.querySelector(`svg`).style.transformOrigin=`${w.x*100}% ${w.y*100}%`,this.aim(D),e(r,1),t.addEventListener(`pointerdown`,e=>{if(m(),e.pointerType===`mouse`&&e.button!==0||e.target.closest(`button`))return;t.setPointerCapture(e.pointerId);let n={x:e.clientX,y:e.clientY};this.fingers.set(e.pointerId,n),!this.nozzle&&(this.nozzle={id:e.pointerId,at:n,last:n},h(),this.animate())}),t.addEventListener(`pointermove`,e=>{if(!this.fingers.has(e.pointerId))return;let t={x:e.clientX,y:e.clientY};this.fingers.set(e.pointerId,t),this.nozzle?.id===e.pointerId&&(this.nozzle.at=t)}),t.addEventListener(`pointerup`,e=>{m(),this.release(e)}),t.addEventListener(`pointercancel`,e=>this.release(e))}release(e){if(this.fingers.delete(e.pointerId),this.nozzle?.id!==e.pointerId)return;let[t]=this.fingers;if(t){let[e,n]=t;this.nozzle={id:e,at:n,last:n}}else this.nozzle=void 0,this.hitting=!1,this.aim(D),g()}animate(){this.animating||(this.animating=!0,this.lastFrame=performance.now(),requestAnimationFrame(this.frame))}frame=e=>{let n=Math.max(0,Math.min((e-this.lastFrame)/1e3,O));this.lastFrame=e;let{g:r,nozzle:i}=this;if(t(r,r.canvas.clientWidth),i){let e=this.options.onSpray(i.last,i.at,n);i.last=i.at,e!==this.hitting&&_(this.hitting=e);let t=this.options.splashRadius();this.drawJet(this.aimAt(i.at),i.at,t),this.splash(i.at,t,n)}this.drawDrops(n),this.animating=!!this.nozzle||this.drops.length>0,this.animating&&requestAnimationFrame(this.frame)};aimAt(e){let t=this.gun.getBoundingClientRect(),n={x:t.left+w.x*t.width,y:t.top+w.y*t.height},r=Math.atan2(e.y-n.y,e.x-n.x);this.aim(r);let i=T/C.width*t.width;return{x:n.x+Math.cos(r)*i,y:n.y+Math.sin(r)*i}}aim(e){this.gun.style.setProperty(`--angle`,`${e}rad`)}drawJet(e,t,n){let{g:r}=this,i=Math.hypot(t.x-e.x,t.y-e.y),a=(e.x+t.x)/2+(Math.random()-.5)*4,o=(e.y+t.y)/2-i*.05+(Math.random()-.5)*4;r.lineCap=`round`;for(let[i,s]of M)r.lineWidth=n*i,r.strokeStyle=s,r.beginPath(),r.moveTo(e.x,e.y),r.quadraticCurveTo(a,o,t.x,t.y),r.stroke()}splash(e,t,n){let{g:r}=this,i=r.createRadialGradient(e.x,e.y,0,e.x,e.y,t);i.addColorStop(0,`rgb(225 245 254 / 0.8)`),i.addColorStop(1,`rgb(225 245 254 / 0)`),r.fillStyle=i,r.beginPath(),r.arc(e.x,e.y,t,0,Math.PI*2),r.fill();for(let r=Math.round(A*n*Math.random()*2);r>0;r--){let n=-Math.PI*Math.random(),r=120+Math.random()*200;this.drops.push({x:e.x,y:e.y,vx:Math.cos(n)*r,vy:Math.sin(n)*r,r:t*(.05+Math.random()*.08),age:0,life:.3+Math.random()*.3})}}drawDrops(e){let{g:t,drops:r}=this,i=Array.from({length:j},()=>[]),a=0;for(let t of r)t.age+=e,!(t.age>=t.life)&&(t.vy+=k*e,t.x+=t.vx*e,t.y+=t.vy*e,r[a++]=t,i[Math.ceil((1-t.age/t.life)*j)-1].push(t));r.length=a,i.forEach((e,r)=>n(t,e,`rgb(179 229 252)`,(r+1)/j))}},P=6,F=18,I=.03,L=8,R=14,z=.6,B=400,V=1500,H={dust:`#d7b98a`,mud:`#5d4037`};async function U(i,a){let{width:o,height:s}=a,u=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${o} ${s}" width="${o}" height="${s}">${a.shapes}</svg>`,d=`data:image/svg+xml;charset=utf-8,${encodeURIComponent(u)}`;i.innerHTML=`
-    <div class="stage" style="--aspect: ${o} / ${s}">
+</svg>`,D=-.45,O=.05,k=900,A=240,j=4,M=[[.7,`rgb(129 212 250 / 0.35)`],[.35,`rgb(179 229 252 / 0.85)`],[.12,`rgb(255 255 255 / 0.95)`]],N=class{options;gun;g;drops=[];fingers=new Map;nozzle;shades=Array.from({length:j},()=>[]);hitting=!1;animating=!1;lastFrame;constructor(t,n){this.options=n,t.insertAdjacentHTML(`beforeend`,`<canvas class="water"></canvas><div class="gun">${E}</div>`);let r=t.querySelector(`.water`);this.g=r.getContext(`2d`),this.gun=t.querySelector(`.gun`),this.gun.style.aspectRatio=`${C.width} / ${C.height}`,this.gun.querySelector(`svg`).style.transformOrigin=`${w.x*100}% ${w.y*100}%`,this.aim(D),e(r,1),t.addEventListener(`pointerdown`,e=>{if(m(),e.pointerType===`mouse`&&e.button!==0||e.target.closest(`button`))return;t.setPointerCapture(e.pointerId);let n={x:e.clientX,y:e.clientY};this.fingers.set(e.pointerId,n),!this.nozzle&&(this.nozzle={id:e.pointerId,last:n},h(),this.animate())}),t.addEventListener(`pointermove`,e=>{this.fingers.has(e.pointerId)&&this.fingers.set(e.pointerId,{x:e.clientX,y:e.clientY})}),t.addEventListener(`pointerup`,e=>{m(),this.release(e)}),t.addEventListener(`pointercancel`,e=>this.release(e))}release(e){if(this.fingers.delete(e.pointerId),this.nozzle?.id!==e.pointerId)return;let[t]=this.fingers;if(t){let[e,n]=t;this.nozzle={id:e,last:n}}else this.nozzle=void 0,this.hitting=!1,this.aim(D),g()}animate(){this.animating||(this.animating=!0,this.lastFrame=void 0,requestAnimationFrame(this.frame))}frame=e=>{let n=this.lastFrame===void 0?0:Math.min((e-this.lastFrame)/1e3,O);this.lastFrame=e;let{g:r,nozzle:i}=this;if(t(r,r.canvas.clientWidth),i){let e=this.fingers.get(i.id),t=this.options.onSpray(i.last,e,n);i.last=e,t!==this.hitting&&_(this.hitting=t);let r=this.options.splashRadius();this.drawJet(this.aimAt(e),e,r),this.splash(e,r,n)}this.drawDrops(n),this.animating=!!this.nozzle||this.drops.length>0,this.animating&&requestAnimationFrame(this.frame)};aimAt(e){let t=this.gun.getBoundingClientRect(),n={x:t.left+w.x*t.width,y:t.top+w.y*t.height},r=Math.atan2(e.y-n.y,e.x-n.x);this.aim(r);let i=T/C.width*t.width;return{x:n.x+Math.cos(r)*i,y:n.y+Math.sin(r)*i}}aim(e){this.gun.style.setProperty(`--angle`,`${e}rad`)}drawJet(e,t,n){let{g:r}=this,i=Math.hypot(t.x-e.x,t.y-e.y),a=(e.x+t.x)/2+(Math.random()-.5)*4,o=(e.y+t.y)/2-i*.05+(Math.random()-.5)*4;r.lineCap=`round`;for(let[i,s]of M)r.lineWidth=n*i,r.strokeStyle=s,r.beginPath(),r.moveTo(e.x,e.y),r.quadraticCurveTo(a,o,t.x,t.y),r.stroke()}splash(e,t,n){let{g:r}=this,i=r.createRadialGradient(e.x,e.y,0,e.x,e.y,t);i.addColorStop(0,`rgb(225 245 254 / 0.8)`),i.addColorStop(1,`rgb(225 245 254 / 0)`),r.fillStyle=i,r.beginPath(),r.arc(e.x,e.y,t,0,Math.PI*2),r.fill();for(let r=Math.round(A*n*Math.random()*2);r>0;r--){let n=-Math.PI*Math.random(),r=120+Math.random()*200;this.drops.push({x:e.x,y:e.y,vx:Math.cos(n)*r,vy:Math.sin(n)*r,r:t*(.05+Math.random()*.08),age:0,life:.3+Math.random()*.3})}}drawDrops(e){let{g:t,drops:r,shades:i}=this;for(let e of i)e.length=0;let a=0;for(let t of r)t.age+=e,!(t.age>=t.life)&&(t.vy+=k*e,t.x+=t.vx*e,t.y+=t.vy*e,r[a++]=t,i[Math.ceil((1-t.age/t.life)*j)-1].push(t));r.length=a,i.forEach((e,r)=>{e.length&&n(t,e,`rgb(179 229 252)`,(r+1)/j)})}},P=6,F=18,I=.03,L=8,R=14,z=.6,B=400,V=1500,H={dust:`#d7b98a`,mud:`#5d4037`};async function U(i,a){let{width:o,height:s}=a,u=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${o} ${s}" width="${o}" height="${s}">${a.shapes}</svg>`,d=`data:image/svg+xml;charset=utf-8,${encodeURIComponent(u)}`;i.innerHTML=`
+    <div class="stage" data-mood="normal" style="--aspect: ${o} / ${s}">
       <div class="vehicle" aria-label="${a.name}">${u}<canvas></canvas></div>
       <p class="cheer" hidden>ぴかぴか！</p>
       <button class="again" type="button" hidden>もういっかい</button>
-    </div>`;let f=i.querySelector(`.stage`),p=f.querySelector(`canvas`),m=f.querySelector(`.cheer`),h=f.querySelector(`.again`),g=p.getContext(`2d`);for(let e of[`mask-image`,`-webkit-mask-image`])p.style.setProperty(e,`url("${d}")`);let _=G(await W(d),Math.ceil(o/P),Math.ceil(s/P)),b,x=0,S=0,C=0;function w(){b=l(_),clearTimeout(x),f.classList.remove(`happy`),f.querySelectorAll(`.sparkle`).forEach(e=>e.remove()),m.hidden=h.hidden=!0,E(),O()}function T(e,t,n){r(a.face,e,t)>a.face.r?S=0:(S+=n,clearTimeout(C),C=window.setTimeout(E,B),S>=z&&!f.classList.contains(`fussing`)&&(f.classList.add(`fussing`),y()))}function E(){clearTimeout(C),S=0,f.classList.remove(`fussing`)}function D(){b.clear(),O(),f.classList.add(`happy`),m.hidden=!1,K(f),x=window.setTimeout(()=>h.hidden=!1,V),v()}function O(){t(g,o);let e=[],r=new Map;for(let t of b.cells)if(!(t.hp<=0)){if(t.kind===`dust`)e.push(t);else{let e=Math.ceil(c(t)*L)/L,n=r.get(e);n?n.push(t):r.set(e,[t])}}n(g,e,H.dust,.9);for(let[e,t]of r)n(g,t,H.mud,.35+.65*e)}function k(e,t){return{x:(e.x-t.left)/t.width*o,y:(e.y-t.top)/t.height*s}}new N(i,{onSpray(e,t,n){let r=p.getBoundingClientRect(),[i,a]=[k(e,r),k(t,r)];T(i,a,n);let o=b.spray(i,a,F,n);return o&&b.remaining<=I?D():o&&O(),o},splashRadius:()=>F*p.clientWidth/o}),h.addEventListener(`click`,w),e(p,2,O),w()}function W(e){return new Promise((t,n)=>{let r=new Image;r.onload=()=>t(r),r.onerror=()=>n(Error(`Could not load ${e.slice(0,40)}…`)),r.src=e})}function G(e,t,n){let r=document.createElement(`canvas`);r.width=t,r.height=n;let i=r.getContext(`2d`,{willReadFrequently:!0});i.drawImage(e,0,0,t,n);let a=i.getImageData(0,0,t,n).data.filter((e,t)=>t%4==3);return{cols:t,rows:n,cellSize:P,filled:Array.from(a,e=>e>128)}}function K(e){for(let t=0;t<R;t++){let t=document.createElement(`span`);t.className=`sparkle`,t.style.left=`${5+Math.random()*90}%`,t.style.top=`${5+Math.random()*85}%`,t.style.animationDelay=`${Math.random()*1.2}s`,t.style.setProperty(`--size`,`${18+Math.random()*26}px`),e.append(t)}}var q=Array.from({length:11},(e,t)=>`<line x1="${100+t*140}" y1="0" x2="${100+t*140}" y2="630"/>`).join(``),J=e=>`
+    </div>`;let f=i.querySelector(`.stage`),p=f.querySelector(`canvas`),m=f.querySelector(`.cheer`),h=f.querySelector(`.again`),g=p.getContext(`2d`),_=G(f.querySelector(`.face`));for(let e of[`mask-image`,`-webkit-mask-image`])p.style.setProperty(e,`url("${d}")`);let b=q(await K(d),Math.ceil(o/P),Math.ceil(s/P)),x,S=0,C=!1,w=!1,T=0,E=0;function D(){f.dataset.mood=w?`fussy`:C?`happy`:`normal`}function O(){x=l(b),clearTimeout(S),C=!1,f.querySelectorAll(`.sparkle`).forEach(e=>e.remove()),m.hidden=h.hidden=!0,A(),M()}function k(e,t,n){r(_,e,t)>_.r?T=0:(T+=n,clearTimeout(E),E=window.setTimeout(A,B),T>=z&&!w&&(w=!0,D(),y()))}function A(){clearTimeout(E),T=0,w=!1,D()}function j(){x.clear(),M(),C=!0,D(),m.hidden=!1,J(f),S=window.setTimeout(()=>h.hidden=!1,V),v()}function M(){t(g,o);let e=[],r=new Map;for(let t of x.cells)if(!(t.hp<=0)){if(t.kind===`dust`)e.push(t);else{let e=Math.ceil(c(t)*L)/L,n=r.get(e);n?n.push(t):r.set(e,[t])}}n(g,e,H.dust,.9);for(let[e,t]of r)n(g,t,H.mud,.35+.65*e)}function R(e,t){return{x:(e.x-t.left)/t.width*o,y:(e.y-t.top)/t.height*s}}new N(i,{onSpray(e,t,n){let r=p.getBoundingClientRect(),i=R(e,r),a=R(t,r);k(i,a,n);let o=x.spray(i,a,F,n);return o&&x.remaining<=I?j():o&&M(),o},splashRadius:()=>F*p.clientWidth/o}),h.addEventListener(`click`,O),e(p,2,M),O()}var W=12;function G(e){let t=e.getBBox();return{x:t.x+t.width/2,y:t.y+t.height/2,r:Math.max(t.width,t.height)/2+W}}function K(e){return new Promise((t,n)=>{let r=new Image;r.onload=()=>t(r),r.onerror=()=>n(Error(`Could not load ${e.slice(0,40)}…`)),r.src=e})}function q(e,t,n){let r=document.createElement(`canvas`);r.width=t,r.height=n;let i=r.getContext(`2d`,{willReadFrequently:!0});i.drawImage(e,0,0,t,n);let a=i.getImageData(0,0,t,n).data.filter((e,t)=>t%4==3);return{cols:t,rows:n,cellSize:P,filled:Array.from(a,e=>e>128)}}function J(e){for(let t=0;t<R;t++){let t=document.createElement(`span`);t.className=`sparkle`,t.style.left=`${5+Math.random()*90}%`,t.style.top=`${5+Math.random()*85}%`,t.style.animationDelay=`${Math.random()*1.2}s`,t.style.setProperty(`--size`,`${18+Math.random()*26}px`),e.append(t)}}var Y=Array.from({length:11},(e,t)=>`<line x1="${100+t*140}" y1="0" x2="${100+t*140}" y2="630"/>`).join(``),X=e=>`
   <line x1="${e}" y1="0" x2="${e}" y2="90" stroke="#455a64" stroke-width="4"/>
   <circle cx="${e}" cy="160" r="130" fill="url(#glow)"/>
   <path d="M${e-45} 130 L${e-25} 90 L${e+25} 90 L${e+45} 130 Z" fill="#455a64"/>
-  <ellipse cx="${e}" cy="131" rx="24" ry="8" fill="#fff59d"/>`,Y=e=>`<rect x="100" y="${e}" width="180" height="52" rx="24" fill="#37474f" stroke="#263238" stroke-width="4"/>`,X=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <ellipse cx="${e}" cy="131" rx="24" ry="8" fill="#fff59d"/>`,Z=e=>`<rect x="100" y="${e}" width="180" height="52" rx="24" fill="#37474f" stroke="#263238" stroke-width="4"/>`,Q=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#b3afa8"/><stop offset="1" stop-color="#8a8781"/>
@@ -36,14 +36,14 @@
   </defs>
 
   <rect width="1600" height="1000" fill="#e6dccd"/>
-  <g stroke="#d9cdbb" stroke-width="4">${q}</g>
+  <g stroke="#d9cdbb" stroke-width="4">${Y}</g>
 
   <rect x="470" y="110" width="660" height="530" fill="#90a4ae"/>
   <rect x="490" y="130" width="620" height="510" fill="url(#slats)"/>
   <rect x="770" y="590" width="60" height="12" rx="6" fill="#607d8b"/>
 
-  ${J(320)}
-  ${J(1280)}
+  ${X(320)}
+  ${X(1280)}
 
   <rect x="70" y="230" width="300" height="230" rx="8" fill="url(#pegboard)" stroke="#8d6e63" stroke-width="8"/>
   <g transform="translate(140 300) rotate(20)">
@@ -73,13 +73,13 @@
   <rect y="628" width="1600" height="16" fill="url(#hazard)"/>
   <ellipse cx="1180" cy="930" rx="90" ry="14" fill="#7d7a75" opacity="0.5"/>
 
-  ${Y(658)}${Y(606)}${Y(554)}
+  ${Z(658)}${Z(606)}${Z(554)}
   <ellipse cx="190" cy="556" rx="50" ry="10" fill="#263238"/>
 
   <rect x="1370" y="560" width="120" height="150" rx="10" fill="#c62828"/>
   <rect x="1370" y="600" width="120" height="8" fill="#e57373"/><rect x="1370" y="662" width="120" height="8" fill="#e57373"/>
   <ellipse cx="1430" cy="562" rx="60" ry="12" fill="#b71c1c"/>
-</svg>`;document.body.insertAdjacentHTML(`afterbegin`,`<div class="garage">${X}</div>`),document.body.insertAdjacentHTML(`beforeend`,`<div class="badge">プレビュー</div>`),U(document.querySelector(`#app`),{name:`ショベルカー`,width:420,height:260,face:{x:200,y:98,r:28},shapes:`
+</svg>`;document.body.insertAdjacentHTML(`afterbegin`,`<div class="garage">${Q}</div>`),document.body.insertAdjacentHTML(`beforeend`,`<div class="badge">プレビュー</div>`),U(document.querySelector(`#app`),{name:`ショベルカー`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     <rect x="40" y="196" width="250" height="52" rx="26" fill="#424242"/>
     <g fill="#757575">
@@ -103,17 +103,19 @@
     <path d="M350 196 l-6 9 l11 -3 Z M362 201 l-4 10 l10 -6 Z M374 203 l1 10 l7 -9 Z" fill="#9e9e9e"/>
     <rect x="158" y="58" width="84" height="84" rx="14" fill="#fbc02d"/>
     <rect x="170" y="70" width="60" height="56" rx="10" fill="#b3e5fc"/>
-    <g class="eyes">
-      <g fill="#3e2723"><circle cx="189" cy="92" r="5.5"/><circle cx="211" cy="92" r="5.5"/></g>
-      <g fill="#fff"><circle cx="190.5" cy="90.5" r="1.8"/><circle cx="212.5" cy="90.5" r="1.8"/></g>
+    <g class="face">
+      <g data-moods="normal happy">
+        <g fill="#3e2723"><circle cx="189" cy="92" r="5.5"/><circle cx="211" cy="92" r="5.5"/></g>
+        <g fill="#fff"><circle cx="190.5" cy="90.5" r="1.8"/><circle cx="212.5" cy="90.5" r="1.8"/></g>
+      </g>
+      <g data-moods="fussy" fill="none" stroke="#3e2723" stroke-width="3">
+        <path d="M185 87 l8 5 l-8 5"/><path d="M215 87 l-8 5 l8 5"/>
+      </g>
+      <g data-moods="happy" fill="#f48fb1">
+        <circle cx="180" cy="104" r="4.5"/><circle cx="220" cy="104" r="4.5"/>
+      </g>
+      <path data-moods="normal" d="M193 107 q7 5 14 0" fill="none" stroke="#3e2723" stroke-width="3"/>
+      <path data-moods="happy" d="M189 103 q11 16 22 0 Z" fill="#e57373" stroke="#3e2723" stroke-width="2.5"/>
+      <path data-moods="fussy" d="M190 108 q2.5 -4 5 0 q2.5 4 5 0 q2.5 -4 5 0 q2.5 4 5 0" fill="none" stroke="#3e2723" stroke-width="2.5"/>
     </g>
-    <g class="eyes-fussy" fill="none" stroke="#3e2723" stroke-width="3">
-      <path d="M185 87 l8 5 l-8 5"/><path d="M215 87 l-8 5 l8 5"/>
-    </g>
-    <g class="cheeks" fill="#f48fb1">
-      <circle cx="180" cy="104" r="4.5"/><circle cx="220" cy="104" r="4.5"/>
-    </g>
-    <path class="mouth-normal" d="M193 107 q7 5 14 0" fill="none" stroke="#3e2723" stroke-width="3"/>
-    <path class="mouth-happy" d="M189 103 q11 16 22 0 Z" fill="#e57373" stroke="#3e2723" stroke-width="2.5"/>
-    <path class="mouth-fussy" d="M190 108 q2.5 -4 5 0 q2.5 4 5 0 q2.5 -4 5 0 q2.5 4 5 0" fill="none" stroke="#3e2723" stroke-width="2.5"/>
   </g>`});

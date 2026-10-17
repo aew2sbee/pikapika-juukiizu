@@ -198,15 +198,15 @@ body {
 
 .title {
   margin: 0;
-  font-size: clamp(28px, 6vw, 56px);
+  font-size: clamp(24px, min(6vw, 8dvh), 56px);
   color: #5d4037;
   text-shadow: 0 3px 0 #fff;
 }
 
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  /* Always three across and two down. */
+  display: grid;
+  grid-template-columns: repeat(3, auto);
   gap: 4vmin;
 }
 
@@ -214,8 +214,10 @@ body {
   display: grid;
   justify-items: center;
   gap: 1vmin;
-  /* Three to a row, so all six vehicles fit on a tablet without scrolling. */
-  width: min(28vw, 300px);
+  /* Small enough for three across, and for two rows (a card is about 0.62 of its width tall, plus its
+     name) to fit under the title on short screens. */
+  width: min(28vw, 300px, calc((100dvh - 210px) * 0.8));
+  container-type: inline-size;
   padding: 3vmin 3vmin 2vmin;
   border: none;
   border-radius: 24px;
@@ -223,9 +225,13 @@ body {
   box-shadow: 0 6px 0 #bcaaa4, 0 10px 20px rgb(0 0 0 / 0.12);
   color: #3e2723;
   font: inherit;
-  font-size: clamp(18px, 3.5vw, 30px);
   font-weight: bold;
   cursor: pointer;
+}
+
+.card span {
+  /* Scales with the card, so the longest name (8 letters) still fits on one line. */
+  font-size: min(11cqi, 30px);
 }
 
 .card svg {

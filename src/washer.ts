@@ -61,10 +61,13 @@ export class Washer {
   /** Every finger on the screen, by pointer id. */
   private readonly fingers = new Map<number, Point>();
   /** The finger holding the trigger, and where it was last frame. The washer has one nozzle, so one finger. */
-  private nozzle: { id: number; at: Point; last: Point } | undefined;
+  private nozzle: { id: number; last: Point } | undefined;
+  /** Drops sorted by how faded they are, one list per shade. */
+  private readonly shades: Drop[][] = Array.from({ length: DROP_SHADES }, () => []);
   private hitting = false;
   private animating = false;
-  private lastFrame = 0;
+  /** Unset until the first frame of a run, which counts as no time passing. */
+  private lastFrame: number | undefined;
 
   constructor(
     root: HTMLElement,
@@ -86,15 +89,13 @@ export class Washer {
       const at = { x: e.clientX, y: e.clientY };
       this.fingers.set(e.pointerId, at);
       if (this.nozzle) return;
-      this.nozzle = { id: e.pointerId, at, last: at };
+      this.nozzle = { id: e.pointerId, last: at };
       startSpray();
       this.animate();
     });
     root.addEventListener('pointermove', (e) => {
       if (!this.fingers.has(e.pointerId)) return;
-      const at = { x: e.clientX, y: e.clientY };
-      this.fingers.set(e.pointerId, at);
-      if (this.nozzle?.id === e.pointerId) this.nozzle.at = at;
+      this.fingers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     });
     // iOS may not count a touch's pointerdown as permission to play sound, but it does count its end.
     root.addEventListener('pointerup', (e) => {
@@ -111,7 +112,7 @@ export class Washer {
     const [next] = this.fingers;
     if (next) {
       const [id, at] = next;
-      this.nozzle = { id, at, last: at };
+      this.nozzle = { id, last: at };
       return;
     }
     this.nozzle = undefined;
@@ -123,25 +124,25 @@ export class Washer {
   private animate(): void {
     if (this.animating) return;
     this.animating = true;
-    this.lastFrame = performance.now();
+    this.lastFrame = undefined;
     requestAnimationFrame(this.frame);
   }
 
   /** Sprays and draws one frame: the jet while the trigger is held, and the drops still flying. */
   private readonly frame = (now: number) => {
-    // The first frame's timestamp can be slightly earlier than the pointerdown that started it.
-    const seconds = Math.max(0, Math.min((now - this.lastFrame) / 1000, MAX_FRAME));
+    const seconds = this.lastFrame === undefined ? 0 : Math.min((now - this.lastFrame) / 1000, MAX_FRAME);
     this.lastFrame = now;
     const { g, nozzle } = this;
     clearScaled(g, g.canvas.clientWidth);
 
     if (nozzle) {
-      const hit = this.options.onSpray(nozzle.last, nozzle.at, seconds);
-      nozzle.last = nozzle.at;
+      const at = this.fingers.get(nozzle.id)!;
+      const hit = this.options.onSpray(nozzle.last, at, seconds);
+      nozzle.last = at;
       if (hit !== this.hitting) setSprayHitting((this.hitting = hit));
       const radius = this.options.splashRadius();
-      this.drawJet(this.aimAt(nozzle.at), nozzle.at, radius);
-      this.splash(nozzle.at, radius, seconds);
+      this.drawJet(this.aimAt(at), at, radius);
+      this.splash(at, radius, seconds);
     }
     this.drawDrops(seconds);
 
@@ -208,8 +209,8 @@ export class Washer {
 
   /** Moves the drops, drops the ones that have faded, and draws the rest. */
   private drawDrops(seconds: number): void {
-    const { g, drops } = this;
-    const shades: Drop[][] = Array.from({ length: DROP_SHADES }, () => []);
+    const { g, drops, shades } = this;
+    for (const shade of shades) shade.length = 0;
     let alive = 0;
     for (const d of drops) {
       d.age += seconds;
@@ -221,6 +222,8 @@ export class Washer {
       shades[Math.ceil((1 - d.age / d.life) * DROP_SHADES) - 1].push(d);
     }
     drops.length = alive;
-    shades.forEach((shade, i) => fillCircles(g, shade, 'rgb(179 229 252)', (i + 1) / DROP_SHADES));
+    shades.forEach((shade, i) => {
+      if (shade.length) fillCircles(g, shade, 'rgb(179 229 252)', (i + 1) / DROP_SHADES);
+    });
   }
 }

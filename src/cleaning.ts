@@ -31,7 +31,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${vehicle.shapes}</svg>`;
   const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   root.innerHTML = `
-    <div class="stage" style="--aspect: ${width} / ${height}">
+    <div class="stage" data-mood="normal" style="--aspect: ${width} / ${height}">
       <div class="vehicle" aria-label="${vehicle.name}">${svg}<canvas></canvas></div>
       <p class="cheer" hidden>ぴかぴか！</p>
       <button class="again" type="button" hidden>もういっかい</button>
@@ -41,6 +41,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   const cheer = stage.querySelector<HTMLParagraphElement>('.cheer')!;
   const again = stage.querySelector<HTMLButtonElement>('.again')!;
   const g = canvas.getContext('2d')!;
+  const face = faceCircle(stage.querySelector<SVGGraphicsElement>('.face')!);
   // Trim blobs that spill past the vehicle's outline.
   for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgUrl}")`);
 
@@ -49,14 +50,20 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
 
   let dirt: DirtField;
   let againTimer = 0;
+  let clean = false;
+  let fussing = false;
   /** How long water has been on the face without a break. */
   let faceWet = 0;
   let calmTimer = 0;
 
+  function showMood() {
+    stage.dataset.mood = fussing ? 'fussy' : clean ? 'happy' : 'normal';
+  }
+
   function reset() {
     dirt = generateDirt(mask);
     clearTimeout(againTimer);
-    stage.classList.remove('happy');
+    clean = false;
     stage.querySelectorAll('.sparkle').forEach((s) => s.remove());
     cheer.hidden = again.hidden = true;
     calm();
@@ -65,15 +72,16 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
 
   /** Water held on the face makes the vehicle squeeze its eyes shut and shake. */
   function wetFace(from: Point, to: Point, seconds: number) {
-    if (distanceToSegment(vehicle.face, from, to) > vehicle.face.r) {
+    if (distanceToSegment(face, from, to) > face.r) {
       faceWet = 0;
       return;
     }
     faceWet += seconds;
     clearTimeout(calmTimer);
     calmTimer = window.setTimeout(calm, CALM_AFTER);
-    if (faceWet >= FUSS_AFTER && !stage.classList.contains('fussing')) {
-      stage.classList.add('fussing');
+    if (faceWet >= FUSS_AFTER && !fussing) {
+      fussing = true;
+      showMood();
       playFuss();
     }
   }
@@ -81,13 +89,15 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   function calm() {
     clearTimeout(calmTimer);
     faceWet = 0;
-    stage.classList.remove('fussing');
+    fussing = false;
+    showMood();
   }
 
   function finish() {
     dirt.clear();
     draw();
-    stage.classList.add('happy');
+    clean = true;
+    showMood();
     cheer.hidden = false;
     addSparkles(stage);
     againTimer = window.setTimeout(() => (again.hidden = false), AGAIN_DELAY);
@@ -121,7 +131,8 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   new Washer(root, {
     onSpray(from, to, seconds) {
       const rect = canvas.getBoundingClientRect();
-      const [a, b] = [toVehicle(from, rect), toVehicle(to, rect)];
+      const a = toVehicle(from, rect);
+      const b = toVehicle(to, rect);
       wetFace(a, b, seconds);
       const hit = dirt.spray(a, b, JET, seconds);
       if (hit && dirt.remaining <= CLEAR_AT) finish();
@@ -135,6 +146,19 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   fitCanvas(canvas, 2, draw);
 
   reset();
+}
+
+/** Water this far outside the face's parts still counts as hitting the face, in viewBox units. */
+const FACE_MARGIN = 12;
+
+/** The circle around the face as currently drawn, in viewBox units. */
+function faceCircle(face: SVGGraphicsElement): Point & { r: number } {
+  const box = face.getBBox();
+  return {
+    x: box.x + box.width / 2,
+    y: box.y + box.height / 2,
+    r: Math.max(box.width, box.height) / 2 + FACE_MARGIN,
+  };
 }
 
 /** Waits for onload rather than decode(), which some Safari versions reject for SVG images. */

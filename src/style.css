@@ -65,40 +65,23 @@ body {
   -webkit-mask-size: 100% 100%;
 }
 
-.mouth-happy,
-.cheeks {
+/* Face parts show only in the moods they list; the stage carries the current mood. */
+[data-moods] {
   display: none;
 }
 
-.happy .mouth-normal {
-  display: none;
-}
-
-.happy .mouth-happy,
-.happy .cheeks {
+[data-mood='normal'] [data-moods~='normal'],
+[data-mood='happy'] [data-moods~='happy'],
+[data-mood='fussy'] [data-moods~='fussy'] {
   display: inline;
 }
 
-.happy .vehicle {
+[data-mood='happy'] .vehicle {
   animation: hop 0.6s ease-in-out infinite;
 }
 
-/* Water on the face: eyes squeezed shut, a wavy mouth, and a "no, no" shake. */
-.eyes-fussy,
-.mouth-fussy,
-.fussing .eyes,
-.fussing .mouth-normal,
-.fussing .mouth-happy,
-.fussing .cheeks {
-  display: none;
-}
-
-.fussing .eyes-fussy,
-.fussing .mouth-fussy {
-  display: inline;
-}
-
-.fussing .vehicle {
+/* Water on the face: a "no, no" shake. */
+[data-mood='fussy'] .vehicle {
   transform-origin: 50% 90%;
   animation: fuss 0.25s ease-in-out infinite;
 }

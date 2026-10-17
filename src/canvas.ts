@@ -18,3 +18,21 @@ export function clearScaled(g: CanvasRenderingContext2D, unitsAcross: number): v
   const scale = g.canvas.width / unitsAcross;
   g.setTransform(scale, 0, 0, scale, 0, 0);
 }
+
+/** Fills many circles in one colour and opacity with a single draw call. */
+export function fillCircles(
+  g: CanvasRenderingContext2D,
+  circles: { x: number; y: number; r: number }[],
+  color: string,
+  alpha: number,
+): void {
+  g.fillStyle = color;
+  g.globalAlpha = alpha;
+  g.beginPath();
+  for (const c of circles) {
+    g.moveTo(c.x + c.r, c.y);
+    g.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+  }
+  g.fill();
+  g.globalAlpha = 1;
+}

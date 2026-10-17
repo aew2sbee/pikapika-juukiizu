@@ -1,7 +1,7 @@
 // The cleaning screen: a dirty vehicle (SVG) under a canvas of dirt, washed off by a pressure washer
 // that sprays wherever the finger is.
 
-import { clearScaled, fitCanvas } from './canvas';
+import { clearScaled, fillCircles, fitCanvas } from './canvas';
 import { type Cell, type DirtField, dirtiness, generateDirt, type Mask } from './dirt';
 import type { Point } from './geometry';
 import { playFanfare } from './sound';
@@ -80,8 +80,8 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
         else mud.set(level, [cell]);
       }
     }
-    fillBlobs(g, dust, COLORS.dust, 0.9);
-    for (const [level, cells] of mud) fillBlobs(g, cells, COLORS.mud, 0.35 + 0.65 * level);
+    fillCircles(g, dust, COLORS.dust, 0.9);
+    for (const [level, cells] of mud) fillCircles(g, cells, COLORS.mud, 0.35 + 0.65 * level);
   }
 
   /** Converts a screen point to viewBox units. */
@@ -97,7 +97,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
       else if (hit) draw();
       return hit;
     },
-    splashRadius: () => (JET * canvas.getBoundingClientRect().width) / width,
+    splashRadius: () => (JET * canvas.clientWidth) / width,
   });
   again.addEventListener('click', reset);
 
@@ -106,10 +106,14 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   reset();
 }
 
+/** Waits for onload rather than decode(), which some Safari versions reject for SVG images. */
 function loadImage(src: string): Promise<HTMLImageElement> {
-  const image = new Image();
-  image.src = src;
-  return image.decode().then(() => image);
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`Could not load ${src.slice(0, 40)}…`));
+    image.src = src;
+  });
 }
 
 /** Marks the grid cells the vehicle covers by drawing it at one pixel per cell. */
@@ -126,17 +130,6 @@ function silhouette(image: HTMLImageElement, cols: number, rows: number): Mask {
     cellSize: CELL,
     filled: Array.from(alpha, (a) => a > 128),
   };
-}
-
-function fillBlobs(g: CanvasRenderingContext2D, cells: Cell[], color: string, alpha: number): void {
-  g.fillStyle = color;
-  g.globalAlpha = alpha;
-  g.beginPath();
-  for (const cell of cells) {
-    g.moveTo(cell.x + cell.r, cell.y);
-    g.arc(cell.x, cell.y, cell.r, 0, Math.PI * 2);
-  }
-  g.fill();
 }
 
 function addSparkles(stage: HTMLElement): void {

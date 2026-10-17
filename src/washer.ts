@@ -1,7 +1,7 @@
 // The pressure washer: a spray gun in the bottom-left corner. While a finger is down it turns to the
 // finger, shoots water there with sound, and reports each frame's spray so the screen can wash dirt.
 
-import { clearScaled, fitCanvas } from './canvas';
+import { clearScaled, fillCircles, fitCanvas } from './canvas';
 import type { Point } from './geometry';
 import { setSprayHitting, startSpray, stopSpray, unlockAudio } from './sound';
 
@@ -58,6 +58,8 @@ export class Washer {
   private readonly gun: HTMLDivElement;
   private readonly g: CanvasRenderingContext2D;
   private readonly drops: Drop[] = [];
+  /** Every finger on the screen, by pointer id. */
+  private readonly fingers = new Map<number, Point>();
   /** The finger holding the trigger, and where it was last frame. The washer has one nozzle, so one finger. */
   private nozzle: { id: number; at: Point; last: Point } | undefined;
   private hitting = false;
@@ -79,15 +81,20 @@ export class Washer {
 
     root.addEventListener('pointerdown', (e) => {
       unlockAudio();
-      if (this.nozzle || (e.target as Element).closest('button')) return;
+      if ((e.pointerType === 'mouse' && e.button !== 0) || (e.target as Element).closest('button')) return;
       root.setPointerCapture(e.pointerId);
       const at = { x: e.clientX, y: e.clientY };
+      this.fingers.set(e.pointerId, at);
+      if (this.nozzle) return;
       this.nozzle = { id: e.pointerId, at, last: at };
       startSpray();
       this.animate();
     });
     root.addEventListener('pointermove', (e) => {
-      if (this.nozzle?.id === e.pointerId) this.nozzle.at = { x: e.clientX, y: e.clientY };
+      if (!this.fingers.has(e.pointerId)) return;
+      const at = { x: e.clientX, y: e.clientY };
+      this.fingers.set(e.pointerId, at);
+      if (this.nozzle?.id === e.pointerId) this.nozzle.at = at;
     });
     // iOS may not count a touch's pointerdown as permission to play sound, but it does count its end.
     root.addEventListener('pointerup', (e) => {
@@ -97,10 +104,19 @@ export class Washer {
     root.addEventListener('pointercancel', (e) => this.release(e));
   }
 
+  /** When the trigger finger lifts, another finger still down takes over; otherwise the water stops. */
   private release(e: PointerEvent): void {
+    this.fingers.delete(e.pointerId);
     if (this.nozzle?.id !== e.pointerId) return;
+    const [next] = this.fingers;
+    if (next) {
+      const [id, at] = next;
+      this.nozzle = { id, at, last: at };
+      return;
+    }
     this.nozzle = undefined;
     this.hitting = false;
+    this.aim(REST_ANGLE);
     stopSpray();
   }
 
@@ -113,7 +129,8 @@ export class Washer {
 
   /** Sprays and draws one frame: the jet while the trigger is held, and the drops still flying. */
   private readonly frame = (now: number) => {
-    const seconds = Math.min((now - this.lastFrame) / 1000, MAX_FRAME);
+    // The first frame's timestamp can be slightly earlier than the pointerdown that started it.
+    const seconds = Math.max(0, Math.min((now - this.lastFrame) / 1000, MAX_FRAME));
     this.lastFrame = now;
     const { g, nozzle } = this;
     clearScaled(g, g.canvas.clientWidth);
@@ -192,6 +209,7 @@ export class Washer {
   /** Moves the drops, drops the ones that have faded, and draws the rest. */
   private drawDrops(seconds: number): void {
     const { g, drops } = this;
+    const shades: Drop[][] = Array.from({ length: DROP_SHADES }, () => []);
     let alive = 0;
     for (const d of drops) {
       d.age += seconds;
@@ -200,20 +218,9 @@ export class Washer {
       d.x += d.vx * seconds;
       d.y += d.vy * seconds;
       drops[alive++] = d;
+      shades[Math.ceil((1 - d.age / d.life) * DROP_SHADES) - 1].push(d);
     }
     drops.length = alive;
-
-    g.fillStyle = 'rgb(179 229 252)';
-    for (let shade = 1; shade <= DROP_SHADES; shade++) {
-      g.globalAlpha = shade / DROP_SHADES;
-      g.beginPath();
-      for (const d of drops) {
-        if (Math.ceil((1 - d.age / d.life) * DROP_SHADES) !== shade) continue;
-        g.moveTo(d.x + d.r, d.y);
-        g.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      }
-      g.fill();
-    }
-    g.globalAlpha = 1;
+    shades.forEach((shade, i) => fillCircles(g, shade, 'rgb(179 229 252)', (i + 1) / DROP_SHADES));
   }
 }

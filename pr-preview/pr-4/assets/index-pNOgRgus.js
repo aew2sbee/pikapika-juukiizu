@@ -16,7 +16,7 @@
     <g fill="#757575">${C(i,a,Math.round(r*.31))}</g>
     <g fill="#bdbdbd">${C(i,a,6)}</g>`}function T(e,t,n){return`<g fill="#37474f">${C(e,t,n)}</g>
     <g fill="#bdbdbd">${C(e,t,n*.5)}</g>
-    <g fill="#757575">${C(e,t,n*.2)}</g>`}var E={name:`ブルドーザー`,width:420,height:260,shapes:`
+    <g fill="#757575">${C(e,t,n*.2)}</g>`}var E={name:`ぶるどーざー`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     <path d="M44 150 L22 150 L14 226 L26 230 L34 172 L44 172 Z" fill="#616161"/>
     ${w(34,192,270,56,[66,116,168,220,272])}
@@ -32,7 +32,7 @@
     ${S(110,80)}
     <path d="M324 104 L356 98 Q378 172 358 246 L324 246 Z" fill="#fbc02d" stroke="#f9a825" stroke-width="4"/>
     <rect x="322" y="240" width="40" height="9" rx="2" fill="#9e9e9e"/>
-  </g>`},D={name:`クレーン車`,width:420,height:260,shapes:`
+  </g>`},D={name:`くれーんしゃ`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     <g fill="#757575"><rect x="40" y="176" width="14" height="46"/><rect x="368" y="176" width="14" height="46"/></g>
     <g fill="#9e9e9e"><rect x="32" y="218" width="30" height="8" rx="2"/><rect x="360" y="218" width="30" height="8" rx="2"/></g>
@@ -51,7 +51,7 @@
     <rect x="162" y="66" width="62" height="56" rx="10" fill="#b3e5fc"/>
     ${S(193,94)}
     ${T([84,146,284,346],204,26)}
-  </g>`},O={name:`ダンプトラック`,width:420,height:260,shapes:`
+  </g>`},O={name:`だんぷとらっく`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     <rect x="30" y="172" width="360" height="22" rx="4" fill="#424242"/>
     <path d="M24 84 L272 70 L262 176 L42 176 Z" fill="#f9a825"/>
@@ -65,7 +65,7 @@
     <rect x="378" y="164" width="22" height="16" rx="4" fill="#757575"/>
     <circle cx="388" cy="156" r="6" fill="#fff59d"/>
     ${T([82,150,334],204,30)}
-  </g>`},k=[{name:`ショベルカー`,width:420,height:260,shapes:`
+  </g>`},k=[{name:`しょべるかー`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     ${w(40,196,250,52,[68,114,165,216,262])}
     <rect x="120" y="184" width="90" height="14" fill="#616161"/>
@@ -82,7 +82,7 @@
     <rect x="158" y="58" width="84" height="84" rx="14" fill="#fbc02d"/>
     <rect x="170" y="70" width="60" height="56" rx="10" fill="#b3e5fc"/>
     ${S(200,98)}
-  </g>`},E,O,{name:`ミキサー車`,width:420,height:260,shapes:`
+  </g>`},E,O,{name:`みきさーしゃ`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     <rect x="30" y="172" width="360" height="22" rx="4" fill="#424242"/>
     <path d="M40 118 L14 150 L24 158 L52 128 Z" fill="#9e9e9e"/>
@@ -99,7 +99,7 @@
     <rect x="378" y="164" width="22" height="16" rx="4" fill="#757575"/>
     <circle cx="388" cy="156" r="6" fill="#fff59d"/>
     ${T([82,150,334],204,30)}
-  </g>`},D,{name:`パイルドライバー`,width:420,height:260,shapes:`
+  </g>`},D,{name:`ぱいるどらいばー`,width:420,height:260,shapes:`
   <g stroke-linecap="round" stroke-linejoin="round">
     <rect x="324" y="88" width="14" height="164" fill="#a1887f"/>
     ${w(40,196,250,52,[68,114,165,216,262])}
@@ -213,4 +213,4 @@
             <span>${e.name}</span>
           </button>`).join(``)}
       </div>
-    </div>`,e.querySelectorAll(`.card`).forEach((e,r)=>{e.addEventListener(`click`,()=>{m(),n(t[r])})})}document.body.insertAdjacentHTML(`afterbegin`,`<div class="garage">${pe}</div>`),document.body.insertAdjacentHTML(`beforeend`,`<div class="badge">プレビュー</div>`);var he=document.querySelector(`#app`),Z;function Q(e){Z?.abort(),Z=new AbortController;let t=document.createElement(`div`);t.className=`screen`,he.replaceChildren(t),e(t,Z.signal)}function $(){Q(e=>me(e,k,ge))}function ge(e){Q((t,n)=>{ae(t,e,{signal:n,onBack:$}).catch(e=>{console.error(e),n.aborted||$()})})}$();
+    </div>`,e.querySelectorAll(`.card`).forEach((e,r)=>{e.addEventListener(`click`,()=>{m(),n(t[r])})})}document.body.insertAdjacentHTML(`afterbegin`,`<div class="garage">${pe}</div>`),document.body.insertAdjacentHTML(`beforeend`,`<div class="badge">ぷれびゅー</div>`);var he=document.querySelector(`#app`),Z;function Q(e){Z?.abort(),Z=new AbortController;let t=document.createElement(`div`);t.className=`screen`,he.replaceChildren(t),e(t,Z.signal)}function $(){Q(e=>me(e,k,ge))}function ge(e){Q((t,n)=>{ae(t,e,{signal:n,onBack:$}).catch(e=>{console.error(e),n.aborted||$()})})}$();

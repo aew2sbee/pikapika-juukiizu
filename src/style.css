@@ -25,8 +25,8 @@ body {
 
 .stage {
   position: relative;
-  width: min(94vw, calc(68dvh * 420 / 260));
-  aspect-ratio: 420 / 260;
+  width: min(94vw, calc(68dvh * var(--aspect)));
+  aspect-ratio: var(--aspect);
 }
 
 .vehicle,
@@ -40,6 +40,8 @@ body {
 
 .vehicle canvas {
   cursor: pointer;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
 }
 
 .mouth-happy,

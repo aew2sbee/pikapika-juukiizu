@@ -1,11 +1,10 @@
 import type { Vehicle } from './types';
 
 export const excavator: Vehicle = {
-  id: 'excavator',
   name: 'ショベルカー',
   width: 420,
   height: 260,
-  svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 260" width="420" height="260">
+  shapes: `
   <g stroke-linecap="round" stroke-linejoin="round">
     <rect x="40" y="196" width="250" height="52" rx="26" fill="#424242"/>
     <g fill="#757575">
@@ -40,6 +39,5 @@ export const excavator: Vehicle = {
     </g>
     <path class="mouth-normal" d="M193 107 q7 5 14 0" fill="none" stroke="#3e2723" stroke-width="3"/>
     <path class="mouth-happy" d="M189 103 q11 16 22 0 Z" fill="#e57373" stroke="#3e2723" stroke-width="2.5"/>
-  </g>
-</svg>`,
+  </g>`,
 };

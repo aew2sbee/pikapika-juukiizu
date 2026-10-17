@@ -19,9 +19,12 @@ const AGAIN_DELAY = 1500;
 const COLORS = { dust: '#d7b98a', mud: '#5d4037' } as const;
 
 export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promise<void> {
+  const { width, height } = vehicle;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${vehicle.shapes}</svg>`;
+  const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   root.innerHTML = `
-    <div class="stage">
-      <div class="vehicle" aria-label="${vehicle.name}">${vehicle.svg}<canvas></canvas></div>
+    <div class="stage" style="--aspect: ${width} / ${height}">
+      <div class="vehicle" aria-label="${vehicle.name}">${svg}<canvas></canvas></div>
       <p class="cheer" hidden>ぴかぴか！</p>
       <button class="again" type="button" hidden>もういっかい</button>
     </div>`;
@@ -30,21 +33,19 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   const cheer = stage.querySelector<HTMLParagraphElement>('.cheer')!;
   const again = stage.querySelector<HTMLButtonElement>('.again')!;
   const g = canvas.getContext('2d')!;
+  // Trim blobs that spill past the vehicle's outline.
+  for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgUrl}")`);
 
-  const image = await loadSvg(vehicle.svg);
-  const mask = silhouette(image, Math.ceil(vehicle.width / CELL), Math.ceil(vehicle.height / CELL));
-  /** The vehicle rasterized at the canvas's backing size, used to trim the dirt. */
-  const outline = document.createElement('canvas');
+  const image = await loadImage(svgUrl);
+  const mask = silhouette(image, Math.ceil(width / CELL), Math.ceil(height / CELL));
 
   let dirt: DirtField;
-  let clean = false;
   let againTimer = 0;
   let drawQueued = false;
   const fingers = new Map<number, { x: number; y: number }>();
 
   function reset() {
     dirt = generateDirt(mask);
-    clean = false;
     clearTimeout(againTimer);
     stage.classList.remove('happy');
     stage.querySelectorAll('.sparkle').forEach((s) => s.remove());
@@ -53,7 +54,6 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   }
 
   function finish() {
-    clean = true;
     dirt.clear();
     draw();
     stage.classList.add('happy');
@@ -66,7 +66,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   function draw() {
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.clearRect(0, 0, canvas.width, canvas.height);
-    const scale = canvas.width / vehicle.width;
+    const scale = canvas.width / width;
     g.setTransform(scale, 0, 0, scale, 0, 0);
     // One fill per colour and opacity keeps a frame to a handful of draw calls.
     const dust: Cell[] = [];
@@ -83,12 +83,6 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
     }
     fillBlobs(g, dust, COLORS.dust, 0.9);
     for (const [level, cells] of mud) fillBlobs(g, cells, COLORS.mud, 0.35 + 0.65 * level);
-    // Trim blobs that spill past the vehicle's outline.
-    g.setTransform(1, 0, 0, 1, 0, 0);
-    g.globalAlpha = 1;
-    g.globalCompositeOperation = 'destination-in';
-    g.drawImage(outline, 0, 0);
-    g.globalCompositeOperation = 'source-over';
   }
 
   function queueDraw() {
@@ -103,8 +97,8 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   function toVehicle(e: PointerEvent) {
     const rect = canvas.getBoundingClientRect();
     return {
-      x: ((e.clientX - rect.left) / rect.width) * vehicle.width,
-      y: ((e.clientY - rect.top) / rect.height) * vehicle.height,
+      x: ((e.clientX - rect.left) / rect.width) * width,
+      y: ((e.clientY - rect.top) / rect.height) * height,
     };
   }
 
@@ -120,14 +114,14 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
     canvas.setPointerCapture(e.pointerId);
     const p = toVehicle(e);
     fingers.set(e.pointerId, p);
-    if (!clean) wiped(dirt.dab(p.x, p.y, BRUSH));
+    wiped(dirt.dab(p.x, p.y, BRUSH));
   });
   canvas.addEventListener('pointermove', (e) => {
     const from = fingers.get(e.pointerId);
     if (!from) return;
     const to = toVehicle(e);
     fingers.set(e.pointerId, to);
-    if (!clean) wiped(dirt.rub(from.x, from.y, to.x, to.y, BRUSH));
+    wiped(dirt.rub(from.x, from.y, to.x, to.y, BRUSH));
   });
   // iOS may not count a touch's pointerdown as permission to play sound, but it does count its end.
   canvas.addEventListener('pointerup', (e) => {
@@ -141,19 +135,19 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   });
 
   new ResizeObserver(() => {
-    canvas.width = outline.width = Math.round(canvas.clientWidth * devicePixelRatio);
-    canvas.height = outline.height = Math.round(canvas.clientHeight * devicePixelRatio);
-    // Rasterize the SVG once per size: redrawing it every frame is slow on some tablets.
-    outline.getContext('2d')!.drawImage(image, 0, 0, outline.width, outline.height);
+    // Soft blobs gain nothing from 3x screens but would cost over twice the pixels of 2x.
+    const density = Math.min(devicePixelRatio, 2);
+    canvas.width = Math.round(canvas.clientWidth * density);
+    canvas.height = Math.round(canvas.clientHeight * density);
     draw();
   }).observe(canvas);
 
   reset();
 }
 
-function loadSvg(svg: string): Promise<HTMLImageElement> {
+function loadImage(src: string): Promise<HTMLImageElement> {
   const image = new Image();
-  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  image.src = src;
   return image.decode().then(() => image);
 }
 

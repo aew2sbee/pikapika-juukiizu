@@ -30,7 +30,13 @@ function showSelect() {
 }
 
 function showCleaning(vehicle: Vehicle) {
-  show((root, signal) => void mountCleaning(root, vehicle, { signal, onBack: showSelect }));
+  show((root, signal) => {
+    mountCleaning(root, vehicle, { signal, onBack: showSelect }).catch((error: unknown) => {
+      // A vehicle that failed to load would leave a screen with nothing to do: go back to choose again.
+      console.error(error);
+      if (!signal.aborted) showSelect();
+    });
+  });
 }
 
 showSelect();

@@ -57,6 +57,9 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   // Trim blobs that spill past the vehicle's outline.
   for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgDataUrl(svg)}")`);
 
+  // Wired before the wait, so the way back works while the vehicle loads (or if it never does).
+  root.querySelector('.back')!.addEventListener('click', onBack);
+
   const mask = await silhouette(vehicle);
   if (signal.aborted) return;
 
@@ -156,7 +159,6 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   });
   stage.querySelector('.again')!.addEventListener('click', reset);
   stage.querySelector('.others')!.addEventListener('click', onBack);
-  root.querySelector('.back')!.addEventListener('click', onBack);
   signal.addEventListener('abort', () => {
     clearTimeout(actionsTimer);
     clearTimeout(calmTimer);
@@ -202,7 +204,14 @@ function silhouette(vehicle: Vehicle): Promise<Mask> {
   if (!mask) {
     const cols = Math.ceil(vehicle.width / CELL);
     const rows = Math.ceil(vehicle.height / CELL);
-    mask = loadImage(svgDataUrl(vehicleSvg(vehicle))).then((image) => rasterize(image, cols, rows));
+    mask = loadImage(svgDataUrl(vehicleSvg(vehicle))).then(
+      (image) => rasterize(image, cols, rows),
+      (error: unknown) => {
+        // Forget the failure, so opening the vehicle again tries again.
+        silhouettes.delete(vehicle);
+        throw error;
+      },
+    );
     silhouettes.set(vehicle, mask);
   }
   return mask;

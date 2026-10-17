@@ -5,6 +5,7 @@ import { vehicleSvg } from './vehicles';
 import type { Vehicle } from './vehicles/types';
 
 export function mountSelect(root: HTMLElement, vehicles: Vehicle[], onPick: (vehicle: Vehicle) => void): void {
+  root.classList.add('pick');
   root.innerHTML = `
     <div class="select">
       <h1 class="title">どの くるまを あらう？</h1>

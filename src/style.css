@@ -24,6 +24,12 @@ body {
   place-items: center;
 }
 
+/* The select screen scrolls when its cards don't fit (more vehicles, short landscape phones). */
+.pick {
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
 /* The wash screen: the whole screen is the washer's trigger. */
 .wash {
   cursor: crosshair;

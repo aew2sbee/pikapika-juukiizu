@@ -8,7 +8,7 @@ body {
   font-family: 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', sans-serif;
 }
 
-/* Small hands rub everywhere: no scrolling, zooming, text selection or long-press menus. */
+/* Little fingers touch everywhere: no scrolling, zooming, text selection or long-press menus. */
 body {
   touch-action: none;
   overscroll-behavior: none;

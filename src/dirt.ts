@@ -1,5 +1,7 @@
 // Dirt on a vehicle: blobs of cells in SVG viewBox units that wash off under a water jet.
 
+import { distanceToSegment, type Point } from './geometry';
+
 export type DirtKind = 'dust' | 'mud';
 
 /**
@@ -11,9 +13,7 @@ export const STRENGTH: Record<DirtKind, number> = { dust: 0.04, mud: 0.3 };
 const DUST_COVERAGE = 0.6;
 const MUD_BLOBS = 6;
 
-export interface Cell {
-  x: number;
-  y: number;
+export interface Cell extends Point {
   /** Drawing radius; a little larger than half a cell so neighbours overlap into blobs. */
   r: number;
   kind: DirtKind;
@@ -46,22 +46,15 @@ export class DirtField {
    * Sprays water for `seconds` over the path the jet swept in that time (a point if it stayed put).
    * Every dirty cell the jet covers soaks up the whole time. Returns whether any dirt came off.
    */
-  spray(x0: number, y0: number, x1: number, y1: number, radius: number, seconds: number): boolean {
+  spray(from: Point, to: Point, radius: number, seconds: number): boolean {
     let changed = false;
-    for (const cell of this.dirtyNear(x0, y0, x1, y1, radius)) {
-      if (distanceToSegment(cell.x, cell.y, x0, y0, x1, y1) > radius) continue;
+    for (const cell of this.cells) {
+      if (cell.hp <= 0 || distanceToSegment(cell, from, to) > radius) continue;
       cell.hp = Math.max(0, cell.hp - seconds);
       if (cell.hp === 0) this.left--;
       changed = true;
     }
     return changed;
-  }
-
-  /** Dirty cells inside the box the jet covers while moving along the segment. */
-  private dirtyNear(x0: number, y0: number, x1: number, y1: number, radius: number): Cell[] {
-    const [left, right] = [Math.min(x0, x1) - radius, Math.max(x0, x1) + radius];
-    const [top, bottom] = [Math.min(y0, y1) - radius, Math.max(y0, y1) + radius];
-    return this.cells.filter((c) => c.hp > 0 && c.x >= left && c.x <= right && c.y >= top && c.y <= bottom);
   }
 
   clear(): void {
@@ -103,11 +96,4 @@ export function generateDirt(mask: Mask, random: () => number = Math.random): Di
       hp: STRENGTH[kind],
     })),
   );
-}
-
-function distanceToSegment(px: number, py: number, x0: number, y0: number, x1: number, y1: number): number {
-  const [dx, dy] = [x1 - x0, y1 - y0];
-  const lengthSquared = dx * dx + dy * dy;
-  const t = lengthSquared ? Math.max(0, Math.min(1, ((px - x0) * dx + (py - y0) * dy) / lengthSquared)) : 0;
-  return Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
 }

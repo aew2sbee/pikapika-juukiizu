@@ -49,14 +49,14 @@ describe('DirtField.spray', () => {
   const FRAME = 1 / 60;
   /** Holds the jet on (50, 50) for the given time, one frame at a time. */
   const hold = (dirt: DirtField, seconds: number) => {
-    for (let t = 0; t < seconds - 1e-9; t += FRAME) dirt.spray(50, 50, 50, 50, JET, FRAME);
+    for (let t = 0; t < seconds - 1e-9; t += FRAME) dirt.spray({ x: 50, y: 50 }, { x: 50, y: 50 }, JET, FRAME);
   };
 
   it('washes dust off with a quick swipe but barely touches mud', () => {
     const mud = cell('mud');
     const dirt = new DirtField([cell('dust'), mud]);
     // The cells sit under the jet for about three frames.
-    for (const x of [20, 35, 50, 65, 80]) dirt.spray(x - 15, 50, x, 50, JET, FRAME);
+    for (const x of [20, 35, 50, 65, 80]) dirt.spray({ x: x - 15, y: 50 }, { x, y: 50 }, JET, FRAME);
     expect(dirt.remaining).toBe(0.5);
     expect(dirtiness(mud)).toBeGreaterThan(0.5);
   });
@@ -77,13 +77,13 @@ describe('DirtField.spray', () => {
 
   it('washes everything the jet swept past in one frame, not just its end', () => {
     const dirt = new DirtField([cell('dust')]);
-    expect(dirt.spray(0, 50, 100, 50, JET, STRENGTH.dust)).toBe(true);
+    expect(dirt.spray({ x: 0, y: 50 }, { x: 100, y: 50 }, JET, STRENGTH.dust)).toBe(true);
     expect(dirt.remaining).toBe(0);
   });
 
   it('leaves dirt outside the jet alone', () => {
     const dirt = new DirtField([cell('dust')]);
-    expect(dirt.spray(0, 0, 100, 0, JET, 1)).toBe(false);
+    expect(dirt.spray({ x: 0, y: 0 }, { x: 100, y: 0 }, JET, 1)).toBe(false);
     expect(dirt.remaining).toBe(1);
   });
 

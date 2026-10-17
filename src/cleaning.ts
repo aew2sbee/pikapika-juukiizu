@@ -3,8 +3,8 @@
 
 import { clearScaled, fillCircles, fitCanvas } from './canvas';
 import { type Cell, type DirtField, dirtiness, generateDirt, type Mask } from './dirt';
-import type { Point } from './geometry';
-import { playFanfare } from './sound';
+import { distanceToSegment, type Point } from './geometry';
+import { playFanfare, playFuss } from './sound';
 import type { Vehicle } from './vehicles/types';
 import { Washer } from './washer';
 
@@ -17,6 +17,10 @@ const CLEAR_AT = 0.03;
 /** Mud is drawn in this many opacity steps as it thins. */
 const MUD_SHADES = 8;
 const SPARKLES = 14;
+/** Seconds of water on the face before the vehicle starts to fuss. */
+const FUSS_AFTER = 0.6;
+/** Milliseconds after the water leaves the face before the vehicle calms down. */
+const CALM_AFTER = 400;
 /** Delay before "again" appears, so a finger still spraying doesn't hit it straight away. */
 const AGAIN_DELAY = 1500;
 
@@ -45,6 +49,9 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
 
   let dirt: DirtField;
   let againTimer = 0;
+  /** How long water has been on the face without a break. */
+  let faceWet = 0;
+  let calmTimer = 0;
 
   function reset() {
     dirt = generateDirt(mask);
@@ -52,7 +59,29 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
     stage.classList.remove('happy');
     stage.querySelectorAll('.sparkle').forEach((s) => s.remove());
     cheer.hidden = again.hidden = true;
+    calm();
     draw();
+  }
+
+  /** Water held on the face makes the vehicle squeeze its eyes shut and shake. */
+  function wetFace(from: Point, to: Point, seconds: number) {
+    if (distanceToSegment(vehicle.face, from, to) > vehicle.face.r) {
+      faceWet = 0;
+      return;
+    }
+    faceWet += seconds;
+    clearTimeout(calmTimer);
+    calmTimer = window.setTimeout(calm, CALM_AFTER);
+    if (faceWet >= FUSS_AFTER && !stage.classList.contains('fussing')) {
+      stage.classList.add('fussing');
+      playFuss();
+    }
+  }
+
+  function calm() {
+    clearTimeout(calmTimer);
+    faceWet = 0;
+    stage.classList.remove('fussing');
   }
 
   function finish() {
@@ -92,7 +121,9 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle): Promis
   new Washer(root, {
     onSpray(from, to, seconds) {
       const rect = canvas.getBoundingClientRect();
-      const hit = dirt.spray(toVehicle(from, rect), toVehicle(to, rect), JET, seconds);
+      const [a, b] = [toVehicle(from, rect), toVehicle(to, rect)];
+      wetFace(a, b, seconds);
+      const hit = dirt.spray(a, b, JET, seconds);
       if (hit && dirt.remaining <= CLEAR_AT) finish();
       else if (hit) draw();
       return hit;

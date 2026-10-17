@@ -66,6 +66,14 @@ export function playFanfare(): void {
   });
 }
 
+/** A whiny "ya-ya-ya" when water keeps hitting the face. */
+export function playFuss(): void {
+  safely((ctx) => {
+    const t = ctx.currentTime;
+    [660, 520, 440].forEach((freq, i) => tone(ctx, freq, t + i * 0.09, 0.12));
+  });
+}
+
 function safely(play: (ctx: AudioContext) => void): void {
   if (!ctx) return;
   try {

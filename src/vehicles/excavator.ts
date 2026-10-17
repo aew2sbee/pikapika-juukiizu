@@ -2,7 +2,7 @@ import { face, track } from './parts';
 import type { Vehicle } from './types';
 
 export const excavator: Vehicle = {
-  name: 'ショベルカー',
+  name: 'しょべるかー',
   width: 420,
   height: 260,
   shapes: `

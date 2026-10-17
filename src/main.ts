@@ -7,7 +7,7 @@ import { vehicles } from './vehicles';
 import type { Vehicle } from './vehicles/types';
 
 document.body.insertAdjacentHTML('afterbegin', `<div class="garage">${garage}</div>`);
-if (isPreview) document.body.insertAdjacentHTML('beforeend', '<div class="badge">プレビュー</div>');
+if (isPreview) document.body.insertAdjacentHTML('beforeend', '<div class="badge">ぷれびゅー</div>');
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 let screen: AbortController | undefined;

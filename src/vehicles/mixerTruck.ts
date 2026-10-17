@@ -2,7 +2,7 @@ import { face, wheels } from './parts';
 import type { Vehicle } from './types';
 
 export const mixerTruck: Vehicle = {
-  name: 'ミキサー車',
+  name: 'みきさーしゃ',
   width: 420,
   height: 260,
   shapes: `

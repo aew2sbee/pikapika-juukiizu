@@ -2,7 +2,7 @@ import { face, wheels } from './parts';
 import type { Vehicle } from './types';
 
 export const crane: Vehicle = {
-  name: 'クレーン車',
+  name: 'くれーんしゃ',
   width: 420,
   height: 260,
   shapes: `

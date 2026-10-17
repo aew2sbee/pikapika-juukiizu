@@ -2,7 +2,7 @@ import { face, track } from './parts';
 import type { Vehicle } from './types';
 
 export const pileDriver: Vehicle = {
-  name: 'パイルドライバー',
+  name: 'ぱいるどらいばー',
   width: 420,
   height: 260,
   shapes: `

@@ -11,5 +11,5 @@ export const vehicles: Vehicle[] = [excavator, bulldozer, dumpTruck, mixerTruck,
 
 /** A standalone SVG of the vehicle (it is also loaded as an image, so it needs xmlns and a size). */
 export function vehicleSvg({ width, height, shapes }: Vehicle): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${shapes}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" stroke-linecap="round" stroke-linejoin="round">${shapes}</svg>`;
 }

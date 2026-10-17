@@ -1,4 +1,4 @@
-import { face } from './face';
+import { face, track } from './parts';
 import type { Vehicle } from './types';
 
 export const excavator: Vehicle = {
@@ -7,15 +7,7 @@ export const excavator: Vehicle = {
   height: 260,
   shapes: `
   <g stroke-linecap="round" stroke-linejoin="round">
-    <rect x="40" y="196" width="250" height="52" rx="26" fill="#424242"/>
-    <g fill="#757575">
-      <circle cx="68" cy="222" r="16"/><circle cx="114" cy="222" r="16"/><circle cx="165" cy="222" r="16"/>
-      <circle cx="216" cy="222" r="16"/><circle cx="262" cy="222" r="16"/>
-    </g>
-    <g fill="#bdbdbd">
-      <circle cx="68" cy="222" r="6"/><circle cx="114" cy="222" r="6"/><circle cx="165" cy="222" r="6"/>
-      <circle cx="216" cy="222" r="6"/><circle cx="262" cy="222" r="6"/>
-    </g>
+    ${track(40, 196, 250, 52, [68, 114, 165, 216, 262])}
     <rect x="120" y="184" width="90" height="14" fill="#616161"/>
     <rect x="80" y="110" width="9" height="24" rx="3" fill="#616161"/>
     <rect x="40" y="140" width="34" height="46" rx="12" fill="#f9a825"/>

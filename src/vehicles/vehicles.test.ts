@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { vehicles } from '.';
+import { face } from './parts';
+
+describe('face', () => {
+  it.each(['normal', 'happy', 'fussy'])('has parts for the %s mood', (mood) => {
+    expect(face(0, 0)).toMatch(new RegExp(`data-moods="[^"]*${mood}`));
+  });
+});
 
 describe('vehicles', () => {
-  it.each(vehicles.map((v) => [v.name, v]))('%s has a face for every mood', (_, vehicle) => {
+  it.each(vehicles.map((v) => [v.name, v]))('%s has a face', (_, vehicle) => {
     expect(vehicle.shapes).toContain('class="face"');
-    for (const mood of ['normal', 'happy', 'fussy']) expect(vehicle.shapes).toMatch(new RegExp(`data-moods="[^"]*${mood}`));
   });
 
   it('have different names', () => {

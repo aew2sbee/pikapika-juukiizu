@@ -1,4 +1,4 @@
-import { face } from './face';
+import { face, track } from './parts';
 import type { Vehicle } from './types';
 
 export const bulldozer: Vehicle = {
@@ -8,15 +8,7 @@ export const bulldozer: Vehicle = {
   shapes: `
   <g stroke-linecap="round" stroke-linejoin="round">
     <path d="M44 150 L22 150 L14 226 L26 230 L34 172 L44 172 Z" fill="#616161"/>
-    <rect x="34" y="192" width="270" height="56" rx="28" fill="#424242"/>
-    <g fill="#757575">
-      <circle cx="66" cy="220" r="17"/><circle cx="116" cy="220" r="17"/><circle cx="168" cy="220" r="17"/>
-      <circle cx="220" cy="220" r="17"/><circle cx="272" cy="220" r="17"/>
-    </g>
-    <g fill="#bdbdbd">
-      <circle cx="66" cy="220" r="6"/><circle cx="116" cy="220" r="6"/><circle cx="168" cy="220" r="6"/>
-      <circle cx="220" cy="220" r="6"/><circle cx="272" cy="220" r="6"/>
-    </g>
+    ${track(34, 192, 270, 56, [66, 116, 168, 220, 272])}
     <line x1="250" y1="196" x2="334" y2="200" stroke="#f9a825" stroke-width="16"/>
     <line x1="268" y1="152" x2="334" y2="140" stroke="#9e9e9e" stroke-width="8"/>
     <rect x="40" y="118" width="124" height="78" rx="12" fill="#f9a825"/>

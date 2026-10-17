@@ -37,7 +37,7 @@ export interface CleaningOptions {
 export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signal, onBack }: CleaningOptions): Promise<void> {
   const { width, height } = vehicle;
   const svg = vehicleSvg(vehicle);
-  const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  root.classList.add('wash');
   root.innerHTML = `
     <button class="back pill" type="button">◀ もどる</button>
     <div class="stage" data-mood="normal" style="--aspect: ${width} / ${height}">
@@ -55,11 +55,10 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   const g = canvas.getContext('2d')!;
   const face = faceCircle(stage.querySelector<SVGGraphicsElement>('.face')!);
   // Trim blobs that spill past the vehicle's outline.
-  for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgUrl}")`);
+  for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgDataUrl(svg)}")`);
 
-  const image = await loadImage(svgUrl);
+  const mask = await silhouette(vehicle);
   if (signal.aborted) return;
-  const mask = silhouette(image, Math.ceil(width / CELL), Math.ceil(height / CELL));
 
   let dirt: DirtField;
   let actionsTimer = 0;
@@ -191,8 +190,26 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+function svgDataUrl(svg: string): string {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+/** Silhouettes already worked out, so opening a vehicle again starts straight away. */
+const silhouettes = new Map<Vehicle, Promise<Mask>>();
+
+function silhouette(vehicle: Vehicle): Promise<Mask> {
+  let mask = silhouettes.get(vehicle);
+  if (!mask) {
+    const cols = Math.ceil(vehicle.width / CELL);
+    const rows = Math.ceil(vehicle.height / CELL);
+    mask = loadImage(svgDataUrl(vehicleSvg(vehicle))).then((image) => rasterize(image, cols, rows));
+    silhouettes.set(vehicle, mask);
+  }
+  return mask;
+}
+
 /** Marks the grid cells the vehicle covers by drawing it at one pixel per cell. */
-function silhouette(image: HTMLImageElement, cols: number, rows: number): Mask {
+function rasterize(image: HTMLImageElement, cols: number, rows: number): Mask {
   const canvas = document.createElement('canvas');
   canvas.width = cols;
   canvas.height = rows;

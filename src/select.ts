@@ -11,8 +11,8 @@ export function mountSelect(root: HTMLElement, vehicles: Vehicle[], onPick: (veh
       <div class="cards">
         ${vehicles
           .map(
-            (vehicle, i) => `
-          <button class="card" type="button" data-index="${i}" data-mood="normal">
+            (vehicle) => `
+          <button class="card" type="button" data-mood="normal">
             ${vehicleSvg(vehicle)}
             <span>${vehicle.name}</span>
           </button>`,
@@ -20,11 +20,11 @@ export function mountSelect(root: HTMLElement, vehicles: Vehicle[], onPick: (veh
           .join('')}
       </div>
     </div>`;
-  for (const card of root.querySelectorAll<HTMLButtonElement>('.card')) {
+  root.querySelectorAll('.card').forEach((card, i) => {
     card.addEventListener('click', () => {
       // A tap is a user gesture: a good moment to let sound play on the next screen.
       unlockAudio();
-      onPick(vehicles[Number(card.dataset.index)]);
+      onPick(vehicles[i]);
     });
-  }
+  });
 }

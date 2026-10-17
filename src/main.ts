@@ -12,20 +12,25 @@ if (isPreview) document.body.insertAdjacentHTML('beforeend', '<div class="badge"
 const app = document.querySelector<HTMLDivElement>('#app')!;
 let screen: AbortController | undefined;
 
-/** Swaps the screen in #app, taking down the one before (its listeners, timers, water and sound). */
-function show(mount: (signal: AbortSignal) => void) {
+/**
+ * Swaps in a fresh container for the next screen. Its DOM listeners leave with the old container;
+ * the signal stops what outlives it (animation, sound, observers, timers).
+ */
+function show(mount: (root: HTMLElement, signal: AbortSignal) => void) {
   screen?.abort();
   screen = new AbortController();
-  app.replaceChildren();
-  mount(screen.signal);
+  const root = document.createElement('div');
+  root.className = 'screen';
+  app.replaceChildren(root);
+  mount(root, screen.signal);
 }
 
 function showSelect() {
-  show(() => mountSelect(app, vehicles, showCleaning));
+  show((root) => mountSelect(root, vehicles, showCleaning));
 }
 
 function showCleaning(vehicle: Vehicle) {
-  show((signal) => void mountCleaning(app, vehicle, { signal, onBack: showSelect }));
+  show((root, signal) => void mountCleaning(root, vehicle, { signal, onBack: showSelect }));
 }
 
 showSelect();

@@ -37,7 +37,7 @@ const JET_LAYERS = [
 ] as const;
 
 export interface WasherOptions {
-  /** Aborting it takes the washer down: the water, its sound and its listeners stop. */
+  /** Aborting it takes the washer down: the water and its sound stop. */
   signal: AbortSignal;
   /**
    * Called every frame the trigger is held, with the path the jet swept in screen coordinates.
@@ -85,12 +85,10 @@ export class Washer {
     this.aim(REST_ANGLE);
     const { signal } = options;
     fitCanvas(canvas, { maxDensity: 1, signal });
+    // The listeners leave with the screen's container; the loop and the sound would not.
     signal.addEventListener('abort', () => {
       cancelAnimationFrame(this.frameRequest);
-      this.animating = false;
-      this.fingers.clear();
-      if (this.nozzle) stopSpray();
-      this.nozzle = undefined;
+      stopSpray();
     });
 
     root.addEventListener('pointerdown', (e) => {
@@ -103,17 +101,17 @@ export class Washer {
       this.nozzle = { id: e.pointerId, last: at };
       startSpray();
       this.animate();
-    }, { signal });
+    });
     root.addEventListener('pointermove', (e) => {
       if (!this.fingers.has(e.pointerId)) return;
       this.fingers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    }, { signal });
+    });
     // iOS may not count a touch's pointerdown as permission to play sound, but it does count its end.
     root.addEventListener('pointerup', (e) => {
       unlockAudio();
       this.release(e);
-    }, { signal });
-    root.addEventListener('pointercancel', (e) => this.release(e), { signal });
+    });
+    root.addEventListener('pointercancel', (e) => this.release(e));
   }
 
   /** When the trigger finger lifts, another finger still down takes over; otherwise the water stops. */

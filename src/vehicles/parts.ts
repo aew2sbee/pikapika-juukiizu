@@ -19,3 +19,13 @@ export function face(x: number, y: number): string {
       <path data-moods="fussy" d="M${x - 10} ${y + 10} q2.5 -4 5 0 q2.5 4 5 0 q2.5 -4 5 0 q2.5 4 5 0" fill="none" stroke="#3e2723" stroke-width="2.5"/>
     </g>`;
 }
+
+/** A crawler track: a rounded belt with wheels at the given x positions. */
+export function track(x: number, y: number, width: number, height: number, wheelXs: number[]): string {
+  const cy = y + height / 2;
+  const r = Math.round(height * 0.31);
+  const wheels = (radius: number) => wheelXs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${radius}"/>`).join('');
+  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${height / 2}" fill="#424242"/>
+    <g fill="#757575">${wheels(r)}</g>
+    <g fill="#bdbdbd">${wheels(6)}</g>`;
+}

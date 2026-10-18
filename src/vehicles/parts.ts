@@ -1,6 +1,6 @@
 /**
  * The face every vehicle wears in its cab window, centred on (x, y) in viewBox units. Each part lists
- * the moods it shows in: "normal", "happy" once clean, and "fussy" while water hits the face.
+ * the moods it shows in: "normal", "happy" once clean, "fussy" while water hits the face, and "sleepy" on the lock screen.
  */
 export function face(x: number, y: number): string {
   return `<g class="face">
@@ -11,12 +11,16 @@ export function face(x: number, y: number): string {
       <g data-moods="fussy" fill="none" stroke="#3e2723" stroke-width="3">
         <path d="M${x - 15} ${y - 11} l8 5 l-8 5"/><path d="M${x + 15} ${y - 11} l-8 5 l8 5"/>
       </g>
+      <g data-moods="sleepy" fill="none" stroke="#3e2723" stroke-width="3">
+        <path d="M${x - 16} ${y - 7} q5 5 10 0"/><path d="M${x + 6} ${y - 7} q5 5 10 0"/>
+      </g>
       <g data-moods="happy" fill="#f48fb1">
         <circle cx="${x - 20}" cy="${y + 6}" r="4.5"/><circle cx="${x + 20}" cy="${y + 6}" r="4.5"/>
       </g>
       <path data-moods="normal" d="M${x - 7} ${y + 9} q7 5 14 0" fill="none" stroke="#3e2723" stroke-width="3"/>
       <path data-moods="happy" d="M${x - 11} ${y + 5} q11 16 22 0 Z" fill="#e57373" stroke="#3e2723" stroke-width="2.5"/>
       <path data-moods="fussy" d="M${x - 10} ${y + 10} q2.5 -4 5 0 q2.5 4 5 0 q2.5 -4 5 0 q2.5 4 5 0" fill="none" stroke="#3e2723" stroke-width="2.5"/>
+      <ellipse data-moods="sleepy" cx="${x}" cy="${y + 9}" rx="3.5" ry="4.5" fill="#3e2723"/>
     </g>`;
 }
 

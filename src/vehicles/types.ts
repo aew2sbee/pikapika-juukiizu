@@ -5,7 +5,8 @@ export interface Vehicle {
   height: number;
   /**
    * SVG elements (without the root <svg>). The face is a `.face` group; each of its parts lists the
-   * moods it shows in with `data-moods` ("normal", "happy" once clean, "fussy" while water hits the face).
+   * moods it shows in with `data-moods` ("normal", "happy" once clean,
+   * "fussy" while water hits the face, "sleepy" on the lock screen).
    */
   shapes: string;
 }

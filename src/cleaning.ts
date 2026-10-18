@@ -34,14 +34,21 @@ export interface CleaningOptions {
   signal: AbortSignal;
   /** Goes back to the select screen. */
   onBack(): void;
+  /** Called at each clean; says whether to show the usual buttons, ask about one more wash, or go to sleep. */
+  onClean(): 'play' | 'ask' | 'lock';
+  /** "あと いっかい" was chosen. */
+  onOneMore(): void;
+  /** Goes to the lock screen. */
+  onSleep(): void;
 }
 
-export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signal, onBack }: CleaningOptions): Promise<void> {
+export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signal, onBack, onClean, onOneMore, onSleep }: CleaningOptions): Promise<void> {
   const { width, height } = vehicle;
   const svg = vehicleSvg(vehicle);
   root.classList.add('wash');
   root.innerHTML = `
     <button class="back pill" type="button">◀ もどる</button>
+    <button class="sleep-now pill" type="button">☾ おやすみ</button>
     <div class="stage" data-mood="normal" style="--aspect: ${width} / ${height}">
       <div class="vehicle" aria-label="${vehicle.name}">${svg}<canvas></canvas></div>
       <p class="cheer" hidden>ぴかぴか！</p>
@@ -49,11 +56,19 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
         <button class="again pill" type="button">もういっかい</button>
         <button class="others pill" type="button">ほかの くるま</button>
       </div>
+      <p class="question" hidden><span>くるまたちが ねむそう。</span><span>あと いっかい あらう？</span></p>
+      <div class="ask actions" hidden>
+        <button class="one-more pill" type="button">あと いっかい</button>
+        <button class="goodnight-now pill" type="button">おやすみ</button>
+      </div>
     </div>`;
   const stage = root.querySelector<HTMLDivElement>('.stage')!;
   const canvas = stage.querySelector('canvas')!;
   const cheer = stage.querySelector<HTMLParagraphElement>('.cheer')!;
   const actions = stage.querySelector<HTMLDivElement>('.actions')!;
+  const question = stage.querySelector<HTMLParagraphElement>('.question')!;
+  const ask = stage.querySelector<HTMLDivElement>('.ask')!;
+  const sleepNow = root.querySelector<HTMLButtonElement>('.sleep-now')!;
   const g = canvas.getContext('2d')!;
   const face = faceCircle(stage.querySelector<SVGGraphicsElement>('.face')!);
   // Trim blobs that spill past the vehicle's outline.
@@ -61,6 +76,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
 
   // Wired before the wait, so the way back works while the vehicle loads (or if it never does).
   root.querySelector('.back')!.addEventListener('click', onBack);
+  sleepNow.addEventListener('click', onSleep);
 
   const mask = await silhouette(vehicle);
   if (signal.aborted) return;
@@ -82,7 +98,8 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
     clearTimeout(actionsTimer);
     clean = false;
     stage.querySelectorAll('.sparkle').forEach((s) => s.remove());
-    cheer.hidden = actions.hidden = true;
+    cheer.hidden = actions.hidden = question.hidden = ask.hidden = true;
+    sleepNow.hidden = false;
     calm();
     draw();
   }
@@ -117,8 +134,19 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
     clean = true;
     showMood();
     cheer.hidden = false;
+    // The washing is over, so a finger still spraying shouldn't land on "おやすみ" either.
+    sleepNow.hidden = true;
     addSparkles(stage);
-    actionsTimer = window.setTimeout(() => (actions.hidden = false), ACTIONS_DELAY);
+    // Time running out never cuts a wash short: it only counts once the vehicle is clean.
+    const next = onClean();
+    actionsTimer = window.setTimeout(() => {
+      if (next === 'lock') onSleep();
+      else if (next === 'ask') {
+        // The question takes the cheer's place, and its two answers the usual buttons' place.
+        cheer.hidden = true;
+        question.hidden = ask.hidden = false;
+      } else actions.hidden = false;
+    }, ACTIONS_DELAY);
     playFanfare();
   }
 
@@ -170,6 +198,14 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   });
   stage.querySelector('.again')!.addEventListener('click', reset);
   stage.querySelector('.others')!.addEventListener('click', onBack);
+  stage.querySelector('.one-more')!.addEventListener('click', () => {
+    onOneMore();
+    question.hidden = ask.hidden = true;
+    cheer.hidden = actions.hidden = false;
+    // The pressed button has just gone.
+    stage.querySelector<HTMLButtonElement>('.again')!.focus();
+  });
+  stage.querySelector('.goodnight-now')!.addEventListener('click', onSleep);
   signal.addEventListener('abort', () => {
     clearTimeout(actionsTimer);
     clearTimeout(calmTimer);

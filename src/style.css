@@ -82,7 +82,8 @@ body {
 
 [data-mood='normal'] [data-moods~='normal'],
 [data-mood='happy'] [data-moods~='happy'],
-[data-mood='fussy'] [data-moods~='fussy'] {
+[data-mood='fussy'] [data-moods~='fussy'],
+[data-mood='sleepy'] [data-moods~='sleepy'] {
   display: inline;
 }
 
@@ -188,6 +189,46 @@ body {
   z-index: 1;
   font-size: clamp(16px, 3vw, 22px);
   background: #6d4c41;
+}
+
+/* "おやすみ" while washing: straight to the lock screen, whatever the time. */
+.sleep-now {
+  --shade: #283593;
+  position: fixed;
+  top: 3vmin;
+  right: 3vmin;
+  z-index: 1;
+  font-size: clamp(16px, 3vw, 22px);
+  background: #3949ab;
+}
+
+.sleep-now[hidden] {
+  display: none;
+}
+
+/* Time is up: "あと いっかい あらう？" above the vehicle, growing upwards when it takes two lines. */
+.question {
+  position: absolute;
+  bottom: 102%;
+  left: -3vw;
+  right: -3vw;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(18px, min(5vw, 6dvh), 40px);
+  font-weight: bold;
+  color: #3949ab;
+  text-shadow: 0 3px 0 #fff, 0 6px 12px rgb(0 0 0 / 0.15);
+  animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+/* A narrow screen breaks the line between the two sentences, not inside one. */
+.question span {
+  display: inline-block;
+}
+
+.goodnight-now {
+  --shade: #283593;
+  background: #3949ab;
 }
 
 /* The select screen. */
@@ -304,11 +345,214 @@ body {
 
 .badge {
   position: fixed;
-  top: 8px;
+  /* Bottom right: the top corners hold "もどる" and "おやすみ", and the gun sits bottom left. */
+  bottom: 8px;
   right: 8px;
   padding: 2px 8px;
   border-radius: 4px;
   background: #3e2723;
   color: #fff;
   font-size: 12px;
+}
+
+/* The lock screen: the garage at night, the last vehicle asleep. */
+.sleep {
+  overflow: hidden;
+}
+
+.night {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgb(13 27 62 / 0.88), rgb(26 35 80 / 0.8));
+}
+
+.moon {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  width: 14vmin;
+  height: 14vmin;
+  border-radius: 50%;
+  /* A crescent: the shadow is the lit part. */
+  box-shadow: 3.5vmin 2vmin 0 0 #fff59d;
+  filter: drop-shadow(0 0 12px rgb(255 245 157 / 0.5));
+}
+
+.star {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff9c4;
+  animation: glimmer 2s ease-in-out infinite alternate;
+}
+
+@keyframes glimmer {
+  to {
+    opacity: 0.3;
+  }
+}
+
+.bed {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14vmin;
+}
+
+.goodnight {
+  margin: 0;
+  font-size: clamp(32px, min(9vw, 12dvh), 80px);
+  color: #fff59d;
+  text-shadow: 0 3px 12px rgb(0 0 0 / 0.4);
+  outline: none;
+}
+
+.bed .stage {
+  width: min(80vw, calc(45dvh * var(--aspect)));
+}
+
+/* Dim, as in a dark garage. */
+.sleep .vehicle {
+  filter: brightness(0.75) saturate(0.8);
+}
+
+[data-mood='sleepy'] .vehicle {
+  transform-origin: 50% 100%;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.02, 0.98);
+  }
+}
+
+.snore {
+  position: absolute;
+  top: -10%;
+  right: 4%;
+  margin: 0;
+  font-size: clamp(24px, 6vmin, 48px);
+  font-weight: bold;
+  color: #fff;
+  animation: drift 3s ease-in-out infinite;
+}
+
+@keyframes drift {
+  from {
+    opacity: 0;
+    transform: translate(0, 20%) scale(0.7);
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate(30%, -40%) scale(1.1);
+  }
+}
+
+/* Small and in a corner: it is for grown-ups. */
+.adult {
+  --shade: #37474f;
+  position: fixed;
+  right: 3vmin;
+  bottom: 3vmin;
+  font-size: 14px;
+  background: #546e7a;
+}
+
+.adult[hidden],
+.gate[hidden] {
+  display: none;
+}
+
+.gate {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  box-sizing: border-box;
+  width: min(92vw, 360px);
+  height: fit-content;
+  max-height: 96dvh;
+  overflow-y: auto;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.4);
+  touch-action: manipulation;
+}
+
+.gate__sum {
+  margin: 0;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.gate__hint {
+  min-height: 1.4em;
+  margin: 0;
+  color: #c62828;
+  font-size: 14px;
+}
+
+.gate__keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.gate__key {
+  min-height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: #eceff1;
+  color: inherit;
+  font: inherit;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.gate__key:active {
+  background: #cfd8dc;
+}
+
+.gate__key--clear,
+.gate__key--enter {
+  font-size: 16px;
+}
+
+.gate__key--enter {
+  background: #43a047;
+  color: #fff;
+}
+
+.gate__back {
+  --shade: #4e342e;
+  font-size: 16px;
+  background: #6d4c41;
+}
+
+/* Short landscape phones: the keypad goes beside the sum. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .gate {
+    width: min(92vw, 560px);
+    grid-template-columns: 1fr 1.4fr;
+    align-items: center;
+  }
+
+  .gate__keys {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+
+  .gate__key {
+    min-height: 44px;
+  }
 }

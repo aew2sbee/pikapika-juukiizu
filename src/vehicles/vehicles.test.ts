@@ -3,7 +3,7 @@ import { vehicles } from '.';
 import { face } from './parts';
 
 describe('face', () => {
-  it.each(['normal', 'happy', 'fussy'])('has parts for the %s mood', (mood) => {
+  it.each(['normal', 'happy', 'fussy', 'sleepy'])('has parts for the %s mood', (mood) => {
     expect(face(0, 0)).toMatch(new RegExp(`data-moods="[^"]*${mood}`));
   });
 });

@@ -34,15 +34,15 @@ export interface CleaningOptions {
   signal: AbortSignal;
   /** Goes back to the select screen. */
   onBack(): void;
-  /** Asked at each clean: show the usual buttons, ask about one more wash, or go to sleep. */
-  bedtime(): 'play' | 'ask' | 'lock';
+  /** Called at each clean; says whether to show the usual buttons, ask about one more wash, or go to sleep. */
+  onClean(): 'play' | 'ask' | 'lock';
   /** "あと いっかい" was chosen. */
   onOneMore(): void;
   /** Goes to the lock screen. */
   onSleep(): void;
 }
 
-export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signal, onBack, bedtime, onOneMore, onSleep }: CleaningOptions): Promise<void> {
+export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signal, onBack, onClean, onOneMore, onSleep }: CleaningOptions): Promise<void> {
   const { width, height } = vehicle;
   const svg = vehicleSvg(vehicle);
   root.classList.add('wash');
@@ -138,7 +138,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
     sleepNow.hidden = true;
     addSparkles(stage);
     // Time running out never cuts a wash short: it only counts once the vehicle is clean.
-    const next = bedtime();
+    const next = onClean();
     actionsTimer = window.setTimeout(() => {
       if (next === 'lock') onSleep();
       else if (next === 'ask') {
@@ -202,6 +202,8 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
     onOneMore();
     question.hidden = ask.hidden = true;
     cheer.hidden = actions.hidden = false;
+    // The pressed button has just gone.
+    stage.querySelector<HTMLButtonElement>('.again')!.focus();
   });
   stage.querySelector('.goodnight-now')!.addEventListener('click', onSleep);
   signal.addEventListener('abort', () => {

@@ -3,7 +3,7 @@ import { mountCleaning } from './cleaning';
 import { isPreview } from './env';
 import { garage } from './garage';
 import { mountLock } from './lock';
-import { bedtime, FRESH, limitFromQuery, loadPlayState, savePlayState } from './playtime';
+import { bedtime, FRESH, limitFromQuery, loadPlayState, playStateKey, savePlayState } from './playtime';
 import { mountSelect } from './select';
 import { vehicles } from './vehicles';
 import type { Vehicle } from './vehicles/types';
@@ -43,9 +43,29 @@ function save() {
   savePlayState(storage, storagePrefix, play);
 }
 
+/**
+ * Takes on the state another tab saved, so a stale tab can't write an old, unlocked state over a
+ * lock (or keep a lock an adult has just lifted).
+ */
+function adopt() {
+  const wasLocked = play.locked;
+  Object.assign(play, loadPlayState(storage, storagePrefix));
+  countedTo = undefined;
+  count();
+  if (play.locked && !wasLocked) sleep();
+  else if (!play.locked && wasLocked) showSelect();
+}
+
 setInterval(save, SAVE_EVERY);
 document.addEventListener('visibilitychange', save);
 window.addEventListener('pagehide', save);
+window.addEventListener('storage', (e) => {
+  if (e.key === playStateKey(storagePrefix)) adopt();
+});
+// A page brought back from the back-forward cache missed whatever other tabs saved meanwhile.
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) adopt();
+});
 
 /**
  * Swaps in a fresh container for the next screen. Its DOM listeners leave with the old container;
@@ -70,9 +90,15 @@ function showCleaning(vehicle: Vehicle) {
     mountCleaning(root, vehicle, {
       signal,
       onBack: showSelect,
-      bedtime() {
+      onClean() {
         count();
-        return bedtime(play, limitMs);
+        const next = bedtime(play, limitMs);
+        // Saved now, not when the lock screen shows: a reload during the cheer must not dodge it.
+        if (next === 'lock') {
+          play.locked = true;
+          save();
+        }
+        return next;
       },
       onOneMore() {
         play.oneMore = true;

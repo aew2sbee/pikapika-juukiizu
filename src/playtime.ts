@@ -14,7 +14,7 @@ export interface PlayState {
   vehicle: string | null;
 }
 
-export const FRESH: PlayState = { elapsedMs: 0, locked: false, oneMore: false, vehicle: null };
+export const FRESH: Readonly<PlayState> = Object.freeze({ elapsedMs: 0, locked: false, oneMore: false, vehicle: null });
 
 /**
  * What a clean leads to: the usual buttons, the question about one more wash, or sleep.

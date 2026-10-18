@@ -70,6 +70,11 @@ export function mountLock(root: HTMLElement, vehicle: Vehicle, onUnlock: () => v
     render();
   }
 
+  function clear() {
+    typed = '';
+    render();
+  }
+
   function submit() {
     if (!problem || typed === '') return;
     if (Number(typed) === problem.answer) {
@@ -77,14 +82,13 @@ export function mountLock(root: HTMLElement, vehicle: Vehicle, onUnlock: () => v
       return;
     }
     // No waiting and no new sum: just try again.
-    typed = '';
+    clear();
     hint.textContent = 'ちがうよ。もういちど いれてね';
-    render();
   }
 
   const layout: { label: string; action: () => void; kind?: string }[] = [
     ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => ({ label: String(digit), action: () => press(String(digit)) })),
-    { label: 'けす', kind: 'clear', action: () => ((typed = ''), render()) },
+    { label: 'けす', kind: 'clear', action: clear },
     { label: '0', action: () => press('0') },
     { label: 'けってい', kind: 'enter', action: submit },
   ];

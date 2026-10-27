@@ -81,7 +81,9 @@ function show(mount: (root: HTMLElement, signal: AbortSignal) => void) {
 }
 
 function showSelect() {
-  show((root) => mountSelect(root, vehicles, showCleaning));
+  // Leaving the wash screen once the lock is saved (during the cheer before it shows) still ends there.
+  if (play.locked) sleep();
+  else show((root) => mountSelect(root, vehicles, showCleaning));
 }
 
 function showCleaning(vehicle: Vehicle) {

@@ -36,7 +36,7 @@ export interface CleaningOptions {
   onBack(): void;
   /** Called at each clean; says whether to show the usual buttons, ask about one more wash, or go to sleep. */
   onClean(): 'play' | 'ask' | 'lock';
-  /** "あと いっかい" was chosen. */
+  /** "あと いっかい" was chosen (or "もどる" was, while that was being asked). */
   onOneMore(): void;
   /** Goes to the lock screen. */
   onSleep(): void;
@@ -73,8 +73,15 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   // Trim blobs that spill past the vehicle's outline.
   for (const property of ['mask-image', '-webkit-mask-image']) canvas.style.setProperty(property, `url("${svgDataUrl(svg)}")`);
 
+  /** "あと いっかい あらう？" is coming or showing, and not yet answered. */
+  let asking = false;
+
   // Wired before the wait, so the way back works while the vehicle loads (or if it never does).
-  root.querySelector('.back')!.addEventListener('click', onBack);
+  root.querySelector('.back')!.addEventListener('click', () => {
+    // Going back instead of answering counts as one more wash, so the question can't be dodged again and again.
+    if (asking) onOneMore();
+    onBack();
+  });
   root.querySelector('.sleep-now')!.addEventListener('click', onSleep);
 
   const mask = await silhouette(vehicle);
@@ -135,6 +142,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
     addSparkles(stage);
     // Time running out never cuts a wash short: it only counts once the vehicle is clean.
     const next = onClean();
+    asking = next === 'ask';
     actionsTimer = window.setTimeout(() => {
       if (next === 'lock') onSleep();
       else if (next === 'ask') {
@@ -195,6 +203,7 @@ export async function mountCleaning(root: HTMLElement, vehicle: Vehicle, { signa
   stage.querySelector('.again')!.addEventListener('click', reset);
   stage.querySelector('.others')!.addEventListener('click', onBack);
   stage.querySelector('.one-more')!.addEventListener('click', () => {
+    asking = false;
     onOneMore();
     question.hidden = ask.hidden = true;
     cheer.hidden = actions.hidden = false;

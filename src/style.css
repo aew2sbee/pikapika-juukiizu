@@ -195,7 +195,7 @@ body {
   font-size: clamp(16px, 3vw, 22px);
 }
 
-/* "おやすみ" while washing: straight to the lock screen, whatever the time. */
+/* "おやすみ", always there on the wash screen (clean or not): straight to the lock screen, whatever the time. */
 .sleep-now,
 .goodnight-now {
   --shade: #283593;
@@ -208,10 +208,6 @@ body {
   right: 3vmin;
   z-index: 1;
   font-size: clamp(16px, 3vw, 22px);
-}
-
-.sleep-now[hidden] {
-  display: none;
 }
 
 /* Time is up: "あと いっかい あらう？" above the vehicle, growing upwards when it takes two lines. */

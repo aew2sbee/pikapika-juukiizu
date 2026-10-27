@@ -5,7 +5,7 @@ const { light, base, dark, deep } = ORANGE;
 const holes = [34, 70, 106, 142, 178, 214].map((y) => `<rect x="305" y="${y}" width="12" height="10" rx="2"/>`).join('');
 const flights = [92, 106, 120, 134, 148, 162, 176, 190, 204, 218, 232].map((y) => `M328 ${y} L356 ${y + 8}`).join(' ');
 
-// A pile driver: the tall leader stands in front, held by a bracket below and two stays from the back,
+// A pile driver: the tall leader stands in front, held by a bracket below and a stay from the back,
 // with the auger's motor riding on it.
 export const pileDriver: Vehicle = {
   name: 'ぱいるどらいばー',

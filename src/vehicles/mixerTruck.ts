@@ -1,7 +1,9 @@
 import { BLUE, truck } from './parts';
 import type { Vehicle } from './types';
 
-const DRUM = 'M55 50 Q140 38 210 40 L249 48 C283 55 292 98 284 112 C276 138 254 160 227 157 L188 149 Q110 120 49 78 Z';
+/** The white band along the cab. */
+const STRIPE = '#fff';
+const DRUM ='M55 50 Q140 38 210 40 L249 48 C283 55 292 98 284 112 C276 138 254 160 227 157 L188 149 Q110 120 49 78 Z';
 const rungs = [72, 88, 104, 120, 136, 152, 168, 184].map((y) => `<line x1="26" y1="${y}" x2="38" y2="${y}"/>`).join('');
 
 export const mixerTruck: Vehicle = {
@@ -29,6 +31,6 @@ export const mixerTruck: Vehicle = {
     <rect x="48" y="42" width="14" height="12" fill="#78909c"/>
     <path d="M46 84 L22 132" stroke="#78909c" stroke-width="10"/>
     <path d="M43 84 L19 130" stroke="#b0bec5" stroke-width="3"/>`,
-    '#fff',
+    STRIPE,
   ),
 };

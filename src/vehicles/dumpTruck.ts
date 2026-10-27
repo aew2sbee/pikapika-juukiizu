@@ -1,6 +1,8 @@
 import { truck, WHITE } from './parts';
 import type { Vehicle } from './types';
 
+/** The green band along the cab. */
+const STRIPE = '#43a047';
 /** Upright ribs along the side of the bed, `width` wide: the whole rib, or the lit strip down its left edge. */
 const ribs = (width: number) => [70, 118, 166, 214].map((x) => `<rect x="${x}" y="108" width="${width}" height="68"/>`).join('');
 
@@ -20,6 +22,6 @@ export const dumpTruck: Vehicle = {
     <g fill="#cfd8dc">${ribs(2)}</g>
     <rect x="30" y="96" width="10" height="94" rx="3" fill="#78909c"/>
     <rect x="40" y="188" width="236" height="6" fill="#607d8b"/>`,
-    '#43a047',
+    STRIPE,
   ),
 };

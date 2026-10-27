@@ -1,8 +1,7 @@
-import { beacon, cabWindow, cylinder, round, WHITE, wheels } from './parts';
+import { bar, beacon, cabWindow, cylinder, RED, round, WHITE, wheels } from './parts';
 import type { Vehicle } from './types';
 
 const { light, base, dark, deep } = WHITE;
-const RED = '#e53935';
 
 // A rough-terrain crane: one cab, four big tyres, outriggers down, and a telescopic boom raised
 // from its foot at the back of the turning body.
@@ -11,15 +10,19 @@ const ANGLE = (24 * Math.PI) / 180;
 const [UX, UY] = [Math.cos(ANGLE), -Math.sin(ANGLE)];
 
 /** The point s along the boom from its foot, pushed d square to it (downwards). */
+function point(s: number, d = 0): [number, number] {
+  return [round(FOOT_X + UX * s - UY * d), round(FOOT_Y + UY * s + UX * d)];
+}
+
+/** point(), as "x y" for a path. */
 function along(s: number, d = 0): string {
-  return `${round(FOOT_X + UX * s - UY * d)} ${round(FOOT_Y + UY * s + UX * d)}`;
+  return point(s, d).join(' ');
 }
 
 /** One telescopic section of the boom, from s0 to s1 along it and `width` thick, with a collar at its mouth. */
 function section(s0: number, s1: number, width: number): string {
-  const strip = (d: number, color: string, w: number, from = s0) =>
-    `<path d="M${along(from, d)} L${along(s1, d)}" stroke="${color}" stroke-width="${w}" stroke-linecap="butt"/>`;
-  return `${strip(0, base, width)}${strip(-width / 2 + 1.5, light, 3)}${strip(width / 2 - 2.5, dark, 5)}${strip(0, deep, width + 2, s1 - 5)}`;
+  return `<g stroke-linecap="butt">${bar(...point(s0), ...point(s1), width, WHITE)}
+    <path d="M${along(s1 - 5)} L${along(s1)}" stroke="${deep}" stroke-width="${width + 2}"/></g>`;
 }
 
 /** An outrigger at x: its red box on the carrier, and the jack pushed down onto a pad. */
@@ -27,8 +30,8 @@ function outrigger(x: number): string {
   return `${cylinder(x, 186, x, 236, 14)}
   <rect x="${x - 16}" y="236" width="32" height="10" rx="2" fill="#757575"/>
   <rect x="${x - 16}" y="236" width="32" height="3" rx="1.5" fill="#bdbdbd"/>
-  <rect x="${x - 12}" y="170" width="24" height="20" rx="3" fill="${RED}"/>
-  <rect x="${x - 12}" y="170" width="24" height="5" rx="2" fill="#ef9a9a"/>`;
+  <rect x="${x - 12}" y="170" width="24" height="20" rx="3" fill="${RED.base}"/>
+  <rect x="${x - 12}" y="170" width="24" height="5" rx="2" fill="${RED.light}"/>`;
 }
 
 export const crane: Vehicle = {
@@ -39,23 +42,23 @@ export const crane: Vehicle = {
   <path d="M40 172 Q40 164 48 164 H362 Q370 164 370 172 V202 H334 A38 38 0 0 0 258 202 H138 A38 38 0 0 0 62 202 H40 Z" fill="${base}"/>
   <path d="M43 200 V172 Q43 167 48 167 H362" fill="none" stroke="${light}" stroke-width="4"/>
   <path d="M40 199 H62 M138 199 H258 M334 199 H370" stroke="${dark}" stroke-width="6" stroke-linecap="butt"/>
-  <rect x="40" y="180" width="330" height="7" fill="${RED}"/>
+  <rect x="40" y="180" width="330" height="7" fill="${RED.base}"/>
   <g fill="#212121"><path d="M62 202 A38 38 0 0 1 138 202 Z"/><path d="M258 202 A38 38 0 0 1 334 202 Z"/></g>
   <rect x="364" y="170" width="8" height="10" rx="2" fill="#fff59d"/>
   <rect x="130" y="156" width="120" height="10" fill="#424242"/>
   <rect x="112" y="132" width="140" height="30" rx="6" fill="${base}"/>
   <path d="M115 159 V138 Q115 135 118 135 H248" fill="none" stroke="${light}" stroke-width="4"/>
   <rect x="112" y="154" width="140" height="8" fill="${dark}"/>
-  <path d="M152 118 V164 H120 Q100 164 100 144 V138 Q100 118 120 118 Z" fill="${RED}"/>
-  <path d="M104 146 V138 Q104 122 120 122 H150" fill="none" stroke="#ef9a9a" stroke-width="4"/>
-  <path d="M104 150 Q106 160 120 160 H150" fill="none" stroke="#c62828" stroke-width="6"/>
+  <path d="M152 118 V164 H120 Q100 164 100 144 V138 Q100 118 120 118 Z" fill="${RED.base}"/>
+  <path d="M104 146 V138 Q104 122 120 122 H150" fill="none" stroke="${RED.light}" stroke-width="4"/>
+  <path d="M104 150 Q106 160 120 160 H150" fill="none" stroke="${RED.dark}" stroke-width="6"/>
   ${cylinder(204, 160, 234, 99, 16)}
   ${section(214, 262, 15)}
   ${section(170, 224, 19)}
   ${section(110, 180, 24)}
   ${section(-6, 120, 30)}
   <circle cx="${FOOT_X}" cy="${FOOT_Y}" r="8" fill="#424242"/>
-  <path d="M${along(258, -12)} L${along(272, -12)} L${along(272, 12)} L${along(258, 12)} Z" fill="${RED}"/>
+  <path d="M${along(258, -12)} L${along(272, -12)} L${along(272, 12)} L${along(258, 12)} Z" fill="${RED.base}"/>
   <line x1="393" y1="16" x2="393" y2="100" stroke="#424242" stroke-width="2"/>
   <circle cx="383" cy="15.8" r="10" fill="#616161"/>
   <circle cx="381.5" cy="14.3" r="6" fill="#9e9e9e"/>

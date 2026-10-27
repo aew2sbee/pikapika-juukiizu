@@ -47,6 +47,7 @@ export const YELLOW: Paint = { light: '#ffe082', base: '#fbc02d', dark: '#f9a825
 export const ORANGE: Paint = { light: '#ffcc80', base: '#fb8c00', dark: '#ef6c00', deep: '#e65100' };
 export const WHITE: Paint = { light: '#ffffff', base: '#eceff1', dark: '#b0bec5', deep: '#90a4ae' };
 export const BLUE: Paint = { light: '#64b5f6', base: '#1e88e5', dark: '#1565c0', deep: '#0d47a1' };
+export const RED: Paint = { light: '#ef9a9a', base: '#e53935', dark: '#c62828', deep: '#b71c1c' };
 
 /** Keeps worked-out coordinates short in the markup. */
 export function round(v: number): number {
@@ -81,20 +82,40 @@ export function crawler(x: number, y: number, width: number, height: number): st
     <g fill="#757575">${circles([back, front], y + r, 2.5)}</g>`;
 }
 
-/**
- * A hydraulic cylinder `width` thick: its barrel from (x1, y1), and its shiny rod out to (x2, y2). Both
- * catch the light on their upper side.
- */
+/** A unit step square to the line from (x1, y1) to (x2, y2), towards the light at the top left. */
+function towardLight(x1: number, y1: number, x2: number, y2: number): [number, number] {
+  const length = Math.hypot(x2 - x1, y2 - y1);
+  const [nx, ny] = [(y2 - y1) / length, (x1 - x2) / length];
+  return nx + ny <= 0 ? [nx, ny] : [-nx, -ny];
+}
+
+/** A straight line from (x1, y1) to (x2, y2), moved k square to it towards the light. */
+function shifted(x1: number, y1: number, x2: number, y2: number, k: number, color: string, width: number): string {
+  const [nx, ny] = towardLight(x1, y1, x2, y2);
+  return `<path d="M${round(x1 + nx * k)} ${round(y1 + ny * k)} L${round(x2 + nx * k)} ${round(y2 + ny * k)}" stroke="${color}" stroke-width="${round(width)}"/>`;
+}
+
+/** A straight beam `width` thick from (x1, y1) to (x2, y2): lit along the edge facing the light, shaded along the other. */
+export function bar(x1: number, y1: number, x2: number, y2: number, width: number, { light, base, dark }: Paint): string {
+  const [lit, shade] = [width / 5, width / 3];
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${base}" stroke-width="${width}"/>
+    ${shifted(x1, y1, x2, y2, (width - lit) / 2, light, lit)}
+    ${shifted(x1, y1, x2, y2, -(width - shade) / 2, dark, shade)}`;
+}
+
+/** Slots in a panel at the given x positions, from y1 down to y2: each a shaded groove with a lit edge beside it. */
+export function louvers(xs: number[], y1: number, y2: number, { light, deep }: Paint): string {
+  const lines = (dx: number) => xs.map((x) => `<line x1="${x + dx}" y1="${y1}" x2="${x + dx}" y2="${y2}"/>`).join('');
+  return `<g stroke="${deep}" stroke-width="3">${lines(0)}</g><g stroke="${light}" stroke-width="2">${lines(3)}</g>`;
+}
+
+/** A hydraulic cylinder `width` thick: its barrel from (x1, y1), and its shiny rod out to (x2, y2). Both catch the light. */
 export function cylinder(x1: number, y1: number, x2: number, y2: number, width = 12): string {
   const [bx, by] = [round(x1 + (x2 - x1) * 0.6), round(y1 + (y2 - y1) * 0.6)];
-  // A unit step square to the cylinder, towards the top of the picture.
-  const side = (x2 >= x1 ? 1 : -1) / Math.hypot(x2 - x1, y2 - y1);
-  const [nx, ny] = [(y2 - y1) * side, (x1 - x2) * side];
-  const lit = (px: number, py: number, k: number) => `${round(px + nx * k)} ${round(py + ny * k)}`;
   return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#bdbdbd" stroke-width="${width / 2}"/>
-    <path d="M${lit(bx, by, width / 8)} L${lit(x2, y2, width / 8)}" stroke="#fff" stroke-width="${width / 6}"/>
+    ${shifted(bx, by, x2, y2, width / 8, '#fff', width / 6)}
     <line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="#616161" stroke-width="${width}"/>
-    <path d="M${lit(x1, y1, width / 4)} L${lit(bx, by, width / 4)}" stroke="#8d8d8d" stroke-width="${width / 4}"/>
+    ${shifted(x1, y1, bx, by, width / 4, '#8d8d8d', width / 4)}
     <g fill="#424242"><circle cx="${x1}" cy="${y1}" r="${width / 3}"/><circle cx="${x2}" cy="${y2}" r="${width / 3}"/></g>`;
 }
 
@@ -107,9 +128,9 @@ export function wheels(xs: number[], y: number, r: number): string {
     }),
   );
   // The tread is a shade darker on the side away from the light.
-  const lit = xs.map((x) => round(x - r * 0.05));
+  const litCentres = xs.map((x) => round(x - r * 0.05));
   return `<g fill="#263238" stroke="#263238" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="butt">${circles(xs, y, r - 1.5)}</g>
-    <g fill="#37474f">${circles(lit, round(y - r * 0.05), round(r * 0.88))}</g>
+    <g fill="#37474f">${circles(litCentres, round(y - r * 0.05), round(r * 0.88))}</g>
     <g fill="#78909c">${circles(xs, y, round(r * 0.55))}</g>
     <g fill="#cfd8dc">${circles(xs.map((x) => x - 1.5), y - 1.5, round(r * 0.5))}</g>
     <g fill="#90a4ae">${circles(xs, y, round(r * 0.2))}</g>
@@ -142,8 +163,8 @@ export function beacon(x: number, y: number): string {
  * its counterweight at the back (left), the engine, and a deck at the front for the cab and the
  * attachment. Draw shovelCab() over the attachment's foot.
  */
-export function shovelBody({ light, base, dark, deep }: Paint): string {
-  const louvers = (dx: number) => [100, 114, 128, 142].map((x) => `<line x1="${x + dx}" y1="154" x2="${x + dx}" y2="176"/>`).join('');
+export function shovelBody(paint: Paint): string {
+  const { light, base, dark, deep } = paint;
   return `${crawler(24, 198, 238, 52)}
   <rect x="96" y="186" width="120" height="14" fill="#424242"/>
   <path d="M92 122 V108 H164 V122" fill="none" stroke="#616161" stroke-width="4"/>
@@ -153,8 +174,7 @@ export function shovelBody({ light, base, dark, deep }: Paint): string {
   <rect x="80" y="126" width="96" height="24" rx="4" fill="${base}"/>
   <rect x="40" y="142" width="222" height="50" rx="8" fill="${base}"/>
   <path d="M40 182 H262 V184 Q262 192 254 192 H48 Q40 192 40 184 Z" fill="${dark}"/>
-  <g stroke="${deep}" stroke-width="3">${louvers(0)}</g>
-  <g stroke="${light}" stroke-width="2">${louvers(3)}</g>
+  ${louvers([100, 114, 128, 142], 154, 176, paint)}
   <path d="M88 134 V196 H46 Q16 196 16 165 Q16 134 46 134 Z" fill="${base}"/>
   <path d="M20 168 Q22 192 46 192 H86" fill="none" stroke="${dark}" stroke-width="8"/>
   <path d="M20 164 Q20 138 46 138 H84" fill="none" stroke="${light}" stroke-width="5"/>
@@ -174,9 +194,9 @@ export function shovelCab({ light, base, dark }: Paint): string {
 
 /**
  * A cab-over truck facing right, with two rear axles; `load` (a dump bed, a drum…) sits on the frame
- * behind the cab, and a `stripe` colour, if given, runs along the cab.
+ * behind the cab, and a band of the `stripe` colour runs along the cab.
  */
-export function truck({ light, base, dark }: Paint, load: string, stripe?: string): string {
+export function truck({ light, base, dark }: Paint, load: string, stripe: string): string {
   return `<path d="M60 224 V200 Q60 186 76 186 H178 Q194 186 194 200 V224 Z" fill="#424242"/>
     <rect x="34" y="188" width="300" height="16" fill="#424242"/>
     <rect x="30" y="190" width="8" height="12" rx="2" fill="#e53935"/>
@@ -187,7 +207,7 @@ export function truck({ light, base, dark }: Paint, load: string, stripe?: strin
     <g stroke="#78909c" stroke-width="3"><line x1="226" y1="190" x2="226" y2="220"/><line x1="258" y1="190" x2="258" y2="220"/></g>
     <rect x="302" y="196" width="16" height="6" rx="2" fill="#424242"/>
     <path d="M300 206 V80 Q300 66 314 66 H386 Q400 66 402 80 L406 206 H383 A34 34 0 0 0 321 206 Z" fill="${base}"/>
-    ${stripe ? `<rect x="300" y="158" width="105" height="10" fill="${stripe}"/>` : ''}
+    <rect x="300" y="158" width="105" height="10" fill="${stripe}"/>
     <path d="M303 200 V82 Q303 70 315 70 H384" fill="none" stroke="${light}" stroke-width="5"/>
     <path d="M399 82 L403 204" stroke="${dark}" stroke-width="6"/>
     <path d="M321 206 A34 34 0 0 1 383 206 Z" fill="#212121"/>

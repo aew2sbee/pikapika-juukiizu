@@ -1,4 +1,4 @@
-import { cylinder, shovelBody, shovelCab, YELLOW } from './parts';
+import { bar, cylinder, shovelBody, shovelCab, YELLOW } from './parts';
 import type { Vehicle } from './types';
 
 const { light, base, dark } = YELLOW;
@@ -16,9 +16,7 @@ export const excavator: Vehicle = {
   <rect x="264" y="112" width="4" height="8" rx="1" fill="#fff59d"/>
   ${cylinder(256, 172, 290, 106)}
   ${cylinder(283, 55, 338, 36)}
-  <line x1="338" y1="36" x2="378" y2="176" stroke="${base}" stroke-width="18"/>
-  <line x1="342.8" y1="34.6" x2="382.8" y2="174.6" stroke="${dark}" stroke-width="8"/>
-  <line x1="331.8" y1="37.8" x2="371.8" y2="177.8" stroke="${light}" stroke-width="4"/>
+  ${bar(338, 36, 378, 176, 18, YELLOW)}
   ${cylinder(353, 44, 383, 150)}
   <g stroke="#757575" stroke-width="6"><line x1="370" y1="160" x2="383" y2="150"/><line x1="383" y1="150" x2="398" y2="172"/></g>
   <path d="M370 168 L400 168 Q418 204 390 234 L352 238 Q364 206 370 168 Z" fill="#616161"/>

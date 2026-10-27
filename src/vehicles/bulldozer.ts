@@ -1,8 +1,7 @@
-import { beacon, cabWindow, crawler, cylinder, YELLOW } from './parts';
+import { bar, beacon, cabWindow, crawler, cylinder, louvers, YELLOW } from './parts';
 import type { Vehicle } from './types';
 
-const { light, base, dark, deep } = YELLOW;
-const louvers = (dx: number) => [226, 240, 254, 268, 282].map((x) => `<line x1="${x + dx}" y1="144" x2="${x + dx}" y2="172"/>`).join('');
+const { light, base, dark } = YELLOW;
 
 export const bulldozer: Vehicle = {
   name: 'ぶるどーざー',
@@ -25,8 +24,7 @@ export const bulldozer: Vehicle = {
   <rect x="202" y="116" width="132" height="16" rx="5" fill="${light}"/>
   <rect x="202" y="124" width="132" height="72" rx="4" fill="${base}"/>
   <rect x="202" y="184" width="132" height="12" fill="${dark}"/>
-  <g stroke="${deep}" stroke-width="3">${louvers(0)}</g>
-  <g stroke="${light}" stroke-width="2">${louvers(3)}</g>
+  ${louvers([226, 240, 254, 268, 282], 144, 172, YELLOW)}
   <rect x="326" y="120" width="16" height="76" rx="3" fill="#424242"/>
   <g stroke="#757575" stroke-width="3"><line x1="329" y1="132" x2="339" y2="132"/><line x1="329" y1="144" x2="339" y2="144"/><line x1="329" y1="156" x2="339" y2="156"/><line x1="329" y1="168" x2="339" y2="168"/><line x1="329" y1="180" x2="339" y2="180"/></g>
   <path d="M96 146 V62 Q96 50 108 50 H186 Q198 50 198 62 V146 Z" fill="${base}"/>
@@ -34,9 +32,7 @@ export const bulldozer: Vehicle = {
   <path d="M99 142 V64 Q99 53 110 53 H184" fill="none" stroke="${light}" stroke-width="5"/>
   ${cabWindow(108, 62, 78, 66)}
   ${beacon(178, 50)}
-  <line x1="196" y1="224" x2="360" y2="238" stroke="${base}" stroke-width="14"/>
-  <line x1="196" y1="219" x2="360" y2="233" stroke="${light}" stroke-width="3"/>
-  <line x1="196" y1="229" x2="360" y2="243" stroke="${dark}" stroke-width="4"/>
+  ${bar(196, 224, 360, 238, 14, YELLOW)}
   <circle cx="196" cy="224" r="6" fill="#424242"/>
   <line x1="330" y1="234" x2="356" y2="192" stroke="#757575" stroke-width="6"/>
   ${cylinder(306, 132, 360, 158)}

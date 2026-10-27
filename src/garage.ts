@@ -1,10 +1,16 @@
 // The garage the vehicles are washed in: a full-screen backdrop drawn in a 1600 x 1000 viewBox, lit
 // from the top left like the vehicles.
 
+import type { Paint } from './vehicles/parts';
+
+/** The tones of a thing in the garage, as for a vehicle's Paint; nothing here needs seams. */
+type Shades = Omit<Paint, 'deep'>;
+
 /** Grooves between the wall panels; `dx` shifts them right, for the lit edge beside each. */
 const seams = (dx: number) =>
   Array.from({ length: 11 }, (_, i) => `<line x1="${100 + i * 140 + dx}" y1="40" x2="${100 + i * 140 + dx}" y2="516"/>`).join('');
 
+/** A lamp hanging from the beam at x, with the glow it casts on the wall. */
 const lamp = (x: number) => `
   <line x1="${x}" y1="40" x2="${x}" y2="86" stroke="#455a64" stroke-width="4"/>
   <circle cx="${x}" cy="160" r="130" fill="url(#glow)"/>
@@ -27,7 +33,7 @@ const hung = (x: number, y: number, angle: number, parts: [string, string][]) =>
   <g transform="translate(${x} ${y}) rotate(${angle})">${parts.map(([shape, color]) => `<g fill="${color}">${shape}</g>`).join('')}</g>`;
 
 /** A paint can standing on a shelf at `bottom`: a cylinder with its lid showing, lit on the left. */
-const can = (x: number, bottom: number, width: number, height: number, [light, base, dark]: string[]) => {
+const can = (x: number, bottom: number, width: number, height: number, { light, base, dark }: Shades) => {
   const top = bottom - height;
   return `<rect x="${x}" y="${top}" width="${width}" height="${height}" rx="4" fill="${base}"/>
   <rect x="${x + 4}" y="${top + 4}" width="6" height="${height - 8}" rx="3" fill="${light}"/>
@@ -38,7 +44,7 @@ const can = (x: number, bottom: number, width: number, height: number, [light, b
 };
 
 /** A box standing on a shelf at `bottom`, its lid showing above its front. */
-const box = (x: number, bottom: number, width: number, height: number, [light, base, dark]: string[]) => {
+const box = (x: number, bottom: number, width: number, height: number, { light, base, dark }: Shades) => {
   const top = bottom - height;
   return `<rect x="${x + 4}" y="${top - 8}" width="${width - 4}" height="12" rx="3" fill="${light}"/>
   <rect x="${x}" y="${top}" width="${width}" height="${height}" rx="3" fill="${base}"/>
@@ -144,12 +150,12 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   <g fill="#6d4c41"><rect x="1240" y="220" width="12" height="420"/><rect x="1508" y="220" width="12" height="420"/></g>
   <g fill="#8d6e63"><rect x="1240" y="220" width="3" height="420"/><rect x="1508" y="220" width="3" height="420"/></g>
   ${shelf(320)}${shelf(450)}${shelf(580)}
-  ${can(1270, 316, 50, 54, ['#ef9a9a', '#e53935', '#b71c1c'])}
-  ${can(1340, 316, 40, 40, ['#a5d6a7', '#43a047', '#1b5e20'])}
-  ${can(1400, 316, 60, 60, ['#90caf9', '#1e88e5', '#0d47a1'])}
-  ${box(1262, 446, 110, 72, ['#dcc3a1', '#c8a27a', '#a98458'])}
+  ${can(1270, 316, 50, 54, { light: '#ef9a9a', base: '#e53935', dark: '#b71c1c' })}
+  ${can(1340, 316, 40, 40, { light: '#a5d6a7', base: '#43a047', dark: '#1b5e20' })}
+  ${can(1400, 316, 60, 60, { light: '#90caf9', base: '#1e88e5', dark: '#0d47a1' })}
+  ${box(1262, 446, 110, 72, { light: '#dcc3a1', base: '#c8a27a', dark: '#a98458' })}
   <rect x="1306" y="366" width="22" height="80" fill="#e8d5b5"/>
-  ${box(1392, 446, 90, 52, ['#ffe082', '#ffb300', '#ff8f00'])}
+  ${box(1392, 446, 90, 52, { light: '#ffe082', base: '#ffb300', dark: '#ff8f00' })}
   <path d="M1418 394 V382 H1456 V394" fill="none" stroke="#5d4037" stroke-width="6"/>
   <path d="M1300 520 L1400 520 L1390 576 L1310 576 Z" fill="#ff7043"/>
   <path d="M1306 528 L1316 528 L1312 570 L1314 570 Z" fill="#ffab91"/>

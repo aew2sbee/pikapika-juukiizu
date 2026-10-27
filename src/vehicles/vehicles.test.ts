@@ -13,6 +13,11 @@ describe('vehicles', () => {
     expect(vehicle.shapes).toContain('class="face"');
   });
 
+  // A slip in the worked-out coordinates would otherwise quietly drop a shape from the picture.
+  it.each(vehicles.map((v) => [v.name, v]))('%s has no missing numbers', (_, vehicle) => {
+    expect(vehicle.shapes).not.toMatch(/NaN|undefined/);
+  });
+
   it('have different names', () => {
     expect(new Set(vehicles.map((v) => v.name)).size).toBe(vehicles.length);
   });

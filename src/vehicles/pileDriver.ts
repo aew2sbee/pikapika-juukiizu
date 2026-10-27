@@ -1,25 +1,38 @@
-import { cabWindow, track } from './parts';
+import { cylinder, ORANGE, shovel } from './parts';
 import type { Vehicle } from './types';
 
+const { light, base, dark, deep } = ORANGE;
+const holes = [34, 70, 106, 142, 178, 214].map((y) => `<rect x="305" y="${y}" width="12" height="10" rx="2"/>`).join('');
+const flights = [92, 106, 120, 134, 148, 162, 176, 190, 204, 218, 232].map((y) => `M328 ${y} L356 ${y + 8}`).join(' ');
+const vents = [58, 66, 74].map((y) => `<line x1="328" y1="${y}" x2="356" y2="${y}"/>`).join('');
+
+// A pile driver: the tall leader stands in front, held by a bracket below and a stay from the back,
+// with the auger's motor riding on it.
 export const pileDriver: Vehicle = {
   name: 'ぱいるどらいばー',
   width: 420,
   height: 260,
-  shapes: `
-  <rect x="324" y="88" width="14" height="164" fill="#a1887f"/>
-  ${track(40, 196, 250, 52, [68, 114, 165, 216, 262])}
-  <rect x="120" y="184" width="90" height="14" fill="#616161"/>
-  <rect x="40" y="140" width="34" height="46" rx="12" fill="#f9a825"/>
-  <rect x="54" y="130" width="230" height="60" rx="12" fill="#fbc02d"/>
-  <line x1="262" y1="140" x2="320" y2="56" stroke="#9e9e9e" stroke-width="8"/>
-  <line x1="276" y1="180" x2="318" y2="196" stroke="#9e9e9e" stroke-width="8"/>
-  <rect x="316" y="8" width="30" height="232" rx="4" fill="#fbc02d"/>
-  <g stroke="#f9a825" stroke-width="4">
-    <line x1="316" y1="40" x2="346" y2="70"/><line x1="346" y1="100" x2="316" y2="130"/>
-    <line x1="316" y1="160" x2="346" y2="190"/><line x1="346" y1="210" x2="316" y2="236"/>
-  </g>
-  <rect x="308" y="44" width="46" height="46" rx="6" fill="#616161"/>
-  <circle cx="331" cy="10" r="9" fill="#616161"/>
-  <rect x="150" y="58" width="84" height="84" rx="14" fill="#fbc02d"/>
-  ${cabWindow(162, 70, 60, 56)}`,
+  shapes: shovel(
+    ORANGE,
+    `
+    ${cylinder(112, 124, 302, 52, 10)}
+    <rect x="250" y="150" width="54" height="24" rx="4" fill="${base}"/>
+    <rect x="250" y="150" width="54" height="5" rx="2" fill="${light}"/>
+    <rect x="250" y="168" width="54" height="6" rx="2" fill="${dark}"/>
+    <rect x="300" y="10" width="24" height="232" rx="3" fill="${base}"/>
+    <rect x="302" y="12" width="4" height="228" rx="2" fill="${light}"/>
+    <rect x="318" y="12" width="6" height="228" fill="${dark}"/>
+    <g fill="${deep}">${holes}</g>
+    <rect x="324" y="10" width="5" height="232" fill="#616161"/>
+    <rect x="294" y="2" width="40" height="12" rx="3" fill="#616161"/>
+    <rect x="294" y="2" width="40" height="3" rx="1.5" fill="#9e9e9e"/>
+    <g stroke="#424242" stroke-width="2"><line x1="330" y1="14" x2="330" y2="42"/><line x1="336" y1="14" x2="336" y2="42"/></g>
+    <line x1="342" y1="86" x2="342" y2="244" stroke="#757575" stroke-width="6"/>
+    <path d="${flights}" stroke="#9e9e9e" stroke-width="6"/>
+    <path d="${flights}" stroke="#e0e0e0" stroke-width="2" transform="translate(0 -2)"/>
+    <path d="M332 240 L352 240 L342 254 Z" fill="#9e9e9e"/>
+    <rect x="318" y="40" width="48" height="46" rx="6" fill="#616161"/>
+    <rect x="318" y="40" width="48" height="8" rx="4" fill="#9e9e9e"/>
+    <g stroke="#424242" stroke-width="3">${vents}</g>`,
+  ),
 };

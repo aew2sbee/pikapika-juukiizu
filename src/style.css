@@ -195,13 +195,14 @@ body {
   font-size: clamp(16px, 3vw, 22px);
 }
 
-/* "おやすみ", always there on the wash screen (clean or not): straight to the lock screen, whatever the time. */
+/* "おやすみ": straight to the lock screen, whatever the time. */
 .sleep-now,
 .goodnight-now {
   --shade: #283593;
   background: #3949ab;
 }
 
+/* Always there on the wash screen, clean or not. */
 .sleep-now {
   position: fixed;
   top: 3vmin;

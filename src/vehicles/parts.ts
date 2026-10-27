@@ -37,6 +37,32 @@ export function track(x: number, y: number, width: number, height: number, wheel
     <g fill="#bdbdbd">${circles(wheelXs, cy, 6)}</g>`;
 }
 
+/**
+ * A crawler seen from the side: a belt of plates with grousers, round a toothed drive sprocket at the
+ * back (left) and an idler at the front (right), with rollers along the bottom and top between them.
+ */
+export function crawler(x: number, y: number, width: number, height: number): string {
+  const r = height / 2;
+  const [back, front] = [x + r, x + width - r];
+  const between = (n: number) => Array.from({ length: n }, (_, i) => back + ((front - back) * (i + 1)) / (n + 1));
+  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${r}" fill="#424242" stroke="#424242" stroke-width="6" stroke-dasharray="6 4" stroke-linecap="butt"/>
+    <rect x="${x + 4}" y="${y + 4}" width="${width - 8}" height="${height - 8}" rx="${r - 4}" fill="none" stroke="#212121" stroke-width="8" stroke-dasharray="2 9" stroke-linecap="butt"/>
+    <rect x="${x + 8}" y="${y + 8}" width="${width - 16}" height="${height - 16}" rx="${r - 8}" fill="#616161"/>
+    <g fill="#9e9e9e">${circles(between(Math.round((front - back) / 40)), y + height - 15, 7)}</g>
+    <g fill="#9e9e9e">${circles(between(2), y + 13, 4)}</g>
+    <circle cx="${back}" cy="${y + r}" r="${r - 11}" fill="#757575" stroke="#757575" stroke-width="6" stroke-dasharray="4 3.5" stroke-linecap="butt"/>
+    <circle cx="${front}" cy="${y + r}" r="${r - 10}" fill="#757575"/>
+    <g fill="#bdbdbd">${circles([back, front], y + r, 6)}</g>`;
+}
+
+/** A hydraulic cylinder: its barrel from (x1, y1), and its shiny rod out to (x2, y2). */
+export function cylinder(x1: number, y1: number, x2: number, y2: number): string {
+  const [bx, by] = [x1 + (x2 - x1) * 0.6, y1 + (y2 - y1) * 0.6];
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e0e0e0" stroke-width="6"/>
+    <line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="#616161" stroke-width="12"/>
+    <g fill="#424242"><circle cx="${x1}" cy="${y1}" r="4"/><circle cx="${x2}" cy="${y2}" r="4"/></g>`;
+}
+
 /** Road wheels: tyres of radius r centred on y, at the given x positions. */
 export function wheels(xs: number[], y: number, r: number): string {
   return `<g fill="#37474f">${circles(xs, y, r)}</g>

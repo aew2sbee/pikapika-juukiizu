@@ -1,4 +1,4 @@
-import { cabWindow, track } from './parts';
+import { cabWindow, crawler, cylinder } from './parts';
 import type { Vehicle } from './types';
 
 export const excavator: Vehicle = {
@@ -6,18 +6,29 @@ export const excavator: Vehicle = {
   width: 420,
   height: 260,
   shapes: `
-  ${track(40, 196, 250, 52, [68, 114, 165, 216, 262])}
-  <rect x="120" y="184" width="90" height="14" fill="#616161"/>
-  <rect x="80" y="110" width="9" height="24" rx="3" fill="#616161"/>
-  <rect x="40" y="140" width="34" height="46" rx="12" fill="#f9a825"/>
-  <rect x="54" y="130" width="200" height="60" rx="12" fill="#fbc02d"/>
-  <line x1="215" y1="140" x2="300" y2="84" stroke="#9e9e9e" stroke-width="8"/>
-  <line x1="245" y1="146" x2="335" y2="50" stroke="#fbc02d" stroke-width="26"/>
-  <line x1="335" y1="50" x2="370" y2="148" stroke="#f9a825" stroke-width="18"/>
-  <circle cx="245" cy="146" r="8" fill="#616161"/>
-  <circle cx="335" cy="50" r="8" fill="#616161"/>
-  <path d="M356 142 L396 150 L392 190 L372 204 L350 196 Q362 172 356 142 Z" fill="#616161"/>
-  <path d="M350 196 l-6 9 l11 -3 Z M362 201 l-4 10 l10 -6 Z M374 203 l1 10 l7 -9 Z" fill="#9e9e9e"/>
-  <rect x="158" y="58" width="84" height="84" rx="14" fill="#fbc02d"/>
-  ${cabWindow(170, 70, 60, 56)}`,
+  ${crawler(24, 198, 238, 52)}
+  <rect x="96" y="186" width="120" height="14" fill="#424242"/>
+  <path d="M92 122 V108 H164 V122" fill="none" stroke="#616161" stroke-width="4"/>
+  <rect x="106" y="104" width="8" height="26" rx="2" fill="#616161"/>
+  <rect x="80" y="124" width="96" height="24" rx="6" fill="#fbc02d"/>
+  <rect x="40" y="142" width="222" height="50" rx="8" fill="#fbc02d"/>
+  <g stroke="#f9a825" stroke-width="4"><line x1="100" y1="154" x2="100" y2="180"/><line x1="114" y1="154" x2="114" y2="180"/><line x1="128" y1="154" x2="128" y2="180"/><line x1="142" y1="154" x2="142" y2="180"/></g>
+  <path d="M88 134 V196 H46 Q16 196 16 165 Q16 134 46 134 Z" fill="#f9a825"/>
+  <path d="M226 144 L276 70 L282 50 L296 54 L341 47 A11 11 0 0 1 347 69 L306 86 L246 160 Z" fill="#fbc02d"/>
+  <rect x="254" y="111" width="12" height="10" rx="2" fill="#424242"/>
+  <rect x="264" y="112" width="4" height="8" rx="1" fill="#fff59d"/>
+  ${cylinder(256, 172, 290, 106)}
+  ${cylinder(283, 55, 338, 36)}
+  <line x1="338" y1="36" x2="378" y2="176" stroke="#f9a825" stroke-width="18"/>
+  ${cylinder(353, 44, 383, 150)}
+  <g stroke="#757575" stroke-width="6"><line x1="370" y1="160" x2="383" y2="150"/><line x1="383" y1="150" x2="398" y2="172"/></g>
+  <path d="M370 168 L400 168 Q418 204 390 234 L352 238 Q364 206 370 168 Z" fill="#616161"/>
+  <path d="M356 232 l-14 8 l15 1 Z M370 234 l-13 9 l15 0 Z" fill="#9e9e9e"/>
+  <g fill="#424242"><circle cx="344" cy="58" r="6"/><circle cx="378" cy="176" r="6"/></g>
+  <path d="M174 176 V80 Q174 66 188 65 L238 62 Q248 62 249 72 L254 176 Z" fill="#fbc02d"/>
+  ${cabWindow(182, 72, 60, 62)}
+  <rect x="182" y="142" width="50" height="26" rx="4" fill="#b3e5fc"/>
+  <rect x="236" y="150" width="10" height="4" rx="2" fill="#424242"/>
+  <path d="M225 60 Q225 48 232 48 Q239 48 239 60 Z" fill="#ff9800"/>
+  <rect x="222" y="58" width="20" height="6" rx="2" fill="#424242"/>`,
 };

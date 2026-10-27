@@ -137,10 +137,13 @@ export function wheels(xs: number[], y: number, r: number): string {
     <g fill="#78909c">${nuts.join('')}</g>`;
 }
 
+/** Glass in shadow: the edges of a pane set into the body, or a windscreen seen edge-on. */
+export const GLASS = '#81d4fa';
+
 /** A pane of glass set into the body: shaded along its top and left edges, with a glint in its top-right corner. */
 function glass(x: number, y: number, width: number, height: number, rx = 10): string {
   const right = x + width;
-  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${rx}" fill="#81d4fa"/>
+  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${rx}" fill="${GLASS}"/>
     <rect x="${x + 3}" y="${y + 4}" width="${width - 3}" height="${height - 4}" rx="${rx}" fill="#b3e5fc"/>
     <path d="M${right - 18} ${y + 3} h8 l7 7 v8 Z" fill="#fff" fill-opacity=".7"/>`;
 }
@@ -160,10 +163,15 @@ export function beacon(x: number, y: number): string {
 
 /**
  * The machine a shovel and a pile driver are built on: a crawler, and on it the body that turns, with
- * its counterweight at the back (left), the engine, and a deck at the front for the cab and the
- * attachment. Draw shovelCab() over the attachment's foot.
+ * its counterweight at the back (left), the engine, and a deck at the front where the `attachment`
+ * (an arm and bucket, a leader…) is fixed, its foot hidden behind the cab.
  */
-export function shovelBody(paint: Paint): string {
+export function shovel(paint: Paint, attachment: string): string {
+  return `${shovelBody(paint)}${attachment}${shovelCab(paint)}`;
+}
+
+/** The crawler and the body of shovel(), drawn behind its attachment. */
+function shovelBody(paint: Paint): string {
   const { light, base, dark, deep } = paint;
   return `${crawler(24, 198, 238, 52)}
   <rect x="96" y="186" width="120" height="14" fill="#424242"/>
@@ -182,7 +190,7 @@ export function shovelBody(paint: Paint): string {
 }
 
 /** The cab at the front of shovelBody(), with the face in its door window and a beacon on its roof. */
-export function shovelCab({ light, base, dark }: Paint): string {
+function shovelCab({ light, base, dark }: Paint): string {
   return `<path d="M174 176 V80 Q174 66 188 65 L238 62 Q248 62 249 72 L254 176 Z" fill="${base}"/>
   <path d="M246 72 L251 174" stroke="${dark}" stroke-width="6"/>
   <path d="M177 172 V80 Q177 69 189 68 L238 65" fill="none" stroke="${light}" stroke-width="5"/>
@@ -212,7 +220,7 @@ export function truck({ light, base, dark }: Paint, load: string, stripe: string
     <path d="M399 82 L403 204" stroke="${dark}" stroke-width="6"/>
     <path d="M321 206 A34 34 0 0 1 383 206 Z" fill="#212121"/>
     ${cabWindow(312, 80, 72, 58)}
-    <path d="M390 72 Q398 72 399 80 L402 138 H390 Z" fill="#81d4fa"/>
+    <path d="M390 72 Q398 72 399 80 L402 138 H390 Z" fill="${GLASS}"/>
     <rect x="314" y="146" width="14" height="5" rx="2" fill="#424242"/>
     <path d="M402 92 Q414 92 414 84" fill="none" stroke="#424242" stroke-width="3"/>
     <rect x="409" y="60" width="9" height="26" rx="3" fill="#424242"/>

@@ -2,6 +2,7 @@ import { bar, beacon, cabWindow, crawler, cylinder, louvers, YELLOW } from './pa
 import type { Vehicle } from './types';
 
 const { light, base, dark } = YELLOW;
+const grille = [132, 144, 156, 168, 180].map((y) => `<line x1="329" y1="${y}" x2="339" y2="${y}"/>`).join('');
 
 export const bulldozer: Vehicle = {
   name: 'ぶるどーざー',
@@ -26,7 +27,7 @@ export const bulldozer: Vehicle = {
   <rect x="202" y="184" width="132" height="12" fill="${dark}"/>
   ${louvers([226, 240, 254, 268, 282], 144, 172, YELLOW)}
   <rect x="326" y="120" width="16" height="76" rx="3" fill="#424242"/>
-  <g stroke="#757575" stroke-width="3"><line x1="329" y1="132" x2="339" y2="132"/><line x1="329" y1="144" x2="339" y2="144"/><line x1="329" y1="156" x2="339" y2="156"/><line x1="329" y1="168" x2="339" y2="168"/><line x1="329" y1="180" x2="339" y2="180"/></g>
+  <g stroke="#757575" stroke-width="3">${grille}</g>
   <path d="M96 146 V62 Q96 50 108 50 H186 Q198 50 198 62 V146 Z" fill="${base}"/>
   <path d="M195 62 V142" stroke="${dark}" stroke-width="6"/>
   <path d="M99 142 V64 Q99 53 110 53 H184" fill="none" stroke="${light}" stroke-width="5"/>

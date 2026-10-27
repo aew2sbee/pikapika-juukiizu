@@ -1,4 +1,4 @@
-import { bar, beacon, cabWindow, cylinder, RED, round, WHITE, wheels } from './parts';
+import { bar, beacon, cabWindow, cylinder, GLASS, RED, round, WHITE, wheels, YELLOW } from './parts';
 import type { Vehicle } from './types';
 
 const { light, base, dark, deep } = WHITE;
@@ -58,20 +58,20 @@ export const crane: Vehicle = {
   ${section(110, 180, 24)}
   ${section(-6, 120, 30)}
   <circle cx="${FOOT_X}" cy="${FOOT_Y}" r="8" fill="#424242"/>
-  <path d="M${along(258, -12)} L${along(272, -12)} L${along(272, 12)} L${along(258, 12)} Z" fill="${RED.base}"/>
+  <path d="M${along(258)} L${along(272)}" stroke="${RED.base}" stroke-width="24" stroke-linecap="butt"/>
   <line x1="393" y1="16" x2="393" y2="100" stroke="#424242" stroke-width="2"/>
   <circle cx="383" cy="15.8" r="10" fill="#616161"/>
   <circle cx="381.5" cy="14.3" r="6" fill="#9e9e9e"/>
   <circle cx="383" cy="15.8" r="3" fill="#424242"/>
-  <rect x="382" y="98" width="22" height="30" rx="4" fill="#fbc02d"/>
+  <rect x="382" y="98" width="22" height="30" rx="4" fill="${YELLOW.base}"/>
   <path d="M382 110 L394 98 H400 L382 116 Z M386 128 L404 110 V116 L392 128 Z" fill="#424242"/>
-  <rect x="382" y="98" width="22" height="4" rx="2" fill="#ffe082"/>
+  <rect x="382" y="98" width="22" height="4" rx="2" fill="${YELLOW.light}"/>
   <path d="M393 128 V136 Q393 148 383 148 Q375 148 375 140" fill="none" stroke="#616161" stroke-width="5"/>
   <path d="M236 170 V104 Q236 92 248 92 H290 Q298 92 302 100 L314 158 V170 Z" fill="${base}"/>
   <path d="M239 166 V104 Q239 95 248 95 H288" fill="none" stroke="${light}" stroke-width="4"/>
   <path d="M236 167 H314" stroke="${dark}" stroke-width="6"/>
   ${cabWindow(244, 102, 56, 56)}
-  <path d="M302 100 L314 158 H306 L298 108 Z" fill="#81d4fa"/>
+  <path d="M302 100 L314 158 H306 L298 108 Z" fill="${GLASS}"/>
   ${beacon(258, 92)}
   ${outrigger(50)}
   ${outrigger(360)}

@@ -10,6 +10,12 @@ type Shades = Omit<Paint, 'deep'>;
 const seams = (dx: number) =>
   Array.from({ length: 11 }, (_, i) => `<line x1="${100 + i * 140 + dx}" y1="40" x2="${100 + i * 140 + dx}" y2="516"/>`).join('');
 
+/** A post of the shutter's frame at x, lit along its left edge and shaded along its right. */
+const doorPost = (x: number) => `
+  <rect x="${x}" y="128" width="16" height="512" fill="#78909c"/>
+  <rect x="${x}" y="128" width="4" height="512" fill="#b0bec5"/>
+  <rect x="${x + 12}" y="128" width="4" height="512" fill="#546e7a"/>`;
+
 /** A lamp hanging from the beam at x, with the glow it casts on the wall. */
 const lamp = (x: number) => `
   <line x1="${x}" y1="40" x2="${x}" y2="86" stroke="#455a64" stroke-width="4"/>
@@ -106,9 +112,7 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   <rect x="494" y="610" width="612" height="5" fill="#cfd8dc"/>
   <rect x="770" y="590" width="60" height="14" rx="7" fill="#546e7a"/>
   <rect x="774" y="592" width="52" height="4" rx="2" fill="#90a4ae"/>
-  <g fill="#78909c"><rect x="478" y="128" width="16" height="512"/><rect x="1106" y="128" width="16" height="512"/></g>
-  <g fill="#b0bec5"><rect x="478" y="128" width="4" height="512"/><rect x="1106" y="128" width="4" height="512"/></g>
-  <g fill="#546e7a"><rect x="490" y="128" width="4" height="512"/><rect x="1118" y="128" width="4" height="512"/></g>
+  ${doorPost(478)}${doorPost(1106)}
   <rect x="450" y="76" width="700" height="52" rx="6" fill="#90a4ae"/>
   <rect x="450" y="76" width="700" height="9" rx="4" fill="#b0bec5"/>
   <rect x="450" y="120" width="700" height="8" rx="3" fill="#607d8b"/>
@@ -147,8 +151,7 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   <rect x="1180" y="510" width="16" height="18" rx="3" fill="#37474f"/>
   <path d="M1196 516 Q1220 520 1214 566" fill="none" stroke="#212121" stroke-width="5"/>
 
-  <g fill="#6d4c41"><rect x="1240" y="220" width="12" height="420"/><rect x="1508" y="220" width="12" height="420"/></g>
-  <g fill="#8d6e63"><rect x="1240" y="220" width="3" height="420"/><rect x="1508" y="220" width="3" height="420"/></g>
+  ${[1240, 1508].map((x) => `<rect x="${x}" y="220" width="12" height="420" fill="#6d4c41"/><rect x="${x}" y="220" width="3" height="420" fill="#8d6e63"/>`).join('')}
   ${shelf(320)}${shelf(450)}${shelf(580)}
   ${can(1270, 316, 50, 54, { light: '#ef9a9a', base: '#e53935', dark: '#b71c1c' })}
   ${can(1340, 316, 40, 40, { light: '#a5d6a7', base: '#43a047', dark: '#1b5e20' })}
@@ -169,11 +172,11 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   <rect y="644" width="1600" height="10" fill="#000" opacity="0.12"/>
   <rect y="620" width="1600" height="8" fill="#cfc9be"/>
   <rect y="628" width="1600" height="16" fill="url(#hazard)"/>
-  <g opacity="0.55">
+  <g fill-opacity="0.55">
     <ellipse cx="330" cy="905" rx="130" ry="20" fill="#cfe3ec"/>
     <ellipse cx="1290" cy="870" rx="90" ry="14" fill="#cfe3ec"/>
   </g>
-  <g fill="#fff" opacity="0.7">
+  <g fill="#fff" fill-opacity="0.7">
     <ellipse cx="290" cy="900" rx="40" ry="4"/>
     <ellipse cx="1265" cy="866" rx="26" ry="3"/>
   </g>
@@ -187,8 +190,7 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   <rect x="1370" y="562" width="120" height="148" rx="10" fill="#c62828"/>
   <rect x="1378" y="568" width="14" height="136" rx="7" fill="#e57373"/>
   <rect x="1464" y="568" width="20" height="136" rx="8" fill="#8e0000"/>
-  <g fill="#b71c1c"><rect x="1370" y="600" width="120" height="10"/><rect x="1370" y="662" width="120" height="10"/></g>
-  <g fill="#ef9a9a"><rect x="1370" y="600" width="120" height="3"/><rect x="1370" y="662" width="120" height="3"/></g>
+  ${[600, 662].map((y) => `<rect x="1370" y="${y}" width="120" height="10" fill="#b71c1c"/><rect x="1370" y="${y}" width="120" height="3" fill="#ef9a9a"/>`).join('')}
   <ellipse cx="1430" cy="562" rx="60" ry="12" fill="#b71c1c"/>
   <ellipse cx="1430" cy="561" rx="54" ry="9" fill="#e53935"/>
   <ellipse cx="1452" cy="560" rx="7" ry="3" fill="#7f0000"/>

@@ -22,52 +22,53 @@
       </g>
       <path data-moods="fussy" d="M${e-10} ${t+10} q2.5 -4 5 0 q2.5 4 5 0 q2.5 -4 5 0 q2.5 4 5 0" fill="none" stroke="#3e2723" stroke-width="2.5"/>
       <ellipse data-moods="sleepy" cx="${e}" cy="${t+9}" rx="3.5" ry="4.5" fill="#3e2723"/>
-    </g>`}var S={light:`#ffe082`,base:`#fbc02d`,dark:`#f9a825`,deep:`#f57f17`},C={light:`#ffcc80`,base:`#fb8c00`,dark:`#ef6c00`,deep:`#e65100`},w={light:`#ffffff`,base:`#eceff1`,dark:`#b0bec5`,deep:`#90a4ae`},ne={light:`#64b5f6`,base:`#1e88e5`,dark:`#1565c0`,deep:`#0d47a1`};function T(e){return Math.round(e*10)/10}function E(e,t,n){return e.map(e=>`<circle cx="${e}" cy="${t}" r="${n}"/>`).join(``)}function D(e,t,n,r){let i=r/2,[a,o]=[e+i,e+n-i],s=e=>Array.from({length:e},(t,n)=>a+(o-a)*(n+1)/(e+1)),c=s(Math.round((o-a)/40));return`<rect x="${e}" y="${t}" width="${n}" height="${r}" rx="${i}" fill="#424242" stroke="#424242" stroke-width="6" stroke-dasharray="6 4" stroke-linecap="butt"/>
+    </g>`}var S={light:`#ffe082`,base:`#fbc02d`,dark:`#f9a825`,deep:`#f57f17`},C={light:`#ffcc80`,base:`#fb8c00`,dark:`#ef6c00`,deep:`#e65100`},w={light:`#ffffff`,base:`#eceff1`,dark:`#b0bec5`,deep:`#90a4ae`},ne={light:`#64b5f6`,base:`#1e88e5`,dark:`#1565c0`,deep:`#0d47a1`},T={light:`#ef9a9a`,base:`#e53935`,dark:`#c62828`,deep:`#b71c1c`};function E(e){return Math.round(e*10)/10}function D(e,t,n){return e.map(e=>`<circle cx="${e}" cy="${t}" r="${n}"/>`).join(``)}function O(e,t,n,r){let i=r/2,[a,o]=[e+i,e+n-i],s=e=>Array.from({length:e},(t,n)=>a+(o-a)*(n+1)/(e+1)),c=s(Math.round((o-a)/40));return`<rect x="${e}" y="${t}" width="${n}" height="${r}" rx="${i}" fill="#424242" stroke="#424242" stroke-width="6" stroke-dasharray="6 4" stroke-linecap="butt"/>
     <rect x="${e+4}" y="${t+4}" width="${n-8}" height="${r-8}" rx="${i-4}" fill="none" stroke="#212121" stroke-width="8" stroke-dasharray="2 9" stroke-linecap="butt"/>
     <rect x="${e+8}" y="${t+8}" width="${n-16}" height="${r-16}" rx="${i-8}" fill="#616161"/>
     <rect x="${a}" y="${t+8}" width="${o-a}" height="7" fill="#4e4e4e"/>
-    <g fill="#757575">${E(c,t+r-15,7)}</g>
-    <g fill="#bdbdbd">${E(c.map(e=>e-1),t+r-16,4.5)}</g>
-    <g fill="#9e9e9e">${E(s(2),t+13,4)}</g>
+    <g fill="#757575">${D(c,t+r-15,7)}</g>
+    <g fill="#bdbdbd">${D(c.map(e=>e-1),t+r-16,4.5)}</g>
+    <g fill="#9e9e9e">${D(s(2),t+13,4)}</g>
     <circle cx="${a}" cy="${t+i}" r="${i-11}" fill="#757575" stroke="#757575" stroke-width="6" stroke-dasharray="4 3.5" stroke-linecap="butt"/>
     <circle cx="${o}" cy="${t+i}" r="${i-10}" fill="#757575"/>
-    <g fill="#9e9e9e">${E([a-1.5,o-1.5],t+i-1.5,i-15)}</g>
-    <g fill="#e0e0e0">${E([a,o],t+i,6)}</g>
-    <g fill="#757575">${E([a,o],t+i,2.5)}</g>`}function O(e,t,n,r,i=12){let[a,o]=[T(e+(n-e)*.6),T(t+(r-t)*.6)],s=(n>=e?1:-1)/Math.hypot(n-e,r-t),[c,l]=[(r-t)*s,(e-n)*s],u=(e,t,n)=>`${T(e+c*n)} ${T(t+l*n)}`;return`<line x1="${e}" y1="${t}" x2="${n}" y2="${r}" stroke="#bdbdbd" stroke-width="${i/2}"/>
-    <path d="M${u(a,o,i/8)} L${u(n,r,i/8)}" stroke="#fff" stroke-width="${i/6}"/>
+    <g fill="#9e9e9e">${D([a-1.5,o-1.5],t+i-1.5,i-15)}</g>
+    <g fill="#e0e0e0">${D([a,o],t+i,6)}</g>
+    <g fill="#757575">${D([a,o],t+i,2.5)}</g>`}function k(e,t,n,r){let i=Math.hypot(n-e,r-t),[a,o]=[(r-t)/i,(e-n)/i];return a+o<=0?[a,o]:[-a,-o]}function A(e,t,n,r,i,a,o){let[s,c]=k(e,t,n,r);return`<path d="M${E(e+s*i)} ${E(t+c*i)} L${E(n+s*i)} ${E(r+c*i)}" stroke="${a}" stroke-width="${E(o)}"/>`}function j(e,t,n,r,i,{light:a,base:o,dark:s}){let[c,l]=[i/5,i/3];return`<line x1="${e}" y1="${t}" x2="${n}" y2="${r}" stroke="${o}" stroke-width="${i}"/>
+    ${A(e,t,n,r,(i-c)/2,a,c)}
+    ${A(e,t,n,r,-(i-l)/2,s,l)}`}function M(e,t,n,{light:r,deep:i}){let a=r=>e.map(e=>`<line x1="${e+r}" y1="${t}" x2="${e+r}" y2="${n}"/>`).join(``);return`<g stroke="${i}" stroke-width="3">${a(0)}</g><g stroke="${r}" stroke-width="2">${a(3)}</g>`}function N(e,t,n,r,i=12){let[a,o]=[E(e+(n-e)*.6),E(t+(r-t)*.6)];return`<line x1="${e}" y1="${t}" x2="${n}" y2="${r}" stroke="#bdbdbd" stroke-width="${i/2}"/>
+    ${A(a,o,n,r,i/8,`#fff`,i/6)}
     <line x1="${e}" y1="${t}" x2="${a}" y2="${o}" stroke="#616161" stroke-width="${i}"/>
-    <path d="M${u(e,t,i/4)} L${u(a,o,i/4)}" stroke="#8d8d8d" stroke-width="${i/4}"/>
-    <g fill="#424242"><circle cx="${e}" cy="${t}" r="${i/3}"/><circle cx="${n}" cy="${r}" r="${i/3}"/></g>`}function k(e,t,n){let r=e.flatMap(e=>Array.from({length:6},(r,i)=>{let a=i*Math.PI/3;return`<circle cx="${T(e+Math.cos(a)*n*.32)}" cy="${T(t+Math.sin(a)*n*.32)}" r="${T(n*.06)}"/>`})),i=e.map(e=>T(e-n*.05));return`<g fill="#263238" stroke="#263238" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="butt">${E(e,t,n-1.5)}</g>
-    <g fill="#37474f">${E(i,T(t-n*.05),T(n*.88))}</g>
-    <g fill="#78909c">${E(e,t,T(n*.55))}</g>
-    <g fill="#cfd8dc">${E(e.map(e=>e-1.5),t-1.5,T(n*.5))}</g>
-    <g fill="#90a4ae">${E(e,t,T(n*.2))}</g>
-    <g fill="#78909c">${r.join(``)}</g>`}function A(e,t,n,r,i=10){let a=e+n;return`<rect x="${e}" y="${t}" width="${n}" height="${r}" rx="${i}" fill="#81d4fa"/>
+    ${A(e,t,a,o,i/4,`#8d8d8d`,i/4)}
+    <g fill="#424242"><circle cx="${e}" cy="${t}" r="${i/3}"/><circle cx="${n}" cy="${r}" r="${i/3}"/></g>`}function P(e,t,n){let r=e.flatMap(e=>Array.from({length:6},(r,i)=>{let a=i*Math.PI/3;return`<circle cx="${E(e+Math.cos(a)*n*.32)}" cy="${E(t+Math.sin(a)*n*.32)}" r="${E(n*.06)}"/>`})),i=e.map(e=>E(e-n*.05));return`<g fill="#263238" stroke="#263238" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="butt">${D(e,t,n-1.5)}</g>
+    <g fill="#37474f">${D(i,E(t-n*.05),E(n*.88))}</g>
+    <g fill="#78909c">${D(e,t,E(n*.55))}</g>
+    <g fill="#cfd8dc">${D(e.map(e=>e-1.5),t-1.5,E(n*.5))}</g>
+    <g fill="#90a4ae">${D(e,t,E(n*.2))}</g>
+    <g fill="#78909c">${r.join(``)}</g>`}function re(e,t,n,r,i=10){let a=e+n;return`<rect x="${e}" y="${t}" width="${n}" height="${r}" rx="${i}" fill="#81d4fa"/>
     <rect x="${e+3}" y="${t+4}" width="${n-3}" height="${r-4}" rx="${i}" fill="#b3e5fc"/>
-    <path d="M${a-18} ${t+3} h8 l7 7 v8 Z" fill="#fff" fill-opacity=".7"/>`}function j(e,t,n,r){return`${A(e,t,n,r)}
-    ${x(e+n/2,t+r/2)}`}function M(e,t){return`<path d="M${e-7} ${t} Q${e-7} ${t-12} ${e} ${t-12} Q${e+7} ${t-12} ${e+7} ${t} Z" fill="#ff9800"/>
+    <path d="M${a-18} ${t+3} h8 l7 7 v8 Z" fill="#fff" fill-opacity=".7"/>`}function F(e,t,n,r){return`${re(e,t,n,r)}
+    ${x(e+n/2,t+r/2)}`}function I(e,t){return`<path d="M${e-7} ${t} Q${e-7} ${t-12} ${e} ${t-12} Q${e+7} ${t-12} ${e+7} ${t} Z" fill="#ff9800"/>
     <ellipse cx="${e-2.5}" cy="${t-7}" rx="2" ry="3" fill="#fff" fill-opacity=".7"/>
-    <rect x="${e-10}" y="${t-2}" width="20" height="6" rx="2" fill="#424242"/>`}function re({light:e,base:t,dark:n,deep:r}){let i=e=>[100,114,128,142].map(t=>`<line x1="${t+e}" y1="154" x2="${t+e}" y2="176"/>`).join(``);return`${D(24,198,238,52)}
+    <rect x="${e-10}" y="${t-2}" width="20" height="6" rx="2" fill="#424242"/>`}function L(e){let{light:t,base:n,dark:r,deep:i}=e;return`${O(24,198,238,52)}
   <rect x="96" y="186" width="120" height="14" fill="#424242"/>
   <path d="M92 122 V108 H164 V122" fill="none" stroke="#616161" stroke-width="4"/>
   <rect x="106" y="102" width="8" height="26" rx="2" fill="#616161"/>
   <line x1="108.5" y1="106" x2="108.5" y2="122" stroke="#9e9e9e" stroke-width="2"/>
-  <rect x="80" y="118" width="96" height="16" rx="5" fill="${e}"/>
-  <rect x="80" y="126" width="96" height="24" rx="4" fill="${t}"/>
-  <rect x="40" y="142" width="222" height="50" rx="8" fill="${t}"/>
-  <path d="M40 182 H262 V184 Q262 192 254 192 H48 Q40 192 40 184 Z" fill="${n}"/>
-  <g stroke="${r}" stroke-width="3">${i(0)}</g>
-  <g stroke="${e}" stroke-width="2">${i(3)}</g>
-  <path d="M88 134 V196 H46 Q16 196 16 165 Q16 134 46 134 Z" fill="${t}"/>
-  <path d="M20 168 Q22 192 46 192 H86" fill="none" stroke="${n}" stroke-width="8"/>
-  <path d="M20 164 Q20 138 46 138 H84" fill="none" stroke="${e}" stroke-width="5"/>
-  <line x1="88" y1="136" x2="88" y2="194" stroke="${r}" stroke-width="3"/>`}function N({light:e,base:t,dark:n}){return`<path d="M174 176 V80 Q174 66 188 65 L238 62 Q248 62 249 72 L254 176 Z" fill="${t}"/>
+  <rect x="80" y="118" width="96" height="16" rx="5" fill="${t}"/>
+  <rect x="80" y="126" width="96" height="24" rx="4" fill="${n}"/>
+  <rect x="40" y="142" width="222" height="50" rx="8" fill="${n}"/>
+  <path d="M40 182 H262 V184 Q262 192 254 192 H48 Q40 192 40 184 Z" fill="${r}"/>
+  ${M([100,114,128,142],154,176,e)}
+  <path d="M88 134 V196 H46 Q16 196 16 165 Q16 134 46 134 Z" fill="${n}"/>
+  <path d="M20 168 Q22 192 46 192 H86" fill="none" stroke="${r}" stroke-width="8"/>
+  <path d="M20 164 Q20 138 46 138 H84" fill="none" stroke="${t}" stroke-width="5"/>
+  <line x1="88" y1="136" x2="88" y2="194" stroke="${i}" stroke-width="3"/>`}function ie({light:e,base:t,dark:n}){return`<path d="M174 176 V80 Q174 66 188 65 L238 62 Q248 62 249 72 L254 176 Z" fill="${t}"/>
   <path d="M246 72 L251 174" stroke="${n}" stroke-width="6"/>
   <path d="M177 172 V80 Q177 69 189 68 L238 65" fill="none" stroke="${e}" stroke-width="5"/>
-  ${j(182,72,60,62)}
-  ${A(182,142,50,26,4)}
+  ${F(182,72,60,62)}
+  ${re(182,142,50,26,4)}
   <rect x="236" y="150" width="10" height="4" rx="2" fill="#424242"/>
-  ${M(232,60)}`}function P({light:e,base:t,dark:n},r,i){return`<path d="M60 224 V200 Q60 186 76 186 H178 Q194 186 194 200 V224 Z" fill="#424242"/>
+  ${I(232,60)}`}function ae({light:e,base:t,dark:n},r,i){return`<path d="M60 224 V200 Q60 186 76 186 H178 Q194 186 194 200 V224 Z" fill="#424242"/>
     <rect x="34" y="188" width="300" height="16" fill="#424242"/>
     <rect x="30" y="190" width="8" height="12" rx="2" fill="#e53935"/>
     ${r}
@@ -77,11 +78,11 @@
     <g stroke="#78909c" stroke-width="3"><line x1="226" y1="190" x2="226" y2="220"/><line x1="258" y1="190" x2="258" y2="220"/></g>
     <rect x="302" y="196" width="16" height="6" rx="2" fill="#424242"/>
     <path d="M300 206 V80 Q300 66 314 66 H386 Q400 66 402 80 L406 206 H383 A34 34 0 0 0 321 206 Z" fill="${t}"/>
-    ${i?`<rect x="300" y="158" width="105" height="10" fill="${i}"/>`:``}
+    <rect x="300" y="158" width="105" height="10" fill="${i}"/>
     <path d="M303 200 V82 Q303 70 315 70 H384" fill="none" stroke="${e}" stroke-width="5"/>
     <path d="M399 82 L403 204" stroke="${n}" stroke-width="6"/>
     <path d="M321 206 A34 34 0 0 1 383 206 Z" fill="#212121"/>
-    ${j(312,80,72,58)}
+    ${F(312,80,72,58)}
     <path d="M390 72 Q398 72 399 80 L402 138 H390 Z" fill="#81d4fa"/>
     <rect x="314" y="146" width="14" height="5" rx="2" fill="#424242"/>
     <path d="M402 92 Q414 92 414 84" fill="none" stroke="#424242" stroke-width="3"/>
@@ -89,67 +90,65 @@
     <rect x="386" y="196" width="28" height="20" rx="4" fill="#9e9e9e"/>
     <rect x="386" y="196" width="28" height="5" rx="2" fill="#e0e0e0"/>
     <rect x="404" y="203" width="8" height="7" rx="2" fill="#fff59d"/>
-    ${k([96,158,352],220,28)}`}var{light:F,base:I,dark:L,deep:ie}=S,ae=e=>[226,240,254,268,282].map(t=>`<line x1="${t+e}" y1="144" x2="${t+e}" y2="172"/>`).join(``),oe={name:`ぶるどーざー`,width:420,height:260,shapes:`
+    ${P([96,158,352],220,28)}`}var{light:oe,base:R,dark:z}=S,se={name:`ぶるどーざー`,width:420,height:260,shapes:`
   <rect x="52" y="148" width="16" height="42" rx="3" fill="#616161"/>
   <g stroke="#757575" stroke-width="7"><line x1="58" y1="154" x2="38" y2="148"/><line x1="58" y1="184" x2="36" y2="176"/></g>
   <path d="M44 140 L28 140 L18 222 L26 238 L34 230 L36 170 L44 170 Z" fill="#616161"/>
   <path d="M28 146 L20 220" stroke="#9e9e9e" stroke-width="3"/>
   <path d="M18 222 L26 238 L30 228 Z" fill="#bdbdbd"/>
-  ${D(50,196,272,54)}
-  <rect x="62" y="140" width="146" height="56" rx="8" fill="${I}"/>
-  <path d="M62 186 H208 V188 Q208 196 200 196 H70 Q62 196 62 188 Z" fill="${L}"/>
+  ${O(50,196,272,54)}
+  <rect x="62" y="140" width="146" height="56" rx="8" fill="${R}"/>
+  <path d="M62 186 H208 V188 Q208 196 200 196 H70 Q62 196 62 188 Z" fill="${z}"/>
   <rect x="276" y="88" width="10" height="34" rx="2" fill="#616161"/>
   <line x1="278.5" y1="92" x2="278.5" y2="118" stroke="#9e9e9e" stroke-width="2"/>
   <path d="M274 90 L276 82 H292 L290 90 Z" fill="#424242"/>
   <rect x="234" y="100" width="16" height="22" rx="3" fill="#424242"/>
   <rect x="231" y="96" width="22" height="7" rx="3" fill="#616161"/>
-  <rect x="202" y="116" width="132" height="16" rx="5" fill="${F}"/>
-  <rect x="202" y="124" width="132" height="72" rx="4" fill="${I}"/>
-  <rect x="202" y="184" width="132" height="12" fill="${L}"/>
-  <g stroke="${ie}" stroke-width="3">${ae(0)}</g>
-  <g stroke="${F}" stroke-width="2">${ae(3)}</g>
+  <rect x="202" y="116" width="132" height="16" rx="5" fill="${oe}"/>
+  <rect x="202" y="124" width="132" height="72" rx="4" fill="${R}"/>
+  <rect x="202" y="184" width="132" height="12" fill="${z}"/>
+  ${M([226,240,254,268,282],144,172,S)}
   <rect x="326" y="120" width="16" height="76" rx="3" fill="#424242"/>
   <g stroke="#757575" stroke-width="3"><line x1="329" y1="132" x2="339" y2="132"/><line x1="329" y1="144" x2="339" y2="144"/><line x1="329" y1="156" x2="339" y2="156"/><line x1="329" y1="168" x2="339" y2="168"/><line x1="329" y1="180" x2="339" y2="180"/></g>
-  <path d="M96 146 V62 Q96 50 108 50 H186 Q198 50 198 62 V146 Z" fill="${I}"/>
-  <path d="M195 62 V142" stroke="${L}" stroke-width="6"/>
-  <path d="M99 142 V64 Q99 53 110 53 H184" fill="none" stroke="${F}" stroke-width="5"/>
-  ${j(108,62,78,66)}
-  ${M(178,50)}
-  <line x1="196" y1="224" x2="360" y2="238" stroke="${I}" stroke-width="14"/>
-  <line x1="196" y1="219" x2="360" y2="233" stroke="${F}" stroke-width="3"/>
-  <line x1="196" y1="229" x2="360" y2="243" stroke="${L}" stroke-width="4"/>
+  <path d="M96 146 V62 Q96 50 108 50 H186 Q198 50 198 62 V146 Z" fill="${R}"/>
+  <path d="M195 62 V142" stroke="${z}" stroke-width="6"/>
+  <path d="M99 142 V64 Q99 53 110 53 H184" fill="none" stroke="${oe}" stroke-width="5"/>
+  ${F(108,62,78,66)}
+  ${I(178,50)}
+  ${j(196,224,360,238,14,S)}
   <circle cx="196" cy="224" r="6" fill="#424242"/>
   <line x1="330" y1="234" x2="356" y2="192" stroke="#757575" stroke-width="6"/>
-  ${O(306,132,360,158)}
-  <path d="M354 116 L384 106 Q394 106 390 116 Q370 176 394 242 L394 250 L358 250 Z" fill="${I}"/>
-  <path d="M358 118 L361 240" stroke="${F}" stroke-width="4"/>
-  <path d="M385 118 Q366 176 388 238" fill="none" stroke="${L}" stroke-width="8"/>
+  ${N(306,132,360,158)}
+  <path d="M354 116 L384 106 Q394 106 390 116 Q370 176 394 242 L394 250 L358 250 Z" fill="${R}"/>
+  <path d="M358 118 L361 240" stroke="${oe}" stroke-width="4"/>
+  <path d="M385 118 Q366 176 388 238" fill="none" stroke="${z}" stroke-width="8"/>
   <path d="M356 240 H394 V250 H358 Z" fill="#616161"/>
-  <line x1="358" y1="242" x2="392" y2="242" stroke="#9e9e9e" stroke-width="2"/>`},{light:R,base:z,dark:B,deep:se}=w,V=`#e53935`,[ce,le]=[140,124],ue=24*Math.PI/180,[de,fe]=[Math.cos(ue),-Math.sin(ue)];function H(e,t=0){return`${T(ce+de*e-fe*t)} ${T(le+fe*e+de*t)}`}function U(e,t,n){let r=(n,r,i,a=e)=>`<path d="M${H(a,n)} L${H(t,n)}" stroke="${r}" stroke-width="${i}" stroke-linecap="butt"/>`;return`${r(0,z,n)}${r(-n/2+1.5,R,3)}${r(n/2-2.5,B,5)}${r(0,se,n+2,t-5)}`}function pe(e){return`${O(e,186,e,236,14)}
+  <line x1="358" y1="242" x2="392" y2="242" stroke="#9e9e9e" stroke-width="2"/>`},{light:B,base:ce,dark:le,deep:ue}=w,[de,fe]=[140,124],pe=24*Math.PI/180,[me,he]=[Math.cos(pe),-Math.sin(pe)];function ge(e,t=0){return[E(de+me*e-he*t),E(fe+he*e+me*t)]}function V(e,t=0){return ge(e,t).join(` `)}function H(e,t,n){return`<g stroke-linecap="butt">${j(...ge(e),...ge(t),n,w)}
+    <path d="M${V(t-5)} L${V(t)}" stroke="${ue}" stroke-width="${n+2}"/></g>`}function _e(e){return`${N(e,186,e,236,14)}
   <rect x="${e-16}" y="236" width="32" height="10" rx="2" fill="#757575"/>
   <rect x="${e-16}" y="236" width="32" height="3" rx="1.5" fill="#bdbdbd"/>
-  <rect x="${e-12}" y="170" width="24" height="20" rx="3" fill="${V}"/>
-  <rect x="${e-12}" y="170" width="24" height="5" rx="2" fill="#ef9a9a"/>`}var me={name:`くれーんしゃ`,width:420,height:260,shapes:`
-  <path d="M40 172 Q40 164 48 164 H362 Q370 164 370 172 V202 H334 A38 38 0 0 0 258 202 H138 A38 38 0 0 0 62 202 H40 Z" fill="${z}"/>
-  <path d="M43 200 V172 Q43 167 48 167 H362" fill="none" stroke="${R}" stroke-width="4"/>
-  <path d="M40 199 H62 M138 199 H258 M334 199 H370" stroke="${B}" stroke-width="6" stroke-linecap="butt"/>
-  <rect x="40" y="180" width="330" height="7" fill="${V}"/>
+  <rect x="${e-12}" y="170" width="24" height="20" rx="3" fill="${T.base}"/>
+  <rect x="${e-12}" y="170" width="24" height="5" rx="2" fill="${T.light}"/>`}var ve={name:`くれーんしゃ`,width:420,height:260,shapes:`
+  <path d="M40 172 Q40 164 48 164 H362 Q370 164 370 172 V202 H334 A38 38 0 0 0 258 202 H138 A38 38 0 0 0 62 202 H40 Z" fill="${ce}"/>
+  <path d="M43 200 V172 Q43 167 48 167 H362" fill="none" stroke="${B}" stroke-width="4"/>
+  <path d="M40 199 H62 M138 199 H258 M334 199 H370" stroke="${le}" stroke-width="6" stroke-linecap="butt"/>
+  <rect x="40" y="180" width="330" height="7" fill="${T.base}"/>
   <g fill="#212121"><path d="M62 202 A38 38 0 0 1 138 202 Z"/><path d="M258 202 A38 38 0 0 1 334 202 Z"/></g>
   <rect x="364" y="170" width="8" height="10" rx="2" fill="#fff59d"/>
   <rect x="130" y="156" width="120" height="10" fill="#424242"/>
-  <rect x="112" y="132" width="140" height="30" rx="6" fill="${z}"/>
-  <path d="M115 159 V138 Q115 135 118 135 H248" fill="none" stroke="${R}" stroke-width="4"/>
-  <rect x="112" y="154" width="140" height="8" fill="${B}"/>
-  <path d="M152 118 V164 H120 Q100 164 100 144 V138 Q100 118 120 118 Z" fill="${V}"/>
-  <path d="M104 146 V138 Q104 122 120 122 H150" fill="none" stroke="#ef9a9a" stroke-width="4"/>
-  <path d="M104 150 Q106 160 120 160 H150" fill="none" stroke="#c62828" stroke-width="6"/>
-  ${O(204,160,234,99,16)}
-  ${U(214,262,15)}
-  ${U(170,224,19)}
-  ${U(110,180,24)}
-  ${U(-6,120,30)}
-  <circle cx="${ce}" cy="${le}" r="8" fill="#424242"/>
-  <path d="M${H(258,-12)} L${H(272,-12)} L${H(272,12)} L${H(258,12)} Z" fill="${V}"/>
+  <rect x="112" y="132" width="140" height="30" rx="6" fill="${ce}"/>
+  <path d="M115 159 V138 Q115 135 118 135 H248" fill="none" stroke="${B}" stroke-width="4"/>
+  <rect x="112" y="154" width="140" height="8" fill="${le}"/>
+  <path d="M152 118 V164 H120 Q100 164 100 144 V138 Q100 118 120 118 Z" fill="${T.base}"/>
+  <path d="M104 146 V138 Q104 122 120 122 H150" fill="none" stroke="${T.light}" stroke-width="4"/>
+  <path d="M104 150 Q106 160 120 160 H150" fill="none" stroke="${T.dark}" stroke-width="6"/>
+  ${N(204,160,234,99,16)}
+  ${H(214,262,15)}
+  ${H(170,224,19)}
+  ${H(110,180,24)}
+  ${H(-6,120,30)}
+  <circle cx="${de}" cy="${fe}" r="8" fill="#424242"/>
+  <path d="M${V(258,-12)} L${V(272,-12)} L${V(272,12)} L${V(258,12)} Z" fill="${T.base}"/>
   <line x1="393" y1="16" x2="393" y2="100" stroke="#424242" stroke-width="2"/>
   <circle cx="383" cy="15.8" r="10" fill="#616161"/>
   <circle cx="381.5" cy="14.3" r="6" fill="#9e9e9e"/>
@@ -158,36 +157,34 @@
   <path d="M382 110 L394 98 H400 L382 116 Z M386 128 L404 110 V116 L392 128 Z" fill="#424242"/>
   <rect x="382" y="98" width="22" height="4" rx="2" fill="#ffe082"/>
   <path d="M393 128 V136 Q393 148 383 148 Q375 148 375 140" fill="none" stroke="#616161" stroke-width="5"/>
-  <path d="M236 170 V104 Q236 92 248 92 H290 Q298 92 302 100 L314 158 V170 Z" fill="${z}"/>
-  <path d="M239 166 V104 Q239 95 248 95 H288" fill="none" stroke="${R}" stroke-width="4"/>
-  <path d="M236 167 H314" stroke="${B}" stroke-width="6"/>
-  ${j(244,102,56,56)}
+  <path d="M236 170 V104 Q236 92 248 92 H290 Q298 92 302 100 L314 158 V170 Z" fill="${ce}"/>
+  <path d="M239 166 V104 Q239 95 248 95 H288" fill="none" stroke="${B}" stroke-width="4"/>
+  <path d="M236 167 H314" stroke="${le}" stroke-width="6"/>
+  ${F(244,102,56,56)}
   <path d="M302 100 L314 158 H306 L298 108 Z" fill="#81d4fa"/>
-  ${M(258,92)}
-  ${pe(50)}
-  ${pe(360)}
-  ${k([100,296],214,34)}`},he=e=>[70,118,166,214].map(t=>`<rect x="${t}" y="108" width="${e}" height="68"/>`).join(``),ge={name:`だんぷとらっく`,width:420,height:260,shapes:P(w,`
+  ${I(258,92)}
+  ${_e(50)}
+  ${_e(360)}
+  ${P([100,296],214,34)}`},ye=`#43a047`,be=e=>[70,118,166,214].map(t=>`<rect x="${t}" y="108" width="${e}" height="68"/>`).join(``),xe={name:`だんぷとらっく`,width:420,height:260,shapes:ae(w,`
     <path d="M272 56 H318 V64 H292 V190 H272 Z" fill="#90a4ae"/>
     <path d="M275 59.5 H316 M275.5 60 V188" fill="none" stroke="#cfd8dc" stroke-width="3"/>
     <rect x="36" y="98" width="240" height="90" rx="4" fill="#b0bec5"/>
     <rect x="36" y="98" width="240" height="10" rx="3" fill="#cfd8dc"/>
     <rect x="36" y="176" width="240" height="12" fill="#90a4ae"/>
-    <g fill="#90a4ae">${he(8)}</g>
-    <g fill="#cfd8dc">${he(2)}</g>
+    <g fill="#90a4ae">${be(8)}</g>
+    <g fill="#cfd8dc">${be(2)}</g>
     <rect x="30" y="96" width="10" height="94" rx="3" fill="#78909c"/>
-    <rect x="40" y="188" width="236" height="6" fill="#607d8b"/>`,`#43a047`)},{light:_e,base:ve,dark:ye}=S,be={name:`しょべるかー`,width:420,height:260,shapes:`
-  ${re(S)}
-  <path d="M226 144 L276 70 L282 50 L296 54 L341 47 A11 11 0 0 1 347 69 L306 86 L246 160 Z" fill="${ve}"/>
-  <path d="M345 65 L304 83 L243 157" fill="none" stroke="${ye}" stroke-width="8"/>
-  <path d="M228 145 L278 71 M296 56 L340 50" fill="none" stroke="${_e}" stroke-width="5"/>
+    <rect x="40" y="188" width="236" height="6" fill="#607d8b"/>`,ye)},{light:Se,base:Ce,dark:we}=S,Te={name:`しょべるかー`,width:420,height:260,shapes:`
+  ${L(S)}
+  <path d="M226 144 L276 70 L282 50 L296 54 L341 47 A11 11 0 0 1 347 69 L306 86 L246 160 Z" fill="${Ce}"/>
+  <path d="M345 65 L304 83 L243 157" fill="none" stroke="${we}" stroke-width="8"/>
+  <path d="M228 145 L278 71 M296 56 L340 50" fill="none" stroke="${Se}" stroke-width="5"/>
   <rect x="254" y="111" width="12" height="10" rx="2" fill="#424242"/>
   <rect x="264" y="112" width="4" height="8" rx="1" fill="#fff59d"/>
-  ${O(256,172,290,106)}
-  ${O(283,55,338,36)}
-  <line x1="338" y1="36" x2="378" y2="176" stroke="${ve}" stroke-width="18"/>
-  <line x1="342.8" y1="34.6" x2="382.8" y2="174.6" stroke="${ye}" stroke-width="8"/>
-  <line x1="331.8" y1="37.8" x2="371.8" y2="177.8" stroke="${_e}" stroke-width="4"/>
-  ${O(353,44,383,150)}
+  ${N(256,172,290,106)}
+  ${N(283,55,338,36)}
+  ${j(338,36,378,176,18,S)}
+  ${N(353,44,383,150)}
   <g stroke="#757575" stroke-width="6"><line x1="370" y1="160" x2="383" y2="150"/><line x1="383" y1="150" x2="398" y2="172"/></g>
   <path d="M370 168 L400 168 Q418 204 390 234 L352 238 Q364 206 370 168 Z" fill="#616161"/>
   <path d="M375 173 L396 173 Q410 204 387 228 L362 232 Q371 206 375 173 Z" fill="#757575"/>
@@ -195,7 +192,7 @@
   <path d="M356 232 l-14 8 l15 1 Z M370 234 l-13 9 l15 0 Z" fill="#bdbdbd"/>
   <g fill="#424242"><circle cx="344" cy="58" r="6"/><circle cx="378" cy="176" r="6"/></g>
   <g fill="#757575"><circle cx="342.5" cy="56.5" r="2.5"/><circle cx="376.5" cy="174.5" r="2.5"/></g>
-  ${N(S)}`},xe={name:`みきさーしゃ`,width:420,height:260,shapes:P(ne,`
+  ${ie(S)}`},Ee={name:`みきさーしゃ`,width:420,height:260,shapes:ae(ne,`
     <g stroke="#757575" stroke-width="3"><line x1="26" y1="60" x2="26" y2="190"/><line x1="38" y1="60" x2="38" y2="190"/>${[72,88,104,120,136,152,168,184].map(e=>`<line x1="26" y1="${e}" x2="38" y2="${e}"/>`).join(``)}</g>
     <g fill="#616161"><rect x="70" y="120" width="20" height="70"/><rect x="250" y="130" width="20" height="60"/></g>
     <rect x="282" y="64" width="16" height="124" rx="6" fill="#cfd8dc"/>
@@ -213,28 +210,28 @@
     <path d="M30 20 H80 L78 25 H32 Z" fill="#cfd8dc"/>
     <rect x="48" y="42" width="14" height="12" fill="#78909c"/>
     <path d="M46 84 L22 132" stroke="#78909c" stroke-width="10"/>
-    <path d="M43 84 L19 130" stroke="#b0bec5" stroke-width="3"/>`,`#fff`)},{light:Se,base:Ce,dark:we,deep:Te}=C,Ee=[34,70,106,142,178,214].map(e=>`<rect x="305" y="${e}" width="12" height="10" rx="2"/>`).join(``),De=[92,106,120,134,148,162,176,190,204,218,232].map(e=>`M328 ${e} L356 ${e+8}`).join(` `),W=[be,oe,ge,xe,me,{name:`ぱいるどらいばー`,width:420,height:260,shapes:`
-  ${re(C)}
-  ${O(112,124,302,52,10)}
-  <rect x="250" y="150" width="54" height="24" rx="4" fill="${Ce}"/>
-  <rect x="250" y="150" width="54" height="5" rx="2" fill="${Se}"/>
-  <rect x="250" y="168" width="54" height="6" rx="2" fill="${we}"/>
-  <rect x="300" y="10" width="24" height="232" rx="3" fill="${Ce}"/>
-  <rect x="302" y="12" width="4" height="228" rx="2" fill="${Se}"/>
-  <rect x="318" y="12" width="6" height="228" fill="${we}"/>
-  <g fill="${Te}">${Ee}</g>
+    <path d="M43 84 L19 130" stroke="#b0bec5" stroke-width="3"/>`,`#fff`)},{light:De,base:Oe,dark:ke,deep:Ae}=C,je=[34,70,106,142,178,214].map(e=>`<rect x="305" y="${e}" width="12" height="10" rx="2"/>`).join(``),Me=[92,106,120,134,148,162,176,190,204,218,232].map(e=>`M328 ${e} L356 ${e+8}`).join(` `),Ne=[Te,se,xe,Ee,ve,{name:`ぱいるどらいばー`,width:420,height:260,shapes:`
+  ${L(C)}
+  ${N(112,124,302,52,10)}
+  <rect x="250" y="150" width="54" height="24" rx="4" fill="${Oe}"/>
+  <rect x="250" y="150" width="54" height="5" rx="2" fill="${De}"/>
+  <rect x="250" y="168" width="54" height="6" rx="2" fill="${ke}"/>
+  <rect x="300" y="10" width="24" height="232" rx="3" fill="${Oe}"/>
+  <rect x="302" y="12" width="4" height="228" rx="2" fill="${De}"/>
+  <rect x="318" y="12" width="6" height="228" fill="${ke}"/>
+  <g fill="${Ae}">${je}</g>
   <rect x="324" y="10" width="5" height="232" fill="#616161"/>
   <rect x="294" y="2" width="40" height="12" rx="3" fill="#616161"/>
   <rect x="294" y="2" width="40" height="3" rx="1.5" fill="#9e9e9e"/>
   <g stroke="#424242" stroke-width="2"><line x1="330" y1="14" x2="330" y2="42"/><line x1="336" y1="14" x2="336" y2="42"/></g>
   <line x1="342" y1="86" x2="342" y2="244" stroke="#757575" stroke-width="6"/>
-  <path d="${De}" stroke="#9e9e9e" stroke-width="6"/>
-  <path d="${De}" stroke="#e0e0e0" stroke-width="2" transform="translate(0 -2)"/>
+  <path d="${Me}" stroke="#9e9e9e" stroke-width="6"/>
+  <path d="${Me}" stroke="#e0e0e0" stroke-width="2" transform="translate(0 -2)"/>
   <path d="M332 240 L352 240 L342 254 Z" fill="#9e9e9e"/>
   <rect x="318" y="40" width="48" height="46" rx="6" fill="#616161"/>
   <rect x="318" y="40" width="48" height="8" rx="4" fill="#9e9e9e"/>
   <g stroke="#424242" stroke-width="3"><line x1="328" y1="58" x2="356" y2="58"/><line x1="328" y1="66" x2="356" y2="66"/><line x1="328" y1="74" x2="356" y2="74"/></g>
-  ${N(C)}`}];function G({width:e,height:t,shapes:n}){return`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${e} ${t}" width="${e}" height="${t}" stroke-linecap="round" stroke-linejoin="round">${n}</svg>`}var K={x:-50,y:-45,width:240,height:110},q={x:-K.x/K.width,y:-K.y/K.height},Oe=184,ke=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${K.x} ${K.y} ${K.width} ${K.height}">
+  ${ie(C)}`}];function U({width:e,height:t,shapes:n}){return`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${e} ${t}" width="${e}" height="${t}" stroke-linecap="round" stroke-linejoin="round">${n}</svg>`}var W={x:-50,y:-45,width:240,height:110},G={x:-W.x/W.width,y:-W.y/W.height},Pe=184,Fe=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${W.x} ${W.y} ${W.width} ${W.height}">
   <g stroke-linejoin="round" stroke-linecap="round">
     <rect x="40" y="-5" width="130" height="10" rx="4" fill="#b0bec5" stroke="#78909c" stroke-width="2"/>
     <rect x="160" y="-9" width="24" height="18" rx="5" fill="#ffb300"/>
@@ -243,7 +240,7 @@
     <rect x="-40" y="-18" width="90" height="30" rx="12" fill="#1e88e5" stroke="#1565c0" stroke-width="3"/>
     <circle cx="-24" cy="-3" r="5" fill="#90caf9"/>
   </g>
-</svg>`,Ae=-.45,je=.05,Me=900,Ne=240,Pe=4,Fe=[[.7,`rgb(129 212 250 / 0.35)`],[.35,`rgb(179 229 252 / 0.85)`],[.12,`rgb(255 255 255 / 0.95)`]],Ie=class{options;gun;g;drops=[];fingers=new Map;nozzle;shades=Array.from({length:Pe},()=>[]);hitting=!1;animating=!1;frameRequest=0;lastFrame;constructor(t,n){this.options=n,t.insertAdjacentHTML(`beforeend`,`<canvas class="water"></canvas><div class="gun">${ke}</div>`);let r=t.querySelector(`.water`);this.g=r.getContext(`2d`),this.gun=t.querySelector(`.gun`),this.gun.style.aspectRatio=`${K.width} / ${K.height}`,this.gun.querySelector(`svg`).style.transformOrigin=`${q.x*100}% ${q.y*100}%`,this.aim(Ae);let{signal:i}=n;e(r,{maxDensity:1,signal:i}),i.addEventListener(`abort`,()=>{cancelAnimationFrame(this.frameRequest),g()}),t.addEventListener(`pointerdown`,e=>{if(m(),e.pointerType===`mouse`&&e.button!==0||e.target.closest(`button`))return;t.setPointerCapture(e.pointerId);let n={x:e.clientX,y:e.clientY};this.fingers.set(e.pointerId,n),!this.nozzle&&(this.nozzle={id:e.pointerId,last:n},h(),this.animate())}),t.addEventListener(`pointermove`,e=>{this.fingers.has(e.pointerId)&&this.fingers.set(e.pointerId,{x:e.clientX,y:e.clientY})}),t.addEventListener(`pointerup`,e=>{m(),this.release(e)}),t.addEventListener(`pointercancel`,e=>this.release(e))}release(e){if(this.fingers.delete(e.pointerId),this.nozzle?.id!==e.pointerId)return;let[t]=this.fingers;if(t){let[e,n]=t;this.nozzle={id:e,last:n}}else this.nozzle=void 0,this.hitting=!1,this.aim(Ae),g()}animate(){this.animating||(this.animating=!0,this.lastFrame=void 0,this.frameRequest=requestAnimationFrame(this.frame))}frame=e=>{let n=this.lastFrame===void 0?0:Math.min((e-this.lastFrame)/1e3,je);this.lastFrame=e;let{g:r,nozzle:i}=this;if(t(r,r.canvas.clientWidth),i){let e=this.fingers.get(i.id),t=this.options.onSpray(i.last,e,n);i.last=e,t!==this.hitting&&_(this.hitting=t);let r=this.options.splashRadius();this.drawJet(this.aimAt(e),e,r),this.splash(e,r,n)}this.drawDrops(n),this.animating=!!this.nozzle||this.drops.length>0,this.animating&&(this.frameRequest=requestAnimationFrame(this.frame))};aimAt(e){let t=this.gun.getBoundingClientRect(),n={x:t.left+q.x*t.width,y:t.top+q.y*t.height},r=Math.atan2(e.y-n.y,e.x-n.x);this.aim(r);let i=Oe/K.width*t.width;return{x:n.x+Math.cos(r)*i,y:n.y+Math.sin(r)*i}}aim(e){this.gun.style.setProperty(`--angle`,`${e}rad`)}drawJet(e,t,n){let{g:r}=this,i=Math.hypot(t.x-e.x,t.y-e.y),a=(e.x+t.x)/2+(Math.random()-.5)*4,o=(e.y+t.y)/2-i*.05+(Math.random()-.5)*4;r.lineCap=`round`;for(let[i,s]of Fe)r.lineWidth=n*i,r.strokeStyle=s,r.beginPath(),r.moveTo(e.x,e.y),r.quadraticCurveTo(a,o,t.x,t.y),r.stroke()}splash(e,t,n){let{g:r}=this,i=r.createRadialGradient(e.x,e.y,0,e.x,e.y,t);i.addColorStop(0,`rgb(225 245 254 / 0.8)`),i.addColorStop(1,`rgb(225 245 254 / 0)`),r.fillStyle=i,r.beginPath(),r.arc(e.x,e.y,t,0,Math.PI*2),r.fill();for(let r=Math.round(Ne*n*Math.random()*2);r>0;r--){let n=-Math.PI*Math.random(),r=120+Math.random()*200;this.drops.push({x:e.x,y:e.y,vx:Math.cos(n)*r,vy:Math.sin(n)*r,r:t*(.05+Math.random()*.08),age:0,life:.3+Math.random()*.3})}}drawDrops(e){let{g:t,drops:r,shades:i}=this;for(let e of i)e.length=0;let a=0;for(let t of r)t.age+=e,!(t.age>=t.life)&&(t.vy+=Me*e,t.x+=t.vx*e,t.y+=t.vy*e,r[a++]=t,i[Math.ceil((1-t.age/t.life)*Pe)-1].push(t));r.length=a,i.forEach((e,r)=>{e.length&&n(t,e,`rgb(179 229 252)`,(r+1)/Pe)})}},Le=6,Re=18,ze=27,Be=.03,Ve=8,He=14,Ue=.6,We=400,Ge=1500,Ke={dust:`#d7b98a`,mud:`#5d4037`};async function qe(i,a,{signal:o,onBack:s,onClean:u,onOneMore:d,onSleep:f}){let{width:p,height:m}=a,h=G(a);i.classList.add(`wash`),i.innerHTML=`
+</svg>`,Ie=-.45,Le=.05,Re=900,ze=240,Be=4,Ve=[[.7,`rgb(129 212 250 / 0.35)`],[.35,`rgb(179 229 252 / 0.85)`],[.12,`rgb(255 255 255 / 0.95)`]],He=class{options;gun;g;drops=[];fingers=new Map;nozzle;shades=Array.from({length:Be},()=>[]);hitting=!1;animating=!1;frameRequest=0;lastFrame;constructor(t,n){this.options=n,t.insertAdjacentHTML(`beforeend`,`<canvas class="water"></canvas><div class="gun">${Fe}</div>`);let r=t.querySelector(`.water`);this.g=r.getContext(`2d`),this.gun=t.querySelector(`.gun`),this.gun.style.aspectRatio=`${W.width} / ${W.height}`,this.gun.querySelector(`svg`).style.transformOrigin=`${G.x*100}% ${G.y*100}%`,this.aim(Ie);let{signal:i}=n;e(r,{maxDensity:1,signal:i}),i.addEventListener(`abort`,()=>{cancelAnimationFrame(this.frameRequest),g()}),t.addEventListener(`pointerdown`,e=>{if(m(),e.pointerType===`mouse`&&e.button!==0||e.target.closest(`button`))return;t.setPointerCapture(e.pointerId);let n={x:e.clientX,y:e.clientY};this.fingers.set(e.pointerId,n),!this.nozzle&&(this.nozzle={id:e.pointerId,last:n},h(),this.animate())}),t.addEventListener(`pointermove`,e=>{this.fingers.has(e.pointerId)&&this.fingers.set(e.pointerId,{x:e.clientX,y:e.clientY})}),t.addEventListener(`pointerup`,e=>{m(),this.release(e)}),t.addEventListener(`pointercancel`,e=>this.release(e))}release(e){if(this.fingers.delete(e.pointerId),this.nozzle?.id!==e.pointerId)return;let[t]=this.fingers;if(t){let[e,n]=t;this.nozzle={id:e,last:n}}else this.nozzle=void 0,this.hitting=!1,this.aim(Ie),g()}animate(){this.animating||(this.animating=!0,this.lastFrame=void 0,this.frameRequest=requestAnimationFrame(this.frame))}frame=e=>{let n=this.lastFrame===void 0?0:Math.min((e-this.lastFrame)/1e3,Le);this.lastFrame=e;let{g:r,nozzle:i}=this;if(t(r,r.canvas.clientWidth),i){let e=this.fingers.get(i.id),t=this.options.onSpray(i.last,e,n);i.last=e,t!==this.hitting&&_(this.hitting=t);let r=this.options.splashRadius();this.drawJet(this.aimAt(e),e,r),this.splash(e,r,n)}this.drawDrops(n),this.animating=!!this.nozzle||this.drops.length>0,this.animating&&(this.frameRequest=requestAnimationFrame(this.frame))};aimAt(e){let t=this.gun.getBoundingClientRect(),n={x:t.left+G.x*t.width,y:t.top+G.y*t.height},r=Math.atan2(e.y-n.y,e.x-n.x);this.aim(r);let i=Pe/W.width*t.width;return{x:n.x+Math.cos(r)*i,y:n.y+Math.sin(r)*i}}aim(e){this.gun.style.setProperty(`--angle`,`${e}rad`)}drawJet(e,t,n){let{g:r}=this,i=Math.hypot(t.x-e.x,t.y-e.y),a=(e.x+t.x)/2+(Math.random()-.5)*4,o=(e.y+t.y)/2-i*.05+(Math.random()-.5)*4;r.lineCap=`round`;for(let[i,s]of Ve)r.lineWidth=n*i,r.strokeStyle=s,r.beginPath(),r.moveTo(e.x,e.y),r.quadraticCurveTo(a,o,t.x,t.y),r.stroke()}splash(e,t,n){let{g:r}=this,i=r.createRadialGradient(e.x,e.y,0,e.x,e.y,t);i.addColorStop(0,`rgb(225 245 254 / 0.8)`),i.addColorStop(1,`rgb(225 245 254 / 0)`),r.fillStyle=i,r.beginPath(),r.arc(e.x,e.y,t,0,Math.PI*2),r.fill();for(let r=Math.round(ze*n*Math.random()*2);r>0;r--){let n=-Math.PI*Math.random(),r=120+Math.random()*200;this.drops.push({x:e.x,y:e.y,vx:Math.cos(n)*r,vy:Math.sin(n)*r,r:t*(.05+Math.random()*.08),age:0,life:.3+Math.random()*.3})}}drawDrops(e){let{g:t,drops:r,shades:i}=this;for(let e of i)e.length=0;let a=0;for(let t of r)t.age+=e,!(t.age>=t.life)&&(t.vy+=Re*e,t.x+=t.vx*e,t.y+=t.vy*e,r[a++]=t,i[Math.ceil((1-t.age/t.life)*Be)-1].push(t));r.length=a,i.forEach((e,r)=>{e.length&&n(t,e,`rgb(179 229 252)`,(r+1)/Be)})}},K=6,q=18,Ue=27,We=.03,Ge=8,Ke=14,qe=.6,Je=400,Ye=1500,Xe={dust:`#d7b98a`,mud:`#5d4037`};async function Ze(i,a,{signal:o,onBack:s,onClean:u,onOneMore:d,onSleep:f}){let{width:p,height:m}=a,h=U(a);i.classList.add(`wash`),i.innerHTML=`
     <button class="back pill" type="button">◀ もどる</button>
     <button class="sleep-now pill" type="button">☾ おやすみ</button>
     <div class="stage" data-mood="normal" style="--aspect: ${p} / ${m}">
@@ -258,31 +255,31 @@
         <button class="one-more pill" type="button">あと いっかい</button>
         <button class="goodnight-now pill" type="button">おやすみ</button>
       </div>
-    </div>`;let g=i.querySelector(`.stage`),_=g.querySelector(`canvas`),v=g.querySelector(`.cheer`),y=g.querySelector(`.actions`),b=g.querySelector(`.question`),x=g.querySelector(`.ask`),S=i.querySelector(`.sleep-now`),C=_.getContext(`2d`),w=Ye(g.querySelector(`.face`));for(let e of[`mask-image`,`-webkit-mask-image`])_.style.setProperty(e,`url("${Ze(h)}")`);i.querySelector(`.back`).addEventListener(`click`,s),S.addEventListener(`click`,f);let ne=await $e(a);if(o.aborted)return;let T,E=0,D=!1,O=!1,k=0,A=0;function j(){g.dataset.mood=O?`fussy`:D?`happy`:`normal`}function M(){T=l(ne),clearTimeout(E),D=!1,g.querySelectorAll(`.sparkle`).forEach(e=>e.remove()),v.hidden=y.hidden=b.hidden=x.hidden=!0,S.hidden=!1,N(),F()}function re(e,t,n,i){r(w,e,t)>w.r+n-Re?k=0:(k+=i,clearTimeout(A),A=window.setTimeout(N,We),k>=Ue&&!O&&(O=!0,j(),te()))}function N(){clearTimeout(A),k=0,O=!1,j()}function P(){T.clear(),F(),D=!0,j(),v.hidden=!1,S.hidden=!0,tt(g);let e=u();E=window.setTimeout(()=>{e===`lock`?f():e===`ask`?(v.hidden=!0,b.hidden=x.hidden=!1):y.hidden=!1},Ge),ee()}function F(){t(C,p);let e=[],r=new Map;for(let t of T.cells)if(!(t.hp<=0)){if(t.kind===`dust`)e.push(t);else{let e=Math.ceil(c(t)*Ve)/Ve,n=r.get(e);n?n.push(t):r.set(e,[t])}}n(C,e,Ke.dust,.9);for(let[e,t]of r)n(C,t,Ke.mud,.35+.65*e)}function I(){let e=_.clientWidth;return e?Math.max(Re,ze*p/e):Re}function L(e,t){return{x:(e.x-t.left)/t.width*p,y:(e.y-t.top)/t.height*m}}new Ie(i,{onSpray(e,t,n){let r=_.getBoundingClientRect(),i=L(e,r),a=L(t,r),o=I();re(i,a,o,n);let s=T.spray(i,a,o,n);return s&&T.remaining<=Be?P():s&&F(),s},splashRadius:()=>I()*_.clientWidth/p,signal:o}),g.querySelector(`.again`).addEventListener(`click`,M),g.querySelector(`.others`).addEventListener(`click`,s),g.querySelector(`.one-more`).addEventListener(`click`,()=>{d(),b.hidden=x.hidden=!0,v.hidden=y.hidden=!1,g.querySelector(`.again`).focus()}),g.querySelector(`.goodnight-now`).addEventListener(`click`,f),o.addEventListener(`abort`,()=>{clearTimeout(E),clearTimeout(A)}),e(_,{maxDensity:2,signal:o,onResize:F}),M()}var Je=12;function Ye(e){let t=e.getBBox();return{x:t.x+t.width/2,y:t.y+t.height/2,r:Math.max(t.width,t.height)/2+Je}}function Xe(e){return new Promise((t,n)=>{let r=new Image;r.onload=()=>t(r),r.onerror=()=>n(Error(`Could not load ${e.slice(0,40)}…`)),r.src=e})}function Ze(e){return`data:image/svg+xml;charset=utf-8,${encodeURIComponent(e)}`}var Qe=new Map;function $e(e){let t=Qe.get(e);if(!t){let n=Math.ceil(e.width/Le),r=Math.ceil(e.height/Le);t=Xe(Ze(G(e))).then(e=>et(e,n,r),t=>{throw Qe.delete(e),t}),Qe.set(e,t)}return t}function et(e,t,n){let r=document.createElement(`canvas`);r.width=t,r.height=n;let i=r.getContext(`2d`,{willReadFrequently:!0});i.drawImage(e,0,0,t,n);let a=i.getImageData(0,0,t,n).data.filter((e,t)=>t%4==3);return{cols:t,rows:n,cellSize:Le,filled:Array.from(a,e=>e>128)}}function tt(e){for(let t=0;t<He;t++){let t=document.createElement(`span`);t.className=`sparkle`,t.style.left=`${5+Math.random()*90}%`,t.style.top=`${5+Math.random()*85}%`,t.style.animationDelay=`${Math.random()*1.2}s`,t.style.setProperty(`--size`,`${18+Math.random()*26}px`),e.append(t)}}var nt=e=>Array.from({length:11},(t,n)=>`<line x1="${100+n*140+e}" y1="40" x2="${100+n*140+e}" y2="516"/>`).join(``),rt=e=>`
+    </div>`;let g=i.querySelector(`.stage`),_=g.querySelector(`canvas`),v=g.querySelector(`.cheer`),y=g.querySelector(`.actions`),b=g.querySelector(`.question`),x=g.querySelector(`.ask`),S=i.querySelector(`.sleep-now`),C=_.getContext(`2d`),w=$e(g.querySelector(`.face`));for(let e of[`mask-image`,`-webkit-mask-image`])_.style.setProperty(e,`url("${tt(h)}")`);i.querySelector(`.back`).addEventListener(`click`,s),S.addEventListener(`click`,f);let ne=await rt(a);if(o.aborted)return;let T,E=0,D=!1,O=!1,k=0,A=0;function j(){g.dataset.mood=O?`fussy`:D?`happy`:`normal`}function M(){T=l(ne),clearTimeout(E),D=!1,g.querySelectorAll(`.sparkle`).forEach(e=>e.remove()),v.hidden=y.hidden=b.hidden=x.hidden=!0,S.hidden=!1,P(),F()}function N(e,t,n,i){r(w,e,t)>w.r+n-q?k=0:(k+=i,clearTimeout(A),A=window.setTimeout(P,Je),k>=qe&&!O&&(O=!0,j(),te()))}function P(){clearTimeout(A),k=0,O=!1,j()}function re(){T.clear(),F(),D=!0,j(),v.hidden=!1,S.hidden=!0,at(g);let e=u();E=window.setTimeout(()=>{e===`lock`?f():e===`ask`?(v.hidden=!0,b.hidden=x.hidden=!1):y.hidden=!1},Ye),ee()}function F(){t(C,p);let e=[],r=new Map;for(let t of T.cells)if(!(t.hp<=0)){if(t.kind===`dust`)e.push(t);else{let e=Math.ceil(c(t)*Ge)/Ge,n=r.get(e);n?n.push(t):r.set(e,[t])}}n(C,e,Xe.dust,.9);for(let[e,t]of r)n(C,t,Xe.mud,.35+.65*e)}function I(){let e=_.clientWidth;return e?Math.max(q,Ue*p/e):q}function L(e,t){return{x:(e.x-t.left)/t.width*p,y:(e.y-t.top)/t.height*m}}new He(i,{onSpray(e,t,n){let r=_.getBoundingClientRect(),i=L(e,r),a=L(t,r),o=I();N(i,a,o,n);let s=T.spray(i,a,o,n);return s&&T.remaining<=We?re():s&&F(),s},splashRadius:()=>I()*_.clientWidth/p,signal:o}),g.querySelector(`.again`).addEventListener(`click`,M),g.querySelector(`.others`).addEventListener(`click`,s),g.querySelector(`.one-more`).addEventListener(`click`,()=>{d(),b.hidden=x.hidden=!0,v.hidden=y.hidden=!1,g.querySelector(`.again`).focus()}),g.querySelector(`.goodnight-now`).addEventListener(`click`,f),o.addEventListener(`abort`,()=>{clearTimeout(E),clearTimeout(A)}),e(_,{maxDensity:2,signal:o,onResize:F}),M()}var Qe=12;function $e(e){let t=e.getBBox();return{x:t.x+t.width/2,y:t.y+t.height/2,r:Math.max(t.width,t.height)/2+Qe}}function et(e){return new Promise((t,n)=>{let r=new Image;r.onload=()=>t(r),r.onerror=()=>n(Error(`Could not load ${e.slice(0,40)}…`)),r.src=e})}function tt(e){return`data:image/svg+xml;charset=utf-8,${encodeURIComponent(e)}`}var nt=new Map;function rt(e){let t=nt.get(e);if(!t){let n=Math.ceil(e.width/K),r=Math.ceil(e.height/K);t=et(tt(U(e))).then(e=>it(e,n,r),t=>{throw nt.delete(e),t}),nt.set(e,t)}return t}function it(e,t,n){let r=document.createElement(`canvas`);r.width=t,r.height=n;let i=r.getContext(`2d`,{willReadFrequently:!0});i.drawImage(e,0,0,t,n);let a=i.getImageData(0,0,t,n).data.filter((e,t)=>t%4==3);return{cols:t,rows:n,cellSize:K,filled:Array.from(a,e=>e>128)}}function at(e){for(let t=0;t<Ke;t++){let t=document.createElement(`span`);t.className=`sparkle`,t.style.left=`${5+Math.random()*90}%`,t.style.top=`${5+Math.random()*85}%`,t.style.animationDelay=`${Math.random()*1.2}s`,t.style.setProperty(`--size`,`${18+Math.random()*26}px`),e.append(t)}}var ot=e=>Array.from({length:11},(t,n)=>`<line x1="${100+n*140+e}" y1="40" x2="${100+n*140+e}" y2="516"/>`).join(``),st=e=>`
   <line x1="${e}" y1="40" x2="${e}" y2="86" stroke="#455a64" stroke-width="4"/>
   <circle cx="${e}" cy="160" r="130" fill="url(#glow)"/>
   <rect x="${e-10}" y="82" width="20" height="10" rx="3" fill="#37474f"/>
   <path d="M${e-45} 130 L${e-25} 90 L${e+25} 90 L${e+45} 130 Z" fill="#455a64"/>
   <path d="M${e-45} 130 L${e-25} 90 L${e-10} 90 L${e-22} 130 Z" fill="#607d8b"/>
   <rect x="${e-47}" y="127" width="94" height="6" rx="3" fill="#37474f"/>
-  <ellipse cx="${e}" cy="134" rx="24" ry="8" fill="#fff59d"/>`,it=e=>`
+  <ellipse cx="${e}" cy="134" rx="24" ry="8" fill="#fff59d"/>`,ct=e=>`
   <rect x="100" y="${e}" width="180" height="52" rx="24" fill="#37474f"/>
   <rect x="106" y="${e+4}" width="168" height="9" rx="4.5" fill="#546e7a"/>
   <rect x="106" y="${e+40}" width="168" height="8" rx="4" fill="#263238"/>
-  <g stroke="#263238" stroke-width="5">${[124,142,160,178,196,214,232,250].map(t=>`<line x1="${t}" y1="${e+17}" x2="${t+6}" y2="${e+35}"/>`).join(``)}</g>`,at=(e,t,n,r)=>`
+  <g stroke="#263238" stroke-width="5">${[124,142,160,178,196,214,232,250].map(t=>`<line x1="${t}" y1="${e+17}" x2="${t+6}" y2="${e+35}"/>`).join(``)}</g>`,lt=(e,t,n,r)=>`
   <g transform="translate(${e+6} ${t+8}) rotate(${n})" fill="#3e2723" opacity="0.2">${r.map(([e])=>e).join(``)}</g>
-  <g transform="translate(${e} ${t}) rotate(${n})">${r.map(([e,t])=>`<g fill="${t}">${e}</g>`).join(``)}</g>`,ot=(e,t,n,r,[i,a,o])=>{let s=t-r;return`<rect x="${e}" y="${s}" width="${n}" height="${r}" rx="4" fill="${a}"/>
+  <g transform="translate(${e} ${t}) rotate(${n})">${r.map(([e,t])=>`<g fill="${t}">${e}</g>`).join(``)}</g>`,ut=(e,t,n,r,{light:i,base:a,dark:o})=>{let s=t-r;return`<rect x="${e}" y="${s}" width="${n}" height="${r}" rx="4" fill="${a}"/>
   <rect x="${e+4}" y="${s+4}" width="6" height="${r-8}" rx="3" fill="${i}"/>
   <rect x="${e+n-10}" y="${s+4}" width="7" height="${r-8}" rx="3" fill="${o}"/>
   <rect x="${e}" y="${s+r*.4}" width="${n}" height="${r*.28}" fill="#fff" opacity="0.85"/>
   <ellipse cx="${e+n/2}" cy="${s}" rx="${n/2}" ry="5" fill="${i}"/>
-  <ellipse cx="${e+n/2}" cy="${s}" rx="${n/2-5}" ry="3" fill="${a}"/>`},st=(e,t,n,r,[i,a,o])=>{let s=t-r;return`<rect x="${e+4}" y="${s-8}" width="${n-4}" height="12" rx="3" fill="${i}"/>
+  <ellipse cx="${e+n/2}" cy="${s}" rx="${n/2-5}" ry="3" fill="${a}"/>`},dt=(e,t,n,r,{light:i,base:a,dark:o})=>{let s=t-r;return`<rect x="${e+4}" y="${s-8}" width="${n-4}" height="12" rx="3" fill="${i}"/>
   <rect x="${e}" y="${s}" width="${n}" height="${r}" rx="3" fill="${a}"/>
-  <rect x="${e}" y="${t-7}" width="${n}" height="7" rx="2" fill="${o}"/>`},ct=e=>`
+  <rect x="${e}" y="${t-7}" width="${n}" height="7" rx="2" fill="${o}"/>`},ft=e=>`
   <rect x="1230" y="${e+14}" width="300" height="10" fill="#000" opacity="0.1"/>
   <path d="M1238 ${e-8} H1522 L1530 ${e} H1230 Z" fill="#bcaaa4"/>
   <rect x="1230" y="${e}" width="300" height="14" fill="#8d6e63"/>
-  <rect x="1230" y="${e}" width="300" height="3" fill="#a1887f"/>`,lt=e=>[150,470,1130,1450].map(t=>`<line x1="${t+e}" y1="652" x2="${800+(t-800)*1.9+e}" y2="1000"/>`).join(``),ut=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <rect x="1230" y="${e}" width="300" height="3" fill="#a1887f"/>`,pt=e=>[150,470,1130,1450].map(t=>`<line x1="${t+e}" y1="652" x2="${800+(t-800)*1.9+e}" y2="1000"/>`).join(``),mt=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#b3afa8"/><stop offset="1" stop-color="#8a8781"/>
@@ -306,8 +303,8 @@
 
   <rect width="1600" height="1000" fill="#e6dccd"/>
   <rect y="40" width="1600" height="240" fill="url(#ceiling)"/>
-  <g stroke="#d3c6b2" stroke-width="4">${nt(0)}</g>
-  <g stroke="#f1e9dc" stroke-width="3">${nt(4)}</g>
+  <g stroke="#d3c6b2" stroke-width="4">${ot(0)}</g>
+  <g stroke="#f1e9dc" stroke-width="3">${ot(4)}</g>
   <rect y="516" width="1600" height="112" fill="#d8ccb9"/>
   <rect y="512" width="1600" height="8" fill="#efe6d8"/>
   <rect y="520" width="1600" height="5" fill="#c4b7a2"/>
@@ -333,17 +330,17 @@
   <rect x="450" y="76" width="700" height="9" rx="4" fill="#b0bec5"/>
   <rect x="450" y="120" width="700" height="8" rx="3" fill="#607d8b"/>
 
-  ${rt(320)}
-  ${rt(1280)}
+  ${st(320)}
+  ${st(1280)}
 
   <rect x="62" y="222" width="316" height="246" rx="10" fill="#8d6e63"/>
   <path d="M66 462 V232 Q66 226 72 226 H372" fill="none" stroke="#a1887f" stroke-width="5"/>
   <path d="M374 232 V458 Q374 464 368 464 H72" fill="none" stroke="#5d4037" stroke-width="5"/>
   <rect x="74" y="234" width="292" height="222" fill="url(#pegboard)"/>
   <path d="M78 456 V238 H366" fill="none" stroke="#3e2723" stroke-opacity="0.15" stroke-width="8"/>
-  ${at(140,300,20,[[`<path d="M-7 -20.9 A22 22 0 1 0 7 -20.9 V-4 H-7 Z"/><rect x="-8" y="0" width="16" height="120" rx="8"/>`,`#78909c`],[`<rect x="-6" y="6" width="4" height="108" rx="2"/><path d="M-19 -6 A19 19 0 0 1 -8 -18" fill="none" stroke="#b0bec5" stroke-width="4"/>`,`#b0bec5`]])}
-  ${at(240,290,-15,[[`<rect x="-7" y="0" width="14" height="120" rx="6"/>`,`#a1887f`],[`<rect x="-5" y="4" width="4" height="110" rx="2"/>`,`#bcaaa4`],[`<rect x="-36" y="-14" width="72" height="28" rx="6"/>`,`#546e7a`],[`<rect x="-33" y="-12" width="66" height="6" rx="3"/>`,`#78909c`]])}
-  ${at(320,280,0,[[`<rect x="-3" y="50" width="6" height="70"/>`,`#90a4ae`],[`<rect x="-2" y="52" width="2" height="66"/>`,`#cfd8dc`],[`<rect x="-9" y="0" width="18" height="50" rx="8"/>`,`#e53935`],[`<rect x="-6" y="5" width="4" height="40" rx="2"/>`,`#ef9a9a`]])}
+  ${lt(140,300,20,[[`<path d="M-7 -20.9 A22 22 0 1 0 7 -20.9 V-4 H-7 Z"/><rect x="-8" y="0" width="16" height="120" rx="8"/>`,`#78909c`],[`<rect x="-6" y="6" width="4" height="108" rx="2"/><path d="M-19 -6 A19 19 0 0 1 -8 -18" fill="none" stroke="#b0bec5" stroke-width="4"/>`,`#b0bec5`]])}
+  ${lt(240,290,-15,[[`<rect x="-7" y="0" width="14" height="120" rx="6"/>`,`#a1887f`],[`<rect x="-5" y="4" width="4" height="110" rx="2"/>`,`#bcaaa4`],[`<rect x="-36" y="-14" width="72" height="28" rx="6"/>`,`#546e7a`],[`<rect x="-33" y="-12" width="66" height="6" rx="3"/>`,`#78909c`]])}
+  ${lt(320,280,0,[[`<rect x="-3" y="50" width="6" height="70"/>`,`#90a4ae`],[`<rect x="-2" y="52" width="2" height="66"/>`,`#cfd8dc`],[`<rect x="-9" y="0" width="18" height="50" rx="8"/>`,`#e53935`],[`<rect x="-6" y="5" width="4" height="40" rx="2"/>`,`#ef9a9a`]])}
   <g fill="#616161"><circle cx="140" cy="276" r="4"/><circle cx="244" cy="270" r="4"/><circle cx="320" cy="274" r="4"/></g>
 
   <rect x="1176" y="506" width="24" height="10" rx="3" fill="#455a64"/>
@@ -356,13 +353,13 @@
 
   <g fill="#6d4c41"><rect x="1240" y="220" width="12" height="420"/><rect x="1508" y="220" width="12" height="420"/></g>
   <g fill="#8d6e63"><rect x="1240" y="220" width="3" height="420"/><rect x="1508" y="220" width="3" height="420"/></g>
-  ${ct(320)}${ct(450)}${ct(580)}
-  ${ot(1270,316,50,54,[`#ef9a9a`,`#e53935`,`#b71c1c`])}
-  ${ot(1340,316,40,40,[`#a5d6a7`,`#43a047`,`#1b5e20`])}
-  ${ot(1400,316,60,60,[`#90caf9`,`#1e88e5`,`#0d47a1`])}
-  ${st(1262,446,110,72,[`#dcc3a1`,`#c8a27a`,`#a98458`])}
+  ${ft(320)}${ft(450)}${ft(580)}
+  ${ut(1270,316,50,54,{light:`#ef9a9a`,base:`#e53935`,dark:`#b71c1c`})}
+  ${ut(1340,316,40,40,{light:`#a5d6a7`,base:`#43a047`,dark:`#1b5e20`})}
+  ${ut(1400,316,60,60,{light:`#90caf9`,base:`#1e88e5`,dark:`#0d47a1`})}
+  ${dt(1262,446,110,72,{light:`#dcc3a1`,base:`#c8a27a`,dark:`#a98458`})}
   <rect x="1306" y="366" width="22" height="80" fill="#e8d5b5"/>
-  ${st(1392,446,90,52,[`#ffe082`,`#ffb300`,`#ff8f00`])}
+  ${dt(1392,446,90,52,{light:`#ffe082`,base:`#ffb300`,dark:`#ff8f00`})}
   <path d="M1418 394 V382 H1456 V394" fill="none" stroke="#5d4037" stroke-width="6"/>
   <path d="M1300 520 L1400 520 L1390 576 L1310 576 Z" fill="#ff7043"/>
   <path d="M1306 528 L1316 528 L1312 570 L1314 570 Z" fill="#ffab91"/>
@@ -371,8 +368,8 @@
   <ellipse cx="1350" cy="520" rx="43" ry="6" fill="#bf360c"/>
 
   <rect y="644" width="1600" height="356" fill="url(#floor)"/>
-  <g stroke="#9a968f" stroke-width="3">${lt(0)}<line x1="0" y1="790" x2="1600" y2="790"/></g>
-  <g stroke="#c2beb6" stroke-width="2">${lt(3)}<line x1="0" y1="793" x2="1600" y2="793"/></g>
+  <g stroke="#9a968f" stroke-width="3">${pt(0)}<line x1="0" y1="790" x2="1600" y2="790"/></g>
+  <g stroke="#c2beb6" stroke-width="2">${pt(3)}<line x1="0" y1="793" x2="1600" y2="793"/></g>
   <rect y="644" width="1600" height="10" fill="#000" opacity="0.12"/>
   <rect y="620" width="1600" height="8" fill="#cfc9be"/>
   <rect y="628" width="1600" height="16" fill="url(#hazard)"/>
@@ -386,7 +383,7 @@
   </g>
 
   <ellipse cx="205" cy="712" rx="112" ry="12" fill="#000" opacity="0.2"/>
-  ${it(658)}${it(606)}${it(554)}
+  ${ct(658)}${ct(606)}${ct(554)}
   <ellipse cx="190" cy="557" rx="86" ry="13" fill="#455a64"/>
   <ellipse cx="190" cy="557" rx="50" ry="8" fill="#1c262b"/>
 
@@ -399,12 +396,12 @@
   <ellipse cx="1430" cy="562" rx="60" ry="12" fill="#b71c1c"/>
   <ellipse cx="1430" cy="561" rx="54" ry="9" fill="#e53935"/>
   <ellipse cx="1452" cy="560" rx="7" ry="3" fill="#7f0000"/>
-</svg>`,dt=15e5,ft=Object.freeze({elapsedMs:0,locked:!1,oneMore:!1,vehicle:null});function pt({elapsedMs:e,oneMore:t},n=dt){return e<n?`play`:t?`lock`:`ask`}function mt(e){return e+`playtime`}function ht(e,t){try{return gt(e?.getItem(mt(t))??null)}catch{return{...ft}}}function gt(e){try{let t=JSON.parse(e??`null`),n=Number(t?.elapsedMs);return{elapsedMs:Number.isFinite(n)&&n>0?n:0,locked:t?.locked===!0,oneMore:t?.oneMore===!0,vehicle:typeof t?.vehicle==`string`?t.vehicle:null}}catch{return{...ft}}}function _t(e,t,n){try{e?.setItem(mt(t),JSON.stringify(n))}catch{}}function vt(e=Math.random,t){for(;;){let n=3+Math.floor(e()*7),r=3+Math.floor(e()*7);if(!t||n!==t.a||r!==t.b)return{a:n,b:r,answer:n*r}}}function yt(e,t){if(!t)return dt;let n=Number(new URLSearchParams(e).get(`limit`));return Number.isFinite(n)&&n>0?n*6e4:dt}var bt=2,xt=18;function St(e,t,n){let r=Array.from({length:xt},(e,t)=>`<span class="star" style="left: ${(t*37+11)%100}%; top: ${(t*23+7)%45}%; animation-delay: ${t%5*.4}s"></span>`).join(``);e.classList.add(`sleep`),e.innerHTML=`
+</svg>`,ht=15e5,gt=Object.freeze({elapsedMs:0,locked:!1,oneMore:!1,vehicle:null});function _t({elapsedMs:e,oneMore:t},n=ht){return e<n?`play`:t?`lock`:`ask`}function vt(e){return e+`playtime`}function yt(e,t){try{return bt(e?.getItem(vt(t))??null)}catch{return{...gt}}}function bt(e){try{let t=JSON.parse(e??`null`),n=Number(t?.elapsedMs);return{elapsedMs:Number.isFinite(n)&&n>0?n:0,locked:t?.locked===!0,oneMore:t?.oneMore===!0,vehicle:typeof t?.vehicle==`string`?t.vehicle:null}}catch{return{...gt}}}function xt(e,t,n){try{e?.setItem(vt(t),JSON.stringify(n))}catch{}}function St(e=Math.random,t){for(;;){let n=3+Math.floor(e()*7),r=3+Math.floor(e()*7);if(!t||n!==t.a||r!==t.b)return{a:n,b:r,answer:n*r}}}function Ct(e,t){if(!t)return ht;let n=Number(new URLSearchParams(e).get(`limit`));return Number.isFinite(n)&&n>0?n*6e4:ht}var wt=2,Tt=18;function Et(e,t,n){let r=Array.from({length:Tt},(e,t)=>`<span class="star" style="left: ${(t*37+11)%100}%; top: ${(t*23+7)%45}%; animation-delay: ${t%5*.4}s"></span>`).join(``);e.classList.add(`sleep`),e.innerHTML=`
     <div class="night" aria-hidden="true">${r}<span class="moon"></span></div>
     <div class="bed">
       <h1 class="goodnight" tabindex="-1">またあしたね</h1>
       <div class="stage" data-mood="sleepy" style="--aspect: ${t.width} / ${t.height}">
-        <div class="vehicle" aria-label="${t.name}">${G(t)}</div>
+        <div class="vehicle" aria-label="${t.name}">${U(t)}</div>
         <p class="snore" aria-hidden="true">ぐう</p>
       </div>
     </div>
@@ -414,14 +411,14 @@
       <p class="gate__hint" aria-live="polite"></p>
       <div class="gate__keys"></div>
       <button class="gate__back pill" type="button">もどる</button>
-    </div>`;let i=e.querySelector(`.adult`),a=e.querySelector(`.gate`),o=a.querySelector(`.gate__question`),s=a.querySelector(`.gate__answer`),c=a.querySelector(`.gate__hint`),l=a.querySelector(`.gate__keys`),u,d=``;function f(){s.value=d||`?`}function p(){u=vt(Math.random,u),o.textContent=`${u.a} × ${u.b}`,d=``,c.textContent=``,f(),i.hidden=!0,a.hidden=!1,l.querySelector(`button`)?.focus()}function m(){a.hidden=!0,i.hidden=!1,i.focus()}function h(e){d.length>=bt||(d=d===`0`?e:d+e,c.textContent=``,f())}function g(){d=``,f()}function _(){u&&d!==``&&(Number(d)===u.answer?n():(g(),c.textContent=`ちがうよ。もういちど いれてね`))}let ee=[...[1,2,3,4,5,6,7,8,9].map(e=>({label:String(e),action:()=>h(String(e))})),{label:`けす`,kind:`clear`,action:g},{label:`0`,action:()=>h(`0`)},{label:`けってい`,kind:`enter`,action:_}];for(let e of ee){let t=document.createElement(`button`);t.type=`button`,t.className=e.kind?`gate__key gate__key--${e.kind}`:`gate__key`,t.textContent=e.label,t.addEventListener(`click`,e.action),l.append(t)}i.addEventListener(`click`,p),a.querySelector(`.gate__back`).addEventListener(`click`,m),a.addEventListener(`keydown`,e=>{e.key===`Escape`&&m()}),e.querySelector(`.goodnight`).focus()}function Ct(e,t,n){let r=Math.ceil(Math.sqrt(t.length)),i=Math.ceil(t.length/r);e.classList.add(`pick`),e.innerHTML=`
+    </div>`;let i=e.querySelector(`.adult`),a=e.querySelector(`.gate`),o=a.querySelector(`.gate__question`),s=a.querySelector(`.gate__answer`),c=a.querySelector(`.gate__hint`),l=a.querySelector(`.gate__keys`),u,d=``;function f(){s.value=d||`?`}function p(){u=St(Math.random,u),o.textContent=`${u.a} × ${u.b}`,d=``,c.textContent=``,f(),i.hidden=!0,a.hidden=!1,l.querySelector(`button`)?.focus()}function m(){a.hidden=!0,i.hidden=!1,i.focus()}function h(e){d.length>=wt||(d=d===`0`?e:d+e,c.textContent=``,f())}function g(){d=``,f()}function _(){u&&d!==``&&(Number(d)===u.answer?n():(g(),c.textContent=`ちがうよ。もういちど いれてね`))}let ee=[...[1,2,3,4,5,6,7,8,9].map(e=>({label:String(e),action:()=>h(String(e))})),{label:`けす`,kind:`clear`,action:g},{label:`0`,action:()=>h(`0`)},{label:`けってい`,kind:`enter`,action:_}];for(let e of ee){let t=document.createElement(`button`);t.type=`button`,t.className=e.kind?`gate__key gate__key--${e.kind}`:`gate__key`,t.textContent=e.label,t.addEventListener(`click`,e.action),l.append(t)}i.addEventListener(`click`,p),a.querySelector(`.gate__back`).addEventListener(`click`,m),a.addEventListener(`keydown`,e=>{e.key===`Escape`&&m()}),e.querySelector(`.goodnight`).focus()}function Dt(e,t,n){let r=Math.ceil(Math.sqrt(t.length)),i=Math.ceil(t.length/r);e.classList.add(`pick`),e.innerHTML=`
     <div class="select">
       <h1 class="title">どの くるまを あらう？</h1>
       <div class="cards" style="--cols: ${r}; --rows: ${i}">
         ${t.map(e=>`
           <button class="card" type="button" data-mood="normal">
-            ${G(e)}
+            ${U(e)}
             <span>${e.name}</span>
           </button>`).join(``)}
       </div>
-    </div>`,e.querySelectorAll(`.card`).forEach((e,r)=>{e.addEventListener(`click`,()=>{m(),n(t[r])})})}var wt=5e3;document.body.insertAdjacentHTML(`afterbegin`,`<div class="garage">${ut}</div>`),document.body.insertAdjacentHTML(`beforeend`,`<div class="badge">ぷれびゅー</div>`);var Tt=document.querySelector(`#app`),Et,J=`/pikapika-juukiizu/pr-preview/pr-6/:`,Dt=(()=>{try{return localStorage}catch{return}})(),Ot=yt(location.search,!0),Y=ht(Dt,J),X;function Z(){let e=performance.now();X!==void 0&&(Y.elapsedMs+=e-X),X=document.visibilityState===`visible`&&!Y.locked?e:void 0}function Q(){Z(),_t(Dt,J,Y)}function kt(){let e=Y.locked;Object.assign(Y,ht(Dt,J)),X=void 0,Z(),Y.locked&&!e?Mt():!Y.locked&&e&&$()}setInterval(Q,wt),document.addEventListener(`visibilitychange`,Q),window.addEventListener(`pagehide`,Q),window.addEventListener(`storage`,e=>{e.key===mt(J)&&kt()}),window.addEventListener(`pageshow`,e=>{e.persisted&&kt()});function At(e){Et?.abort(),Et=new AbortController;let t=document.createElement(`div`);t.className=`screen`,Tt.replaceChildren(t),e(t,Et.signal)}function $(){At(e=>Ct(e,W,jt))}function jt(e){Y.vehicle=e.name,At((t,n)=>{qe(t,e,{signal:n,onBack:$,onClean(){Z();let e=pt(Y,Ot);return e===`lock`&&(Y.locked=!0,Q()),e},onOneMore(){Y.oneMore=!0,Q()},onSleep:Mt}).catch(e=>{console.error(e),n.aborted||$()})})}function Mt(){Z(),Y.locked=!0,Q();let e=W.find(e=>e.name===Y.vehicle)??W[0];At(t=>St(t,e,Nt))}function Nt(){Object.assign(Y,{...ft,vehicle:Y.vehicle}),Q(),$()}Y.locked?Mt():(Z(),$());
+    </div>`,e.querySelectorAll(`.card`).forEach((e,r)=>{e.addEventListener(`click`,()=>{m(),n(t[r])})})}var Ot=5e3;document.body.insertAdjacentHTML(`afterbegin`,`<div class="garage">${mt}</div>`),document.body.insertAdjacentHTML(`beforeend`,`<div class="badge">ぷれびゅー</div>`);var kt=document.querySelector(`#app`),At,J=`/pikapika-juukiizu/pr-preview/pr-6/:`,jt=(()=>{try{return localStorage}catch{return}})(),Mt=Ct(location.search,!0),Y=yt(jt,J),X;function Z(){let e=performance.now();X!==void 0&&(Y.elapsedMs+=e-X),X=document.visibilityState===`visible`&&!Y.locked?e:void 0}function Q(){Z(),xt(jt,J,Y)}function Nt(){let e=Y.locked;Object.assign(Y,yt(jt,J)),X=void 0,Z(),Y.locked&&!e?It():!Y.locked&&e&&$()}setInterval(Q,Ot),document.addEventListener(`visibilitychange`,Q),window.addEventListener(`pagehide`,Q),window.addEventListener(`storage`,e=>{e.key===vt(J)&&Nt()}),window.addEventListener(`pageshow`,e=>{e.persisted&&Nt()});function Pt(e){At?.abort(),At=new AbortController;let t=document.createElement(`div`);t.className=`screen`,kt.replaceChildren(t),e(t,At.signal)}function $(){Pt(e=>Dt(e,Ne,Ft))}function Ft(e){Y.vehicle=e.name,Pt((t,n)=>{Ze(t,e,{signal:n,onBack:$,onClean(){Z();let e=_t(Y,Mt);return e===`lock`&&(Y.locked=!0,Q()),e},onOneMore(){Y.oneMore=!0,Q()},onSleep:It}).catch(e=>{console.error(e),n.aborted||$()})})}function It(){Z(),Y.locked=!0,Q();let e=Ne.find(e=>e.name===Y.vehicle)??Ne[0];Pt(t=>Et(t,e,Lt))}function Lt(){Object.assign(Y,{...gt,vehicle:Y.vehicle}),Q(),$()}Y.locked?It():(Z(),$());

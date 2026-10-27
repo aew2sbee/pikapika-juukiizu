@@ -1,7 +1,7 @@
 // The garage the vehicles are washed in: a full-screen backdrop drawn in a 1600 x 1000 viewBox, lit
 // from the top left like the vehicles.
 
-import type { Paint } from './vehicles/parts';
+import { type Paint, round } from './vehicles/parts';
 
 /** The tones of a thing in the garage, as for a vehicle's Paint; nothing here needs seams. */
 type Shades = Omit<Paint, 'deep'>;
@@ -33,10 +33,13 @@ const tire = (y: number) => `
   <rect x="106" y="${y + 40}" width="168" height="8" rx="4" fill="#263238"/>
   <g stroke="#263238" stroke-width="5">${[124, 142, 160, 178, 196, 214, 232, 250].map((x) => `<line x1="${x}" y1="${y + 17}" x2="${x + 6}" y2="${y + 35}"/>`).join('')}</g>`;
 
-/** A tool hung on the pegboard at (x, y), casting its shadow on the board; each part is [shape, colour]. */
+/**
+ * A tool hung on the pegboard at (x, y), casting its shadow on the board; each part is [shape, colour].
+ * A stroked shape draws with currentColor, so its shadow is as dark as the rest.
+ */
 const hung = (x: number, y: number, angle: number, parts: [string, string][]) => `
-  <g transform="translate(${x + 6} ${y + 8}) rotate(${angle})" fill="#3e2723" opacity="0.2">${parts.map(([shape]) => shape).join('')}</g>
-  <g transform="translate(${x} ${y}) rotate(${angle})">${parts.map(([shape, color]) => `<g fill="${color}">${shape}</g>`).join('')}</g>`;
+  <g transform="translate(${x + 6} ${y + 8}) rotate(${angle})" fill="#3e2723" color="#3e2723" opacity="0.2">${parts.map(([shape]) => shape).join('')}</g>
+  <g transform="translate(${x} ${y}) rotate(${angle})">${parts.map(([shape, color]) => `<g fill="${color}" color="${color}">${shape}</g>`).join('')}</g>`;
 
 /** A paint can standing on a shelf at `bottom`: a cylinder with its lid showing, lit on the left. */
 const can = (x: number, bottom: number, width: number, height: number, { light, base, dark }: Shades) => {
@@ -44,7 +47,7 @@ const can = (x: number, bottom: number, width: number, height: number, { light, 
   return `<rect x="${x}" y="${top}" width="${width}" height="${height}" rx="4" fill="${base}"/>
   <rect x="${x + 4}" y="${top + 4}" width="6" height="${height - 8}" rx="3" fill="${light}"/>
   <rect x="${x + width - 10}" y="${top + 4}" width="7" height="${height - 8}" rx="3" fill="${dark}"/>
-  <rect x="${x}" y="${top + height * 0.4}" width="${width}" height="${height * 0.28}" fill="#fff" opacity="0.85"/>
+  <rect x="${x}" y="${round(top + height * 0.4)}" width="${width}" height="${round(height * 0.28)}" fill="#fff" opacity="0.85"/>
   <ellipse cx="${x + width / 2}" cy="${top}" rx="${width / 2}" ry="5" fill="${light}"/>
   <ellipse cx="${x + width / 2}" cy="${top}" rx="${width / 2 - 5}" ry="3" fill="${base}"/>`;
 };
@@ -127,7 +130,7 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   <path d="M78 456 V238 H366" fill="none" stroke="#3e2723" stroke-opacity="0.15" stroke-width="8"/>
   ${hung(140, 300, 20, [
     ['<path d="M-7 -20.9 A22 22 0 1 0 7 -20.9 V-4 H-7 Z"/><rect x="-8" y="0" width="16" height="120" rx="8"/>', '#78909c'],
-    ['<rect x="-6" y="6" width="4" height="108" rx="2"/><path d="M-19 -6 A19 19 0 0 1 -8 -18" fill="none" stroke="#b0bec5" stroke-width="4"/>', '#b0bec5'],
+    ['<rect x="-6" y="6" width="4" height="108" rx="2"/><path d="M-19 -6 A19 19 0 0 1 -8 -18" fill="none" stroke="currentColor" stroke-width="4"/>', '#b0bec5'],
   ])}
   ${hung(240, 290, -15, [
     ['<rect x="-7" y="0" width="14" height="120" rx="6"/>', '#a1887f'],
@@ -161,7 +164,7 @@ export const garage = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600
   ${box(1392, 446, 90, 52, { light: '#ffe082', base: '#ffb300', dark: '#ff8f00' })}
   <path d="M1418 394 V382 H1456 V394" fill="none" stroke="#5d4037" stroke-width="6"/>
   <path d="M1300 520 L1400 520 L1390 576 L1310 576 Z" fill="#ff7043"/>
-  <path d="M1306 528 L1316 528 L1312 570 L1314 570 Z" fill="#ffab91"/>
+  <path d="M1306 528 L1316 528 L1314 570 L1312 570 Z" fill="#ffab91"/>
   <path d="M1384 528 L1394 528 L1388 570 L1380 570 Z" fill="#e64a19"/>
   <ellipse cx="1350" cy="520" rx="50" ry="9" fill="#ff8a65"/>
   <ellipse cx="1350" cy="520" rx="43" ry="6" fill="#bf360c"/>

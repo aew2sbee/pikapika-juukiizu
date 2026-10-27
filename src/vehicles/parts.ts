@@ -1,13 +1,14 @@
 /**
  * The face every vehicle wears in its cab window, centred on (x, y) in viewBox units. Each part lists
  * the moods it shows in: "normal", "happy" once clean, "fussy" while water hits the face, and "sleepy" on the lock screen.
+ * The blush sits outside the `.face` group, whose size sets how near water must come to count as on the face.
  */
 export function face(x: number, y: number): string {
   const cheeks = `<ellipse cx="${x - 20}" cy="${y + 7}" rx="5" ry="3.5"/><ellipse cx="${x + 20}" cy="${y + 7}" rx="5" ry="3.5"/>`;
   const mouth = `M${x - 11} ${y + 5} q11 16 22 0 Z`;
-  return `<g class="face">
-      <g data-moods="normal sleepy" fill="#f8bbd0">${cheeks}</g>
-      <g data-moods="happy" fill="#f48fb1">${cheeks}</g>
+  return `<g data-moods="normal sleepy" fill="#f8bbd0">${cheeks}</g>
+    <g data-moods="happy" fill="#f48fb1">${cheeks}</g>
+    <g class="face">
       <g data-moods="normal happy">
         <g fill="#3e2723"><ellipse cx="${x - 11}" cy="${y - 6}" rx="5.5" ry="7"/><ellipse cx="${x + 11}" cy="${y - 6}" rx="5.5" ry="7"/></g>
         <g fill="#fff">
@@ -54,9 +55,14 @@ export function round(v: number): number {
   return Math.round(v * 10) / 10;
 }
 
-/** Circles of one radius along a row, as SVG markup. */
-function circles(xs: number[], cy: number, r: number): string {
-  return xs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`).join('');
+/** Circles of one radius along a row, as SVG markup, each with any `extra` attributes. */
+function circles(xs: number[], cy: number, r: number, extra = ''): string {
+  return xs.map((cx) => `<circle cx="${cx}" cy="${cy}" r="${r}" ${extra}/>`).join('');
+}
+
+/** Stretches an outline `length` long to a whole number of dash periods, so its dashes meet evenly where it starts. */
+function evenDashes(length: number, period: number): string {
+  return `pathLength="${Math.round(length / period) * period}"`;
 }
 
 /**
@@ -66,16 +72,18 @@ function circles(xs: number[], cy: number, r: number): string {
 export function crawler(x: number, y: number, width: number, height: number): string {
   const r = height / 2;
   const [back, front] = [x + r, x + width - r];
-  const between = (n: number) => Array.from({ length: n }, (_, i) => back + ((front - back) * (i + 1)) / (n + 1));
+  const between = (n: number) => Array.from({ length: n }, (_, i) => round(back + ((front - back) * (i + 1)) / (n + 1)));
   const rollers = between(Math.round((front - back) / 40));
-  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${r}" fill="#424242" stroke="#424242" stroke-width="6" stroke-dasharray="6 4" stroke-linecap="butt"/>
-    <rect x="${x + 4}" y="${y + 4}" width="${width - 8}" height="${height - 8}" rx="${r - 4}" fill="none" stroke="#212121" stroke-width="8" stroke-dasharray="2 9" stroke-linecap="butt"/>
+  /** Once round the belt, `inset` in from its outer edge. */
+  const perimeter = (inset: number) => 2 * (width - height) + Math.PI * (height - 2 * inset);
+  return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${r}" fill="#424242" stroke="#424242" stroke-width="6" stroke-dasharray="6 4" ${evenDashes(perimeter(0), 10)} stroke-linecap="butt"/>
+    <rect x="${x + 4}" y="${y + 4}" width="${width - 8}" height="${height - 8}" rx="${r - 4}" fill="none" stroke="#212121" stroke-width="8" stroke-dasharray="2 9" ${evenDashes(perimeter(4), 11)} stroke-linecap="butt"/>
     <rect x="${x + 8}" y="${y + 8}" width="${width - 16}" height="${height - 16}" rx="${r - 8}" fill="#616161"/>
     <rect x="${back}" y="${y + 8}" width="${front - back}" height="7" fill="#4e4e4e"/>
     <g fill="#757575">${circles(rollers, y + height - 15, 7)}</g>
     <g fill="#bdbdbd">${circles(rollers.map((cx) => cx - 1), y + height - 16, 4.5)}</g>
     <g fill="#9e9e9e">${circles(between(2), y + 13, 4)}</g>
-    <circle cx="${back}" cy="${y + r}" r="${r - 11}" fill="#757575" stroke="#757575" stroke-width="6" stroke-dasharray="4 3.5" stroke-linecap="butt"/>
+    <circle cx="${back}" cy="${y + r}" r="${r - 11}" fill="#757575" stroke="#757575" stroke-width="6" stroke-dasharray="4 3.5" ${evenDashes(2 * Math.PI * (r - 11), 7.5)} stroke-linecap="butt"/>
     <circle cx="${front}" cy="${y + r}" r="${r - 10}" fill="#757575"/>
     <g fill="#9e9e9e">${circles([back - 1.5, front - 1.5], y + r - 1.5, r - 15)}</g>
     <g fill="#e0e0e0">${circles([back, front], y + r, 6)}</g>
@@ -86,7 +94,8 @@ export function crawler(x: number, y: number, width: number, height: number): st
 function towardLight(x1: number, y1: number, x2: number, y2: number): [number, number] {
   const length = Math.hypot(x2 - x1, y2 - y1);
   const [nx, ny] = [(y2 - y1) / length, (x1 - x2) / length];
-  return nx + ny <= 0 ? [nx, ny] : [-nx, -ny];
+  // A line running straight along the light faces it on neither side: take the upper one, whichever way it is drawn.
+  return nx + ny < 0 || (nx + ny === 0 && ny < 0) ? [nx, ny] : [-nx, -ny];
 }
 
 /** A straight line from (x1, y1) to (x2, y2), moved k square to it towards the light. */
@@ -129,7 +138,7 @@ export function wheels(xs: number[], y: number, r: number): string {
   );
   // The tread is a shade darker on the side away from the light.
   const litCentres = xs.map((x) => round(x - r * 0.05));
-  return `<g fill="#263238" stroke="#263238" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="butt">${circles(xs, y, r - 1.5)}</g>
+  return `<g fill="#263238" stroke="#263238" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="butt">${circles(xs, y, r - 1.5, evenDashes(2 * Math.PI * (r - 1.5), 8))}</g>
     <g fill="#37474f">${circles(litCentres, round(y - r * 0.05), round(r * 0.88))}</g>
     <g fill="#78909c">${circles(xs, y, round(r * 0.55))}</g>
     <g fill="#cfd8dc">${circles(xs.map((x) => x - 1.5), y - 1.5, round(r * 0.5))}</g>

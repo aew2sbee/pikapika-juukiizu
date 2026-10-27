@@ -25,6 +25,22 @@ function section(s0: number, s1: number, width: number): string {
     <path d="M${along(s1 - 5)} L${along(s1)}" stroke="${deep}" stroke-width="${width + 2}"/></g>`;
 }
 
+/** The sheave at the boom's head, with the rope down from its far side to the hook block. */
+function hook(): string {
+  const [x, y] = point(266);
+  const rope = x + 10;
+  return `<line x1="${rope}" y1="${y}" x2="${rope}" y2="100" stroke="#424242" stroke-width="2"/>
+  <circle cx="${x}" cy="${y}" r="10" fill="#616161"/>
+  <circle cx="${round(x - 1.5)}" cy="${round(y - 1.5)}" r="6" fill="#9e9e9e"/>
+  <circle cx="${x}" cy="${y}" r="3" fill="#424242"/>
+  <g transform="translate(${rope} 98)">
+    <rect x="-11" width="22" height="30" rx="4" fill="${YELLOW.base}"/>
+    <path d="M-11 12 L1 0 H7 L-11 18 Z M-7 30 L11 12 V18 L-1 30 Z" fill="#424242"/>
+    <rect x="-11" width="22" height="4" rx="2" fill="${YELLOW.light}"/>
+    <path d="M0 30 V38 Q0 50 -10 50 Q-18 50 -18 42" fill="none" stroke="#616161" stroke-width="5"/>
+  </g>`;
+}
+
 /** An outrigger at x: its red box on the carrier, and the jack pushed down onto a pad. */
 function outrigger(x: number): string {
   return `${cylinder(x, 186, x, 236, 14)}
@@ -59,14 +75,7 @@ export const crane: Vehicle = {
   ${section(-6, 120, 30)}
   <circle cx="${FOOT_X}" cy="${FOOT_Y}" r="8" fill="#424242"/>
   <path d="M${along(258)} L${along(272)}" stroke="${RED.base}" stroke-width="24" stroke-linecap="butt"/>
-  <line x1="393" y1="16" x2="393" y2="100" stroke="#424242" stroke-width="2"/>
-  <circle cx="383" cy="15.8" r="10" fill="#616161"/>
-  <circle cx="381.5" cy="14.3" r="6" fill="#9e9e9e"/>
-  <circle cx="383" cy="15.8" r="3" fill="#424242"/>
-  <rect x="382" y="98" width="22" height="30" rx="4" fill="${YELLOW.base}"/>
-  <path d="M382 110 L394 98 H400 L382 116 Z M386 128 L404 110 V116 L392 128 Z" fill="#424242"/>
-  <rect x="382" y="98" width="22" height="4" rx="2" fill="${YELLOW.light}"/>
-  <path d="M393 128 V136 Q393 148 383 148 Q375 148 375 140" fill="none" stroke="#616161" stroke-width="5"/>
+  ${hook()}
   <path d="M236 170 V104 Q236 92 248 92 H290 Q298 92 302 100 L314 158 V170 Z" fill="${base}"/>
   <path d="M239 166 V104 Q239 95 248 95 H288" fill="none" stroke="${light}" stroke-width="4"/>
   <path d="M236 167 H314" stroke="${dark}" stroke-width="6"/>
